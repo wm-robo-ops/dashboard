@@ -1,22 +1,44 @@
 'use babel';
-
 import React from 'react';
+import createStore from 'redux';
+import {
+  updateBattery,
+  updateLocation
+} from './actions';
+import {
+  getBatteryLevel,
+  getLocation
+} from './vehicle_client';
+import dashboardApp from './reducers';
 
-const BIG_DADDY = 'BIG_DADDY';
-const SCOUT = 'SCOUT';
-const FLYER = 'FLYER';
+var store = createStore(dashboardApp);
+
+const BIG_DADDY = 'bigDaddy';
+const SCOUT = 'scout';
+const FLYER = 'flyer';
+const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
+
+// poll for battery and location information
+function updateStatus() {
+  for (var i = 0; i < vehicles.length; i++) {
+    let v = vehicles[0];
+    console.log(v);
+  }
+}
+//window.setTimeout(updateStatus);
 
 export default class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      view: BIG_DADDY
-    };
+    this.state = store.getStaet().toJS();
+    this.state.view = BIG_DADDY;
   }
 
   componentDidMount() {
-    this.refs.batteryBar.percent = '100%';
+    store.subscribe(() => {
+      this.setState(store.getState().toJS());
+    });
   }
 
   changeView(view) {
@@ -83,6 +105,9 @@ export default class App extends React.Component {
               <div className='bar'></div>
               <div className='label'>battery</div>
             </div>
+
+            {/* location */}
+            <div></div>
 
           </div>
         </div>
