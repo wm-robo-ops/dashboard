@@ -1,7 +1,11 @@
 export function getBatteryLevel() {
-  return 50;
+  return randomInt(100);
 }
 
 export function getLocation() {
-  return [0, 0];
+  return [randomInt(185), randomInt(90)];
+}
+
+function randomInt(max) {
+  return Math.floor(Math.random() * max) + 1;
 }

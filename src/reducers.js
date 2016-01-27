@@ -4,27 +4,12 @@ import {
   LOCATION_UPDATE
 } from './actions';
 
-const initialState = Immutable.fromJS({
-  bigDaddy: {
-    location: [0, 0],
-    battery: 100
-  },
-  scout: {
-    location: [0, 0],
-    battery: 50
-  },
-  flyer: {
-    location: [0, 0],
-    battery: 25
-  }
-});
-
-function dashboardApp(state = initialState, action) {
+function dashboardApp(state, action) {
   switch (action.type) {
     case BATTERY_UPDATE:
-      return state.setIn([action.vehicle, 'battery'], action.batteryLevel);
+      return state.setIn([action.vehicle, 'batteryLevel'], action.batteryLevel);
     case LOCATION_UPDATE:
-      return state.setIn([action.vehicle, 'location'], action.location);
+      return state.setIn([action.vehicle, 'location'], Immutable.List(action.location)); // eslint-disable-line new-cap
   }
   return state;
 }
