@@ -4,15 +4,19 @@ import Immutable from 'immutable';
 import { createStore } from 'redux';
 import {
   updateBattery,
-  updateLocation
+  updateLocation,
+  updateNetworkSpeed
 } from './actions';
 import {
   getBatteryLevel,
-  getLocation
+  getLocation,
+  getPhotos,
+  getNetworkSpeed
 } from './vehicle_client';
+import NetworkLineChart from './components/network_line_chart';
 import dashboardApp from './reducers';
 
-const POLL_INTERVAL = 2000; // milliseconds to wait between polling vehicles
+const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
 
 const BIG_DADDY = 'bigDaddy';
 const SCOUT = 'scout';
@@ -22,21 +26,27 @@ const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
 var store = createStore(dashboardApp, Immutable.fromJS({
   bigDaddy: {
     batteryLevel: getBatteryLevel(BIG_DADDY),
-    location: getLocation(BIG_DADDY)
+    location: getLocation(BIG_DADDY),
+    networkSpeed: [getNetworkSpeed(BIG_DADDY)],
+    cameras: [1, 2, 3]
   },
   scout: {
     batteryLevel: getBatteryLevel(SCOUT),
-    location: getLocation(SCOUT)
+    location: getLocation(SCOUT),
+    networkSpeed: [getNetworkSpeed(SCOUT)],
+    cameras: [1, 2, 3]
   },
   flyer: {
     batteryLevel: getBatteryLevel(FLYER),
-    location: getLocation(FLYER)
+    location: getLocation(FLYER),
+    networkSpeed: [getNetworkSpeed(FLYER)],
+    cameras: [1, 2, 3]
   }
 }));
 
 function updateStatus() {
   for (var i = 0; i < vehicles.length; i++) {
-    let vehicle = vehicles[0];
+    let vehicle = vehicles[i];
     store.dispatch(updateBattery({
       vehicle,
       batteryLevel: getBatteryLevel(vehicle)
@@ -45,10 +55,25 @@ function updateStatus() {
       vehicle,
       location: getLocation(vehicle)
     }));
+    store.dispatch(updateNetworkSpeed({
+      vehicle,
+      data: getNetworkSpeed(vehicle)
+    }));
   }
 }
+
 // poll for battery and location information
 window.setInterval(updateStatus, POLL_INTERVAL);
+
+/*
+function parsePhotoData(fname) {
+  var data = fname.split('.')[1].split('$');
+  var vehicle = data[0];
+  var time = data[1];
+  var location = data[2];
+  return { vehicle, time, location };
+}
+*/
 
 export default class App extends React.Component {
 
@@ -56,7 +81,8 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       data: store.getState(),
-      view: BIG_DADDY
+      view: BIG_DADDY,
+      connectivityData: [ {time: '1', speed: 1}, {time: '2', speed: 5}, {time: '3', speed: 3} ] // add to store
     };
   }
 
@@ -73,11 +99,12 @@ export default class App extends React.Component {
   render() {
     let batteryLevel = this.state.data.getIn([this.state.view, 'batteryLevel']);
     let location = this.state.data.getIn([this.state.view, 'location']);
+    let networkSpeed = this.state.data.getIn([this.state.view, 'networkSpeed']);
 
-    return <div>
+    return <div style={{ padding: '20px' }}>
 
       {/* rover toggle */}
-      <div className='ui container my4'>
+      <div className='ui my4'>
         <div className='ui three item stackable tabs menu'>
           <div
             onClick={this.changeView.bind(this, BIG_DADDY)}
@@ -91,26 +118,44 @@ export default class App extends React.Component {
         </div>
       </div>
 
-      <div className='ui grid container'>
+      <div className='ui grid'>
 
         {/* cameras */}
         <div className='ten wide column'>
           <div className='ui teal padded segment'>
             <h1 className='ui dividing header'>cameras</h1>
 
-            {/* fake cameras */}
+            {/* cameras */}
+            {/* main camera */}
             Main
-            <div className='mb2' style={{ height: '300px', width: '650px', backgroundColor: 'gray' }}></div>
+            <div className='mb2' style={{ backgroundColor: '#000' }}>
+              <img src={getPhotos()[0]} style={{ width: '100%' }} />
+            </div>
+            <div>
+              {getPhotos().map((p, i) => <div
+                  key={i}
+                  style={{
+                    overflowX: 'scroll',
+                    width: '100%',
+                    backgroundColor: '#E6E6E6',
+                    padding: '10px',
+                    borderRadius: '.28571429rem'
+                  }}>
+                <img src={p} style={{ width: '20%' }} />
+              </div>)}
+            </div>
 
             <div className='ui grid container'>
+              {/* camera 2 */}
               <div className='eight wide column'>
                 Camera 2
-                <div style={{ height: '200px', width: '300px', backgroundColor: 'gray' }}></div>
+                <div style={{ height: '200px', width: '100%', backgroundColor: 'gray' }}></div>
               </div>
 
+              {/* camera 3 */}
               <div className='eight wide column'>
                 Camera 3
-                <div style={{ height: '200px', width: '300px', backgroundColor: 'gray' }}></div>
+                <div style={{ height: '200px', width: '100%', backgroundColor: 'gray' }}></div>
               </div>
             </div>
 
@@ -119,10 +164,10 @@ export default class App extends React.Component {
 
         {/* metrics */}
         <div className='six wide column'>
-          <div className='ui pink padded segment'>
-            <h1 className='ui dividing header'>metrics</h1>
 
-            {/* battery level */}
+          {/* battery level */}
+          <div className='ui pink padded segment'>
+            <h1 className='ui dividing header'>battery</h1>
             <div
               className='ui indicating progress active'
               data-percent={`${batteryLevel}`}
@@ -130,12 +175,24 @@ export default class App extends React.Component {
               <div className='bar' style={{ width: batteryLevel + '%' }}></div>
               <div className='label'>battery: {batteryLevel}%</div>
             </div>
-
-            {/* location */}
-            <div>Location: {`${location.get(0) + ',' + location.get(1)}`}</div>
-
           </div>
+
+          {/* location */}
+          <div className='ui black padded segment'>
+            <h1 className='ui dividing header'>location</h1>
+            <div>Location: {`(${location.get(0) + ',' + location.get(1)})`}</div>
+          </div>
+
+          {/* network */}
+          <div className='ui purple padded segment'>
+            <h1 className='ui dividing header'>network</h1>
+            <div>
+              <NetworkLineChart data={networkSpeed.toJS()}/>
+            </div>
+          </div>
+
         </div>
+
       </div>
 
     </div>;
