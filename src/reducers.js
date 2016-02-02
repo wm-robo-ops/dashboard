@@ -14,7 +14,6 @@ function dashboardApp(state, action) {
       return state.setIn([vehicle, 'location'], Immutable.List(action.location)); // eslint-disable-line new-cap
     case NETWORK_SPEED_UPDATE:
       let s = state.setIn([vehicle, 'networkSpeed'], state.getIn([vehicle, 'networkSpeed']).push(Immutable.fromJS(action.data)));
-      console.log(s.getIn([vehicle, 'networkSpeed']).size);
       if (s.getIn([vehicle, 'networkSpeed']).size > 10) {
         s = s.setIn([vehicle, 'networkSpeed'], s.getIn([vehicle, 'networkSpeed']).shift()); // limit to 6 max in the array of data
       }

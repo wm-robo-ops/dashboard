@@ -28,13 +28,13 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevel: getBatteryLevel(BIG_DADDY),
     location: getLocation(BIG_DADDY),
     networkSpeed: [getNetworkSpeed(BIG_DADDY)],
-    cameras: [1, 2, 3]
+    cameras: ['main']
   },
   scout: {
     batteryLevel: getBatteryLevel(SCOUT),
     location: getLocation(SCOUT),
     networkSpeed: [getNetworkSpeed(SCOUT)],
-    cameras: [1, 2, 3]
+    cameras: []
   },
   flyer: {
     batteryLevel: getBatteryLevel(FLYER),
@@ -67,7 +67,7 @@ window.setInterval(updateStatus, POLL_INTERVAL);
 
 /*
 function parsePhotoData(fname) {
-  var data = fname.split('.')[1].split('$');
+  var data = fname.split('.')[0].split('$');
   var vehicle = data[0];
   var time = data[1];
   var location = data[2];
