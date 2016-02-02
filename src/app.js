@@ -82,6 +82,7 @@ export default class App extends React.Component {
     this.state = {
       data: store.getState(),
       view: BIG_DADDY,
+      videoQuality: 'Medium',
       connectivityData: [ {time: '1', speed: 1}, {time: '2', speed: 5}, {time: '3', speed: 3} ] // add to store
     };
   }
@@ -94,6 +95,17 @@ export default class App extends React.Component {
 
   changeView(view) {
     this.setState({ view });
+  }
+
+  changeVideoQuality(e) {
+    var value = e.target.value;
+    if (value > 2) {
+      this.setState({ videoQuality: 'High' });
+    } else if (value > 1) {
+        this.setState({ videoQuality: 'Medium' });
+    } else {
+        this.setState({ videoQuality: 'Low' });
+    }
   }
 
   render() {
@@ -183,12 +195,26 @@ export default class App extends React.Component {
             <div>Location: {`(${location.get(0) + ',' + location.get(1)})`}</div>
           </div>
 
-          {/* network */}
+          {/* network and quality*/}
           <div className='ui purple padded segment'>
+
             <h1 className='ui dividing header'>network</h1>
             <div>
               <NetworkLineChart data={networkSpeed.toJS()}/>
             </div>
+
+            <h1 className='ui dividing header'>quality</h1>
+            <div className='center'>
+              {this.state.videoQuality}
+            </div>
+            <input
+              className='full-width'
+              type='range'
+              min='1'
+              max='3'
+              step='1'
+              onChange={this.changeVideoQuality.bind(this)}/>
+
           </div>
 
         </div>
