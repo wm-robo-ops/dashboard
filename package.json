@@ -4,7 +4,7 @@
   "description": "Robo-Ops Dashboard",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "./node_modules/.bin/electron .",
     "test": "test/run.sh",
     "build-release-osx": "./release.sh osx"
   },
