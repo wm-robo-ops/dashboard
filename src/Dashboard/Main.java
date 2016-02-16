@@ -6,11 +6,14 @@ import javax.swing.JFrame;
 import Dashboard.VideoStreamPlayer;
 import Dashboard.MapPanel;
 
-public class Main extends JFrame {
-    
-    private static final long serialVersionUID = 1L;
+public class Main {
 
-    public static void main(String[]  args) {
+    private JFrame frame = new JFrame();
+    
+    public Main() {
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
         VideoStreamPlayer vsp = new VideoStreamPlayer();
         String[] arg = {"C:\\Users\\djruh_000\\Desktop\\Computer_Science\\robo-ops\\stock.mp4"};
         try {
@@ -18,6 +21,11 @@ public class Main extends JFrame {
         }
         catch (InterruptedException e) { e.printStackTrace();}
         catch (IOException e) { e.printStackTrace(); }
+    }
+    
+    
+    public static void main(String[]  args) {
+        Main m = new Main();
     }
 
 }
