@@ -20,7 +20,7 @@ public class Main {
         frame.pack();
         //map.addPoint("red", 29.564835, -95.081320);
 
-        (new Thread(new VideoPlayerThread())).start();
+        //(new Thread(new VideoPlayerThread())).start();
     }
     
     private class VideoPlayerThread implements Runnable {

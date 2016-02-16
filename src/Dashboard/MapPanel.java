@@ -30,63 +30,61 @@ public class MapPanel {
 	private JPanel addPointPanel;
 	private JLabel picLabel;
 	private BufferedImage previewImage;
+	private Image previewImageFinal;
 	
-	public static JButton inputButton = new JButton("Send");
-	public static JTextArea editTextArea = new JTextArea("Type Here!");
-	public static JTextArea uneditTextArea = new JTextArea();
-	private String myString;
+	public static JButton inputButton = new JButton("Add Point");
+	public static JTextArea colorTextArea = new JTextArea("color");
+	public static JTextArea xTextArea = new JTextArea("x");
+	public static JTextArea yTextArea = new JTextArea("y");
+	private String xString;
+	private String yString;
+	private String colorString;
+	private String pointString;
 	
 	/**
 	 * Constructor, builds JPanel and adds map to it
 	 */
 	public MapPanel(){
+		//Adds main panel
 		mainPanel = new JPanel(new BorderLayout());
+		//Creates Map
 		mapPanel = new JPanel();
 		try{
 			previewImage = ImageIO.read(new URL(finalURL));
-			previewImage = resize(previewImage, 700, 700);
-			picLabel = new JLabel(new ImageIcon(previewImage));
-			picLabel.setPreferredSize(new Dimension(100, 100));
-			mapPanel.add(picLabel, BorderLayout.NORTH);
+			previewImageFinal = previewImage.getScaledInstance(700,700,1);
+			//previewImage = resize(previewImage, 700, 700);
+			picLabel = new JLabel(new ImageIcon(previewImageFinal));
+			mapPanel.add(picLabel, BorderLayout.CENTER);
 		} catch(Exception e){
 			//Do nothing
 		}
+		//Creates Panel for adding points to map
 		addPointPanel = new JPanel();
 		addPointPanel.setPreferredSize( new Dimension(100, 100) );
 		addPointPanel.setLayout(new BorderLayout());
-		uneditTextArea.setEditable(false);
-		editTextArea.setBackground(Color.BLUE);
-		editTextArea.setForeground(Color.WHITE);     
-		addPointPanel.add(uneditTextArea, BorderLayout.EAST);
-		addPointPanel.add(editTextArea, BorderLayout.SOUTH);
-		addPointPanel.add(inputButton, BorderLayout.WEST);
+		//uneditTextArea.setEditable(false);
+		xTextArea.setBackground(Color.WHITE);
+		xTextArea.setForeground(Color.BLUE);     
+		yTextArea.setBackground(Color.WHITE);
+		yTextArea.setForeground(Color.BLUE);
+		colorTextArea.setBackground(Color.WHITE);
+		colorTextArea.setForeground(Color.BLUE);
+		addPointPanel.add(xTextArea, BorderLayout.PAGE_START);
+		addPointPanel.add(yTextArea, BorderLayout.CENTER);
+		addPointPanel.add(colorTextArea, BorderLayout.PAGE_END);
+		addPointPanel.add(inputButton, BorderLayout.EAST);
 		this.inputButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				myString = editTextArea.getText();
-				System.out.println(myString);
+				xString = xTextArea.getText();
+				yString = yTextArea.getText();
+				colorString = colorTextArea.getText();
+				addPoint(colorString, Double.parseDouble(xString), Double.parseDouble(yString));
 			}
 		});
-		mainPanel.add(mapPanel, BorderLayout.EAST);
-		mainPanel.add(addPointPanel, BorderLayout.WEST);
+		//Adds all panels to main panel
+		mainPanel.add(mapPanel, BorderLayout.CENTER);
+		mainPanel.add(addPointPanel, BorderLayout.SOUTH);
 	}
-	
-	/**
-	 * 
-	 * @param img
-	 * @param newW
-	 * @param newH
-	 * @return
-	 */
-	public static BufferedImage resize(BufferedImage img, int newW, int newH) { 
-	    Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-	    BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
-
-	    Graphics2D g2d = dimg.createGraphics();
-	    g2d.drawImage(tmp, 0, 0, null);
-	    g2d.dispose();
-
-	    return dimg;
-	}  
 	
 	/**
 	 * Returns the JPanel
@@ -115,7 +113,8 @@ public class MapPanel {
 		try{
 			mapPanel.removeAll();
 			this.previewImage = ImageIO.read(new URL(finalURL));
-			this.picLabel = new JLabel(new ImageIcon(previewImage));
+			previewImageFinal = previewImage.getScaledInstance(700,700,1);
+			this.picLabel = new JLabel(new ImageIcon(previewImageFinal));
 			mapPanel.add(picLabel);
 		} catch(Exception e){
 			//Do Nothing
