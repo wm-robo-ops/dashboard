@@ -28,18 +28,23 @@ import io.humble.video.MediaDescriptor;
 import io.humble.video.MediaPacket;
 import io.humble.video.MediaPicture;
 import io.humble.video.Rational;
-import io.humble.video.awt.ImageFrame;
+//import io.humble.video.awt.ImageFrame;
 import io.humble.video.awt.MediaPictureConverter;
 import io.humble.video.awt.MediaPictureConverterFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import javax.swing.JPanel;
+import javax.swing.JFrame;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
+import Dashboard.VideoPanel;
 
 /**
  * Opens a media file, finds the first video stream, and then plays it.
@@ -63,12 +68,15 @@ import org.apache.commons.cli.ParseException;
  *
  */
 public class VideoStreamPlayer {
+    
+  private VideoPanel panel;
+  private JFrame frame;
 
   /**
    * Opens a file, and plays the video from it on a screen at the right rate.
    * @param filename The file or URL to play.
    */
-  private static void playVideo(String filename) throws InterruptedException, IOException {
+  private void playVideo(String filename) throws InterruptedException, IOException {
     /*
      * Start by creating a container object, in this case a demuxer since
      * we are reading, to get video data from.
@@ -133,10 +141,11 @@ public class VideoStreamPlayer {
      * we're 'simplifying' Java AWT UI updating code. This method just creates a single window on the UI thread, and blocks
      * until it is displayed.
      */
-    final ImageFrame window = ImageFrame.make();
-    if (window == null) {
-      throw new RuntimeException("Attempting this demo on a headless machine, and that will not work. Sad day for you.");
-    }
+    //final ImageFrame window = ImageFrame.make();
+    panel = new VideoPanel(frame);
+    //if (window == null) {
+    //  throw new RuntimeException("Attempting this demo on a headless machine, and that will not work. Sad day for you.");
+    //}
     
     /**
      * Media playback, like comedy, is all about timing. Here we're going to introduce <b>very very basic</b>
@@ -190,7 +199,7 @@ public class VideoStreamPlayer {
           bytesRead += videoDecoder.decode(picture, packet, offset);
           if (picture.isComplete()) {
             image = displayVideoAtCorrectTime(streamStartTime, picture,
-                converter, image, window, systemStartTime, systemTimeBase,
+                converter, image, /*window*/panel, systemStartTime, systemTimeBase,
                 streamTimebase);
           }
           offset += bytesRead;
@@ -206,7 +215,7 @@ public class VideoStreamPlayer {
       videoDecoder.decode(picture, null, 0);
       if (picture.isComplete()) {
         image = displayVideoAtCorrectTime(streamStartTime, picture, converter,
-            image, window, systemStartTime, systemTimeBase, streamTimebase);
+            image, /*window*/panel, systemStartTime, systemTimeBase, streamTimebase);
       }
     } while (picture.isComplete());
     
@@ -218,7 +227,7 @@ public class VideoStreamPlayer {
     demuxer.close();
     
     // similar with the demuxer, for the windowing system, clean up after yourself.
-    window.dispose();
+    //window.dispose();
   }
 
   /**
@@ -226,7 +235,7 @@ public class VideoStreamPlayer {
    */
   private static BufferedImage displayVideoAtCorrectTime(long streamStartTime,
       final MediaPicture picture, final MediaPictureConverter converter,
-      BufferedImage image, final ImageFrame window, long systemStartTime,
+      BufferedImage image, /*final ImageFrame window*/ VideoPanel panel, long systemStartTime,
       final Rational systemTimeBase, final Rational streamTimebase)
       throws InterruptedException {
     long streamTimestamp = picture.getTimeStamp();
@@ -243,7 +252,8 @@ public class VideoStreamPlayer {
     // finally, convert the image from Humble format into Java images.
     image = converter.toImage(image, picture);
     // And ask the UI thread to repaint with the new image.
-    window.setImage(image);
+    //window.setImage(image);
+    panel.setImage(image);
     return image;
   }
   
@@ -256,8 +266,9 @@ public class VideoStreamPlayer {
    * @throws InterruptedException 
    */
   //public static void main(String[] args) throws InterruptedException, IOException
-  public void init(String[] args) throws InterruptedException, IOException
+  public void init(String[] args, JFrame frame) throws InterruptedException, IOException
   {
+    this.frame = frame;
     final Options options = new Options();
     options.addOption("h", "help", false, "displays help");
     options.addOption("v", "version", false, "version of this library");
@@ -282,5 +293,8 @@ public class VideoStreamPlayer {
     }
   }
 
+  public JPanel getPanel() {
+    return panel;
+  }
 
 }

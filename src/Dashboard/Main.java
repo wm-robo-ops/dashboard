@@ -20,18 +20,26 @@ public class Main {
         frame.pack();
         //map.addPoint("red", 29.564835, -95.081320);
 
-        /*VideoStreamPlayer vsp = new VideoStreamPlayer();
-        String[] arg = {"C:\\Users\\djruh_000\\Desktop\\Computer_Science\\robo-ops\\stock.mp4"};
-        try {
-            vsp.init(arg);
+        (new Thread(new VideoPlayerThread())).start();
+    }
+    
+    private class VideoPlayerThread implements Runnable {
+
+        public void run() {
+            VideoStreamPlayer vsp = new VideoStreamPlayer();
+            String[] args = {"/Users/kelvinabrokwa/hacku/astute-dev.github.io/video/stock.mp4"};
+            try {
+                vsp.init(args, Main.this.frame);
+            }
+            catch (InterruptedException e) { e.printStackTrace();}
+            catch (IOException e) { e.printStackTrace(); }
         }
-        catch (InterruptedException e) { e.printStackTrace();}
-        catch (IOException e) { e.printStackTrace(); }*/
+        
     }
     
     
     public static void main(String[]  args) {
-        Main m = new Main();
+        new Main();
     }
 
 }
