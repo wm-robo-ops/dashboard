@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 import Dashboard.VideoStreamPlayer;
+import Dashboard.MapPanel;
 
 public class Main extends JFrame {
     
@@ -11,7 +12,7 @@ public class Main extends JFrame {
 
     public static void main(String[]  args) {
         VideoStreamPlayer vsp = new VideoStreamPlayer();
-        String[] arg = {"/Users/kelvinabrokwa/hacku/astute-dev.github.io/video/stock.mp4"};
+        String[] arg = {"C:\\Users\\djruh_000\\Desktop\\Computer_Science\\robo-ops\\stock.mp4"};
         try {
             vsp.init(arg);
         }
