@@ -13,18 +13,26 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
-        VideoStreamPlayer vsp = new VideoStreamPlayer();
-        String[] arg = {"/Users/kelvinabrokwa/hacku/astute-dev.github.io/video/stock.mp4"};
-        try {
-            vsp.init(arg);
+        (new Thread(new VideoPlayerThread())).start();
+    }
+    
+    private class VideoPlayerThread implements Runnable {
+
+        public void run() {
+            VideoStreamPlayer vsp = new VideoStreamPlayer();
+            String[] args = {"/Users/kelvinabrokwa/hacku/astute-dev.github.io/video/stock.mp4"};
+            try {
+                vsp.init(args, Main.this.frame);
+            }
+            catch (InterruptedException e) { e.printStackTrace();}
+            catch (IOException e) { e.printStackTrace(); }
         }
-        catch (InterruptedException e) { e.printStackTrace();}
-        catch (IOException e) { e.printStackTrace(); }
+        
     }
     
     
     public static void main(String[]  args) {
-        Main m = new Main();
+        new Main();
     }
 
 }
