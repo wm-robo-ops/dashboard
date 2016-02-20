@@ -2,7 +2,8 @@ import Immutable from 'immutable';
 import {
   BATTERY_UPDATE,
   LOCATION_UPDATE,
-  NETWORK_SPEED_UPDATE
+  NETWORK_SPEED_UPDATE,
+  UPDATE_BEARING
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -18,6 +19,8 @@ function dashboardApp(state, action) {
         s = s.setIn([vehicle, 'networkSpeed'], s.getIn([vehicle, 'networkSpeed']).shift()); // limit to 6 max in the array of data
       }
       return s;
+    case UPDATE_BEARING:
+      return state.setIn([vehicle, 'bearing'], action.bearing);
   }
   return state;
 }

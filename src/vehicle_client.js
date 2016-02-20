@@ -1,24 +1,18 @@
-import fs from 'fs';
-
-export function getBatteryLevel(vehicle) {
-  console.log(vehicle);
+export function getBatteryLevel(/*vehicle*/) {
   return randomInt(100);
 }
 
-export function getLocation(vehicle) {
-  console.log(vehicle);
+export function getLocation(/*vehicle*/) {
   return [randomInt(185), randomInt(90)];
 }
 
-export function getPhotos(vehicle) {
-  console.log(vehicle);
-  return fs.readdirSync('./test/photos').map(f => `./test/photos/${f}`); // make this better
+var time = 1;
+export function getNetworkSpeed(/*vehicle*/) {
+  return { time: time++, speed: randomInt(10) };
 }
 
-var time = 1;
-export function getNetworkSpeed(vehicle) {
-  console.log(vehicle);
-  return { time: time++, speed: randomInt(10) };
+export function getBearing() {
+  return randomInt(50);
 }
 
 // utils

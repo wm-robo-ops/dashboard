@@ -1,20 +1,26 @@
-'use babel';
 import React from 'react';
 import Immutable from 'immutable';
 import { createStore } from 'redux';
 import {
   updateBattery,
   updateLocation,
-  updateNetworkSpeed
+  updateNetworkSpeed,
+  updateBearing
 } from './actions';
 import {
   getBatteryLevel,
   getLocation,
-  getPhotos,
-  getNetworkSpeed
+  getNetworkSpeed,
+  getBearing
 } from './vehicle_client';
-import NetworkLineChart from './components/network_line_chart';
 import dashboardApp from './reducers';
+
+// components
+import NetworkLineChart from './components/network_line_chart';
+import VideoPlayer from './components/video_player';
+import MainMapPanel from './components/main_map_panel';
+import BatteryPanel from './components/battery_panel';
+import BearingMap from './components/bearing_map';
 
 const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
 
@@ -59,21 +65,15 @@ function updateStatus() {
       vehicle,
       data: getNetworkSpeed(vehicle)
     }));
+    store.dispatch(updateBearing({
+      vehicle,
+      bearing: getBearing(vehicle)
+    }));
   }
 }
 
 // poll for battery and location information
 window.setInterval(updateStatus, POLL_INTERVAL);
-
-/*
-function parsePhotoData(fname) {
-  var data = fname.split('.')[0].split('$');
-  var vehicle = data[0];
-  var time = data[1];
-  var location = data[2];
-  return { vehicle, time, location };
-}
-*/
 
 export default class App extends React.Component {
 
@@ -83,7 +83,11 @@ export default class App extends React.Component {
       data: store.getState(),
       view: BIG_DADDY,
       videoQuality: 'Medium',
-      connectivityData: [ {time: '1', speed: 1}, {time: '2', speed: 5}, {time: '3', speed: 3} ] // add to store
+      connectivityData: [
+        {time: '1', speed: 1},
+        {time: '2', speed: 5},
+        {time: '3', speed: 3}
+      ] // add to store
     };
   }
 
@@ -110,8 +114,10 @@ export default class App extends React.Component {
 
   render() {
     let batteryLevel = this.state.data.getIn([this.state.view, 'batteryLevel']);
-    let location = this.state.data.getIn([this.state.view, 'location']);
+    let loc = this.state.data.getIn([this.state.view, 'location']);
     let networkSpeed = this.state.data.getIn([this.state.view, 'networkSpeed']);
+    let bearing = this.state.data.getIn([this.state.view, 'bearing']);
+    window.map && window.map.setBearing(bearing);
 
     return <div style={{ padding: '20px' }}>
 
@@ -138,37 +144,8 @@ export default class App extends React.Component {
             <h1 className='ui dividing header'>cameras</h1>
 
             {/* cameras */}
-            {/* main camera */}
-            Main
-            <div className='mb2' style={{ backgroundColor: '#000' }}>
-              <img src={getPhotos()[0]} style={{ width: '100%' }} />
-            </div>
-            <div>
-              {getPhotos().map((p, i) => <div
-                  key={i}
-                  style={{
-                    overflowX: 'scroll',
-                    width: '100%',
-                    backgroundColor: '#E6E6E6',
-                    padding: '10px',
-                    borderRadius: '.28571429rem'
-                  }}>
-                <img src={p} style={{ width: '20%' }} />
-              </div>)}
-            </div>
-
             <div className='ui grid container'>
-              {/* camera 2 */}
-              <div className='eight wide column'>
-                Camera 2
-                <div style={{ height: '200px', width: '100%', backgroundColor: 'gray' }}></div>
-              </div>
-
-              {/* camera 3 */}
-              <div className='eight wide column'>
-                Camera 3
-                <div style={{ height: '200px', width: '100%', backgroundColor: 'gray' }}></div>
-              </div>
+                <VideoPlayer />
             </div>
 
           </div>
@@ -178,21 +155,15 @@ export default class App extends React.Component {
         <div className='six wide column'>
 
           {/* battery level */}
-          <div className='ui pink padded segment'>
-            <h1 className='ui dividing header'>battery</h1>
-            <div
-              className='ui indicating progress active'
-              data-percent={`${batteryLevel}`}
-              ref='batteryBar'>
-              <div className='bar' style={{ width: batteryLevel + '%' }}></div>
-              <div className='label'>battery: {batteryLevel}%</div>
-            </div>
-          </div>
+          <BatteryPanel batteryLevel={batteryLevel}/>
 
           {/* location */}
           <div className='ui black padded segment'>
             <h1 className='ui dividing header'>location</h1>
-            <div>Location: {`(${location.get(0) + ',' + location.get(1)})`}</div>
+            <MainMapPanel />
+            <BearingMap />
+            <div>Location: {`(${loc.get(0) + ',' + loc.get(1)})`}</div>
+
           </div>
 
           {/* network and quality*/}
