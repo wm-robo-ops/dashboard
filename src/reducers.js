@@ -3,7 +3,8 @@ import {
   BATTERY_UPDATE,
   LOCATION_UPDATE,
   NETWORK_SPEED_UPDATE,
-  UPDATE_BEARING
+  UPDATE_BEARING,
+  SET_MAP
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -21,6 +22,8 @@ function dashboardApp(state, action) {
       return s;
     case UPDATE_BEARING:
       return state.setIn([vehicle, 'bearing'], action.bearing);
+    case SET_MAP:
+      return state.setIn([vehicle, 'map'], action.map);
   }
   return state;
 }

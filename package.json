@@ -30,9 +30,9 @@
     "immutable": "^3.7.6",
     "mapbox-gl": "^0.14.1",
     "react": "^0.14.6",
-    "react-d3": "^0.4.0",
     "react-dom": "^0.14.6",
     "react-redux": "^4.0.6",
+    "react-sparklines": "^1.4.2",
     "redux": "^3.0.6"
   },
   "devDependencies": {

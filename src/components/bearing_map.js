@@ -10,7 +10,7 @@ export default class BearingMap extends React.Component {
   componentDidMount() {
     mapboxgl.accessToken = 'pk.eyJ1Ijoia2VsdmluYWJyb2t3YSIsImEiO' +
       'iJkcUF1TWlVIn0.YzBtz0O019DJGk3IpFi72g';
-    window.map = new mapboxgl.Map({
+    this.map = new mapboxgl.Map({
       container: this.refs.map,
       style: 'mapbox://styles/mapbox/satellite-v8',
       center: [-95.081320, 29.564835],
@@ -18,8 +18,8 @@ export default class BearingMap extends React.Component {
     });
   }
 
-  componentsWillReceiveProps(/*props*/) {
-    //map.setBearing(props.bearing);
+  componentsWillReceiveProps(props) {
+    this.map.setBearing(props.bearing);
   }
 
   render() {

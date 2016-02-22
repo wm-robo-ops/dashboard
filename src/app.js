@@ -5,7 +5,8 @@ import {
   updateBattery,
   updateLocation,
   updateNetworkSpeed,
-  updateBearing
+  updateBearing,
+  setMap
 } from './actions';
 import {
   getBatteryLevel,
@@ -16,7 +17,7 @@ import {
 import dashboardApp from './reducers';
 
 // components
-import NetworkLineChart from './components/network_line_chart';
+import NetworkSparkline from './components/network_sparkline';
 import VideoPlayer from './components/video_player';
 import MainMapPanel from './components/main_map_panel';
 import BatteryPanel from './components/battery_panel';
@@ -34,7 +35,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevel: getBatteryLevel(BIG_DADDY),
     location: getLocation(BIG_DADDY),
     networkSpeed: [getNetworkSpeed(BIG_DADDY)],
-    cameras: ['main']
+    cameras: []
   },
   scout: {
     batteryLevel: getBatteryLevel(SCOUT),
@@ -46,7 +47,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevel: getBatteryLevel(FLYER),
     location: getLocation(FLYER),
     networkSpeed: [getNetworkSpeed(FLYER)],
-    cameras: [1, 2, 3]
+    cameras: []
   }
 }));
 
@@ -112,12 +113,16 @@ export default class App extends React.Component {
     }
   }
 
+  setMap(vehicle, map) {
+    store.dispatch(setMap({ vehicle, map }));
+  }
+
   render() {
     let batteryLevel = this.state.data.getIn([this.state.view, 'batteryLevel']);
     let loc = this.state.data.getIn([this.state.view, 'location']);
     let networkSpeed = this.state.data.getIn([this.state.view, 'networkSpeed']);
     let bearing = this.state.data.getIn([this.state.view, 'bearing']);
-    window.map && window.map.setBearing(bearing);
+    //window.map && window.map.setBearing(bearing);
 
     return <div style={{ padding: '20px' }}>
 
@@ -161,7 +166,7 @@ export default class App extends React.Component {
           <div className='ui black padded segment'>
             <h1 className='ui dividing header'>location</h1>
             <MainMapPanel />
-            <BearingMap />
+            <BearingMap bearing={bearing} />
             <div>Location: {`(${loc.get(0) + ',' + loc.get(1)})`}</div>
 
           </div>
@@ -171,7 +176,7 @@ export default class App extends React.Component {
 
             <h1 className='ui dividing header'>network</h1>
             <div>
-              <NetworkLineChart data={networkSpeed.toJS()}/>
+              <NetworkSparkline data={networkSpeed.toJS()}/>
             </div>
 
             <h1 className='ui dividing header'>quality</h1>
