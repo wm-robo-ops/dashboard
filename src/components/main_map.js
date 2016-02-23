@@ -87,7 +87,7 @@ export default class MainMap extends React.Component {
       <div style={{width: '100%', height: '300px'}} ref='map' id='map'></div>
       {/* legend */}
       <div>
-        {vehicles.map(v => <div>
+        {vehicles.map(v => <div key={v.vehicle}>
           <div style={{display: 'inline-block', height: '10px', width: '10px', backgroundColor: v.color}}></div>
           <div style={{display: 'inline-block'}}>{v.vehicle}</div>
         </div>)}

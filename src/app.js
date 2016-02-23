@@ -17,6 +17,7 @@ import {
 import dashboardApp from './reducers';
 
 // components
+import AllCamerasView from './components/all_cameras_view';
 import NetworkSparkline from './components/network_sparkline';
 import VideoPlayer from './components/video_player';
 import MainMap from './components/main_map';
@@ -28,6 +29,7 @@ const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
 const BIG_DADDY = 'bigDaddy';
 const SCOUT = 'scout';
 const FLYER = 'flyer';
+const ALL_CAMERAS = 'allCameras';
 const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
@@ -138,7 +140,10 @@ export default class App extends React.Component {
 
       {/* rover toggle */}
       <div className='ui my4'>
-        <div className='ui three item stackable tabs menu'>
+        <div className='ui four item stackable tabs menu'>
+          <div
+            onClick={this.changeView.bind(this, ALL_CAMERAS)}
+            className={`item ${this.state.view === ALL_CAMERAS && 'active'}`}>All Cameras</div>
           <div
             onClick={this.changeView.bind(this, BIG_DADDY)}
             className={`item ${this.state.view === BIG_DADDY && 'active'}`}>Big Daddy</div>
@@ -151,7 +156,9 @@ export default class App extends React.Component {
         </div>
       </div>
 
-      <div className='ui grid'>
+      {this.state.view === ALL_CAMERAS && <AllCamerasView />}
+
+      {this.state.view !== ALL_CAMERAS && <div className='ui grid'>
 
         {/* cameras */}
         <div className='ten wide column'>
@@ -160,7 +167,7 @@ export default class App extends React.Component {
 
             {/* cameras */}
             <div className='ui grid container'>
-                <VideoPlayer />
+              <VideoPlayer />
             </div>
 
           </div>
@@ -177,8 +184,6 @@ export default class App extends React.Component {
             <h1 className='ui dividing header'>location</h1>
             <MainMap vehicles={vehicleLocations} rockLocations={rockLocations} />
             <BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>
-            <div>Location: {`(${loc.get(0) + ',' + loc.get(1)})`}</div>
-
           </div>
 
           {/* network and quality*/}
@@ -205,7 +210,7 @@ export default class App extends React.Component {
 
         </div>
 
-      </div>
+      </div>}
 
     </div>;
   }
