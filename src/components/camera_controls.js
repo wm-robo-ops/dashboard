@@ -16,16 +16,16 @@ export default class CameraControls extends React.Component {
             pan-tilt
           </div>
           <div className='ctrl-btn'>
-            <i className='fa fa-arrow-left fa-2x'></i>
-          </div>
-          <div className='ctrl-btn'>
             <i className='fa fa-arrow-up fa-2x'></i>
           </div>
           <div className='ctrl-btn'>
-            <i className='fa fa-arrow-right fa-2x'></i>
+            <i className='fa fa-arrow-down fa-2x'></i>
           </div>
           <div className='ctrl-btn'>
-            <i className='fa fa-arrow-down fa-2x'></i>
+            <i className='fa fa-arrow-left fa-2x'></i>
+          </div>
+          <div className='ctrl-btn'>
+            <i className='fa fa-arrow-right fa-2x'></i>
           </div>
         </div>
       </div>

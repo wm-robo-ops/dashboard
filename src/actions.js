@@ -2,7 +2,7 @@ export const BATTERY_UPDATE = 'BATTERY_UPDATE';
 export const LOCATION_UPDATE = 'LOCATION_UPDATE';
 export const NETWORK_SPEED_UPDATE = 'NETWORK_SPEED_UPDATE';
 export const UPDATE_BEARING = 'UPDATE_BEARING';
-export const SET_MAP = 'SET_MAP';
+export const ADD_ROCK = 'ADD_ROCK';
 
 export function updateBattery(data) {
   let { vehicle, batteryLevel } = data;
@@ -24,7 +24,6 @@ export function updateBearing(data) {
   return { type: UPDATE_BEARING, vehicle, bearing };
 }
 
-export function setMap(data) {
-  let { vehicle, map } = data;
-  return { type: SET_MAP, vehicle, map };
+export function addRock(coordinates) {
+  return { type: ADD_ROCK, coordinates };
 }

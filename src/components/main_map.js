@@ -24,7 +24,7 @@ export default class MainMap extends React.Component {
     var set = () => {
       // rock layer
       this.map.addSource('rocksSource', {
-        data: this.getRockGeoJSON(),
+        data: this.getRockGeoJSON(this.props.rockLocations),
         type: 'geojson'
       });
       this.map.addLayer(rocksStyle);
@@ -50,13 +50,13 @@ export default class MainMap extends React.Component {
     }
   }
 
-  getRockGeoJSON() {
+  getRockGeoJSON(coordinates) {
     return {
       type: 'Feature',
       properties: {},
       geometry: {
         type: 'MultiPoint',
-        coordinates: this.props.rockLocations
+        coordinates
       }
     };
   }
@@ -79,6 +79,7 @@ export default class MainMap extends React.Component {
     props.vehicles.forEach(v => {
       this.map.getSource(v.vehicle).setData(this.getVehicleGeoJSON(v.coordinates));
     });
+    this.map.getSource('rocksSource').setData(this.getRockGeoJSON(props.rockLocations));
   }
 
   render() {
@@ -88,7 +89,15 @@ export default class MainMap extends React.Component {
       {/* legend */}
       <div>
         {vehicles.map(v => <div key={v.vehicle} style={{padding: '5px'}}>
-          <div style={{display: 'inline-block', height: '10px', width: '10px', backgroundColor: v.color, marginRight: '5px', borderRadius: '5px'}}></div>
+          <div
+            style={{
+              display: 'inline-block',
+              height: '10px',
+              width: '10px',
+              backgroundColor: v.color,
+              marginRight: '5px',
+              borderRadius: '5px'
+            }}></div>
           <div style={{display: 'inline-block'}}>{v.vehicle}</div>
         </div>)}
       </div>
