@@ -19,7 +19,7 @@ import dashboardApp from './reducers';
 // components
 import NetworkSparkline from './components/network_sparkline';
 import VideoPlayer from './components/video_player';
-import MainMapPanel from './components/main_map_panel';
+import MainMap from './components/main_map';
 import BatteryPanel from './components/battery_panel';
 import BearingMap from './components/bearing_map';
 
@@ -35,20 +35,24 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevel: getBatteryLevel(BIG_DADDY),
     location: getLocation(BIG_DADDY),
     networkSpeed: [getNetworkSpeed(BIG_DADDY)],
+    color: '#ff00ff',
     cameras: []
   },
   scout: {
     batteryLevel: getBatteryLevel(SCOUT),
     location: getLocation(SCOUT),
     networkSpeed: [getNetworkSpeed(SCOUT)],
+    color: '#ff00ff',
     cameras: []
   },
   flyer: {
     batteryLevel: getBatteryLevel(FLYER),
     location: getLocation(FLYER),
     networkSpeed: [getNetworkSpeed(FLYER)],
+    color: '#ff00ff',
     cameras: []
-  }
+  },
+  rocks: [[-95.081320, 29.564835]]
 }));
 
 function updateStatus() {
@@ -83,12 +87,7 @@ export default class App extends React.Component {
     this.state = {
       data: store.getState(),
       view: BIG_DADDY,
-      videoQuality: 'Medium',
-      connectivityData: [
-        {time: '1', speed: 1},
-        {time: '2', speed: 5},
-        {time: '3', speed: 3}
-      ] // add to store
+      videoQuality: 'Medium'
     };
   }
 
@@ -117,12 +116,23 @@ export default class App extends React.Component {
     store.dispatch(setMap({ vehicle, map }));
   }
 
+  getVehicleLocationData() {
+    return vehicles.map(v => {
+      return {
+        vehicle: v,
+        coordinates: this.state.data.getIn([v, 'location']).toJS(),
+        color: this.state.data.getIn([v, 'color'])
+      };
+    });
+  }
+
   render() {
     let batteryLevel = this.state.data.getIn([this.state.view, 'batteryLevel']);
     let loc = this.state.data.getIn([this.state.view, 'location']);
     let networkSpeed = this.state.data.getIn([this.state.view, 'networkSpeed']);
     let bearing = this.state.data.getIn([this.state.view, 'bearing']);
-    //window.map && window.map.setBearing(bearing);
+    let vehicleLocations = this.getVehicleLocationData();
+    let rockLocations = this.state.data.get('rocks').toJS();
 
     return <div style={{ padding: '20px' }}>
 
@@ -165,8 +175,8 @@ export default class App extends React.Component {
           {/* location */}
           <div className='ui black padded segment'>
             <h1 className='ui dividing header'>location</h1>
-            <MainMapPanel />
-            <BearingMap bearing={bearing} />
+            <MainMap vehicles={vehicleLocations} rockLocations={rockLocations} />
+            <BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>
             <div>Location: {`(${loc.get(0) + ',' + loc.get(1)})`}</div>
 
           </div>
