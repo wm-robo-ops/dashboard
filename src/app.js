@@ -54,7 +54,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     color: '#ffff00',
     cameras: []
   },
-  rocks: [[-95.081320, 29.564835]]
+  rocks: [[-95.081720, 29.564835], [-95.081020, 29.564835], [-95.081320, 29.564995]]
 }));
 
 function updateStatus() {

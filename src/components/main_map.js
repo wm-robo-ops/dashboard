@@ -14,7 +14,7 @@ export default class MainMap extends React.Component {
       container: this.refs.map,
       style: 'mapbox://styles/mapbox/satellite-v8',
       center: [-95.081320, 29.564835],
-      zoom: 0
+      zoom: 17.5
     });
 
     this.setStyle();
@@ -73,7 +73,6 @@ export default class MainMap extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    console.log(props);
     if (!this.map.loaded()) {
       return;
     }
