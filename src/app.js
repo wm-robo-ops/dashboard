@@ -35,7 +35,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevel: getBatteryLevel(BIG_DADDY),
     location: getLocation(BIG_DADDY),
     networkSpeed: [getNetworkSpeed(BIG_DADDY)],
-    color: '#ff00ff',
+    color: '#00ff99',
     cameras: []
   },
   scout: {
@@ -49,7 +49,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevel: getBatteryLevel(FLYER),
     location: getLocation(FLYER),
     networkSpeed: [getNetworkSpeed(FLYER)],
-    color: '#ff00ff',
+    color: '#ffff00',
     cameras: []
   },
   rocks: [[-95.081320, 29.564835]]

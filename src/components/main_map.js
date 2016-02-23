@@ -14,7 +14,7 @@ export default class MainMap extends React.Component {
       container: this.refs.map,
       style: 'mapbox://styles/mapbox/satellite-v8',
       center: [-95.081320, 29.564835],
-      zoom: 17
+      zoom: 0
     });
 
     this.setStyle();
@@ -23,7 +23,7 @@ export default class MainMap extends React.Component {
   setStyle() {
     var set = () => {
       // rock layer
-      this.map.addSource('rocks', {
+      this.map.addSource('rocksSource', {
         data: this.getRockGeoJSON(),
         type: 'geojson'
       });
@@ -72,12 +72,26 @@ export default class MainMap extends React.Component {
     };
   }
 
-  componentWillReceiveProps(/*props*/) {
+  componentWillReceiveProps(props) {
+    if (!this.map.loaded()) {
+      return;
+    }
+    props.vehicles.forEach(v => {
+      this.map.getSource(v.vehicle).setData(this.getVehicleGeoJSON(v.coordinates));
+    });
   }
 
   render() {
+    let { vehicles } = this.props;
     return <div>
       <div style={{width: '100%', height: '300px'}} ref='map' id='map'></div>
+      {/* legend */}
+      <div>
+        {vehicles.map(v => <div>
+          <div style={{display: 'inline-block', height: '10px', width: '10px', backgroundColor: v.color}}></div>
+          <div style={{display: 'inline-block'}}>{v.vehicle}</div>
+        </div>)}
+      </div>
     </div>;
   }
 }
@@ -86,7 +100,7 @@ function createVehicleStyle(v) {
   return {
     'id': v.vehicle,
     'type': 'circle',
-    'source': 'draw',
+    'source': v.vehicle,
     'filter': ['all', ['==', '$type', 'Point']],
     'paint': {
       'circle-radius': 5,
@@ -99,7 +113,7 @@ function createVehicleStyle(v) {
 var rocksStyle = {
   'id': 'rocks',
   'type': 'circle',
-  'source': 'rockSource',
+  'source': 'rocksSource',
   'filter': ['all', ['==', '$type', 'Point']],
   'paint': {
     'circle-radius': 5,
