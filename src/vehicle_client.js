@@ -12,18 +12,12 @@ export function getLocation(/*vehicle*/) {
 
 var time = 1;
 export function getNetworkSpeed(/*vehicle*/) {
-  return { time: time++, speed: randomInt(0, 10, true) };
+  return { time: time++, speed: random(0, 10, true) };
 }
 
 export function getBearing() {
-  return randomInt(0, 179, true);
+  return random(0, 179, true);
 }
-
-// utils
-function randomInt(max) {
-  return Math.floor(Math.random() * max) + 1;
-}
-
 
 function random(min, max, integer) {
   var d = max - min;

@@ -21,8 +21,9 @@ import AllCamerasView from './components/all_cameras_view';
 import NetworkSparkline from './components/network_sparkline';
 import VideoPlayer from './components/video_player';
 import MainMap from './components/main_map';
-import BatteryPanel from './components/battery_panel';
+import Battery from './components/battery';
 import BearingMap from './components/bearing_map';
+import CameraControls from './components/camera_controls';
 
 const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
 
@@ -136,81 +137,73 @@ export default class App extends React.Component {
     let vehicleLocations = this.getVehicleLocationData();
     let rockLocations = this.state.data.get('rocks').toJS();
 
-    return <div style={{ padding: '20px' }}>
+    return <div>
 
-      {/* rover toggle */}
-      <div className='ui my4'>
-        <div className='ui four item stackable tabs menu'>
-          <div
-            onClick={this.changeView.bind(this, ALL_CAMERAS)}
-            className={`item ${this.state.view === ALL_CAMERAS && 'active'}`}>All Cameras</div>
-          <div
-            onClick={this.changeView.bind(this, BIG_DADDY)}
-            className={`item ${this.state.view === BIG_DADDY && 'active'}`}>Big Daddy</div>
-          <div
-            onClick={this.changeView.bind(this, SCOUT)}
-            className={`item ${this.state.view === SCOUT && 'active'}`}>Scout</div>
-          <div
-            onClick={this.changeView.bind(this, FLYER)}
-            className={`item ${this.state.view === FLYER && 'active'}`}>Flyer</div>
-        </div>
+      {/* menu */}
+      <div className='ui sidebar inverted vertical menu visible very thin'>
+        <div className='item'><h2>W&M Robo Ops</h2></div>
+        <div
+          onClick={this.changeView.bind(this, ALL_CAMERAS)}
+          className={`item ${this.state.view === ALL_CAMERAS && 'active'}`}>All Cameras</div>
+        <div
+          onClick={this.changeView.bind(this, BIG_DADDY)}
+          className={`item ${this.state.view === BIG_DADDY && 'active'}`}>Big Daddy</div>
+        <div
+          onClick={this.changeView.bind(this, SCOUT)}
+          className={`item ${this.state.view === SCOUT && 'active'}`}>Scout</div>
+        <div
+          onClick={this.changeView.bind(this, FLYER)}
+          className={`item ${this.state.view === FLYER && 'active'}`}>Flyer</div>
       </div>
 
-      {this.state.view === ALL_CAMERAS && <AllCamerasView />}
 
-      {this.state.view !== ALL_CAMERAS && <div className='ui grid'>
+      <div className='pusher' style={{padding: '25px', marginLeft: '210px'}}>
 
-        {/* cameras */}
-        <div className='ten wide column'>
-          <div className='ui teal padded segment'>
-            <h1 className='ui dividing header'>cameras</h1>
+        {this.state.view === ALL_CAMERAS && <AllCamerasView />}
 
-            {/* cameras */}
-            <div className='ui grid container'>
+        {this.state.view !== ALL_CAMERAS && <div className='ui grid'>
+
+          {/* cameras */}
+          <div className='ten wide column'>
+            <div className='ui teal padded segment'>
+              <h1 className='ui dividing header'>cameras</h1>
+
+              {/* camera controls */}
+              <CameraControls />
+
+              {/* cameras */}
               <VideoPlayer />
+
+            </div>
+          </div>
+
+          {/* metrics */}
+          <div className='six wide column'>
+
+            {/* location */}
+            <div className='ui black padded segment'>
+              <h1 className='ui dividing header'>location</h1>
+              <MainMap vehicles={vehicleLocations} rockLocations={rockLocations} />
+              <BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>
             </div>
 
-          </div>
-        </div>
+            {/* battery level */}
+            <div className='ui pink padded segment'>
+              <h1 className='ui dividing header'>battery</h1>
+              <Battery batteryLevel={batteryLevel}/>
+            </div>
 
-        {/* metrics */}
-        <div className='six wide column'>
-
-          {/* battery level */}
-          <BatteryPanel batteryLevel={batteryLevel}/>
-
-          {/* location */}
-          <div className='ui black padded segment'>
-            <h1 className='ui dividing header'>location</h1>
-            <MainMap vehicles={vehicleLocations} rockLocations={rockLocations} />
-            <BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>
-          </div>
-
-          {/* network and quality*/}
-          <div className='ui purple padded segment'>
-
-            <h1 className='ui dividing header'>network</h1>
-            <div>
+            {/* network and quality*/}
+            <div className='ui purple padded segment'>
+              <h1 className='ui dividing header'>network</h1>
               <NetworkSparkline data={networkSpeed.toJS()}/>
             </div>
 
-            <h1 className='ui dividing header'>quality</h1>
-            <div className='center'>
-              {this.state.videoQuality}
-            </div>
-            <input
-              className='full-width'
-              type='range'
-              min='1'
-              max='3'
-              step='1'
-              onChange={this.changeVideoQuality.bind(this)}/>
-
           </div>
 
-        </div>
+        </div>}
 
-      </div>}
+      </div>
 
     </div>;
   }
