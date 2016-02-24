@@ -3,6 +3,7 @@ export const LOCATION_UPDATE = 'LOCATION_UPDATE';
 export const NETWORK_SPEED_UPDATE = 'NETWORK_SPEED_UPDATE';
 export const UPDATE_BEARING = 'UPDATE_BEARING';
 export const ADD_ROCK = 'ADD_ROCK';
+export const REMOVE_ROCK = 'REMOVE_ROCK';
 
 export function updateBattery(data) {
   let { vehicle, batteryLevel } = data;
@@ -26,4 +27,8 @@ export function updateBearing(data) {
 
 export function addRock(coordinates) {
   return { type: ADD_ROCK, coordinates };
+}
+
+export function removeRock(id) {
+  return { type: REMOVE_ROCK, id };
 }

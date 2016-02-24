@@ -10,6 +10,7 @@
   "rules": {
     "strict": [0],
     "quotes": [2, "single"],
-    "no-use-before-define": [0]
+    "no-use-before-define": [0],
+    "curly": [0]
   }
 }

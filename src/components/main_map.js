@@ -17,6 +17,7 @@ export default class MainMap extends React.Component {
       zoom: 17.5
     });
 
+    this.map.on('click', this.mapClick.bind(this));
     this.setStyle();
   }
 
@@ -50,14 +51,21 @@ export default class MainMap extends React.Component {
     }
   }
 
-  getRockGeoJSON(coordinates) {
+  getRockGeoJSON(rocks) {
     return {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'MultiPoint',
-        coordinates
-      }
+      type: 'FeatureCollection',
+      features: rocks.map(r => {
+        return {
+          type: 'Feature',
+          properties: {
+            id: r.id
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: r.coordinates
+          }
+        };
+      })
     };
   }
 
@@ -80,6 +88,19 @@ export default class MainMap extends React.Component {
       this.map.getSource(v.vehicle).setData(this.getVehicleGeoJSON(v.coordinates));
     });
     this.map.getSource('rocksSource').setData(this.getRockGeoJSON(props.rockLocations));
+    console.log(props.rockLocations);
+    console.log(this.getRockGeoJSON(props.rockLocations));
+  }
+
+  mapClick(e) {
+    this.map.featuresAt(e.point, {
+      radius: 1,
+      layer: 'rocks'
+    }, (err, results) => {
+      if (err) console.log(err);
+      console.log(results[0]);
+      this.props.removeRock(results[0].properties.id);
+    });
   }
 
   render() {
@@ -126,7 +147,7 @@ var rocksStyle = {
   'filter': ['all', ['==', '$type', 'Point']],
   'paint': {
     'circle-radius': 5,
-    'circle-color': '#000'
+    'circle-color': '#fff'
   },
   'interactive': true
 };

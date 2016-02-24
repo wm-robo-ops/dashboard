@@ -6,7 +6,8 @@ import {
   updateLocation,
   updateNetworkSpeed,
   updateBearing,
-  addRock
+  addRock,
+  removeRock
 } from './actions';
 import {
   getBatteryLevel,
@@ -138,6 +139,10 @@ export default class App extends React.Component {
     store.dispatch(addRock(coordinates));
   }
 
+  removeRock(id) {
+    store.dispatch(removeRock(id));
+  }
+
   render() {
     let data = this.state.data;
     let batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
@@ -201,7 +206,7 @@ export default class App extends React.Component {
               {/* location */}
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>location</h1>
-                <MainMap vehicles={vehicleLocations} rockLocations={rockLocations} />
+                <MainMap vehicles={vehicleLocations} rockLocations={rockLocations} removeRock={this.removeRock}/>
                 <BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>
               </div>
 

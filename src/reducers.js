@@ -1,10 +1,12 @@
 import Immutable from 'immutable';
+import hat from 'hat';
 import {
   BATTERY_UPDATE,
   LOCATION_UPDATE,
   NETWORK_SPEED_UPDATE,
   UPDATE_BEARING,
-  ADD_ROCK
+  ADD_ROCK,
+  REMOVE_ROCK
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -23,7 +25,9 @@ function dashboardApp(state, action) {
     case UPDATE_BEARING:
       return state.setIn([vehicle, 'bearing'], action.bearing);
     case ADD_ROCK:
-      return state.set('rocks', state.get('rocks').push(Immutable.List(action.coordinates))); // eslint-disable-line new-cap
+      return state.set('rocks', state.get('rocks').push(Immutable.fromJS({ coordinates: action.coordinates, id: hat()}))); // eslint-disable-line new-cap
+    case REMOVE_ROCK:
+      return state.set('rocks', state.get('rocks').filter(r => r.get('id') !== action.id));
   }
   return state;
 }
