@@ -88,8 +88,6 @@ export default class MainMap extends React.Component {
       this.map.getSource(v.vehicle).setData(this.getVehicleGeoJSON(v.coordinates));
     });
     this.map.getSource('rocksSource').setData(this.getRockGeoJSON(props.rockLocations));
-    console.log(props.rockLocations);
-    console.log(this.getRockGeoJSON(props.rockLocations));
   }
 
   mapClick(e) {
@@ -98,7 +96,6 @@ export default class MainMap extends React.Component {
       layer: 'rocks'
     }, (err, results) => {
       if (err) console.log(err);
-      console.log(results[0]);
       this.props.removeRock(results[0].properties.id);
     });
   }

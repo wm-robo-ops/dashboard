@@ -2,30 +2,31 @@ import React from 'react';
 import Immutable from 'immutable';
 import { createStore } from 'redux';
 import {
+  addRock,
+  removeRock,
+  updateBearing,
   updateBattery,
   updateLocation,
-  updateNetworkSpeed,
-  updateBearing,
-  addRock,
-  removeRock
+  updateNetworkSpeed
 } from './actions';
 import {
-  getBatteryLevel,
+  getBearing,
   getLocation,
-  getNetworkSpeed,
-  getBearing
+  getBatteryLevel,
+  getNetworkSpeed
 } from './vehicle_client';
 import dashboardApp from './reducers';
 
 // components
+import Battery from './components/battery';
+import MainMap from './components/main_map';
+import BearingMap from './components/bearing_map';
+import VideoPlayer from './components/video_player';
+import CameraControls from './components/camera_controls';
 import AllCamerasView from './components/all_cameras_view';
+import BearingVisualization from './components/bearing_viz';
 import NetworkSparkline from './components/network_sparkline';
 import RockCoordinatesForm from './components/rock_coordinates_form';
-import VideoPlayer from './components/video_player';
-import MainMap from './components/main_map';
-import Battery from './components/battery';
-import BearingMap from './components/bearing_map';
-import CameraControls from './components/camera_controls';
 
 const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
 
@@ -113,17 +114,6 @@ export default class App extends React.Component {
     this.setState({ view });
   }
 
-  changeVideoQuality(e) {
-    var value = e.target.value;
-    if (value > 2) {
-      this.setState({ videoQuality: 'High' });
-    } else if (value > 1) {
-        this.setState({ videoQuality: 'Medium' });
-    } else {
-        this.setState({ videoQuality: 'Low' });
-    }
-  }
-
   getVehicleLocationData() {
     return vehicles.map(v => {
       return {
@@ -145,10 +135,10 @@ export default class App extends React.Component {
 
   render() {
     let data = this.state.data;
-    let batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
     let loc = data.getIn([this.state.view, 'location']);
-    let networkSpeed = data.getIn([this.state.view, 'networkSpeed']);
     let bearing = data.getIn([this.state.view, 'bearing']);
+    let batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
+    let networkSpeed = data.getIn([this.state.view, 'networkSpeed']);
     let vehicleLocations = this.getVehicleLocationData();
     let rockLocations = data.get('rocks').toJS();
 
@@ -194,6 +184,7 @@ export default class App extends React.Component {
                 {/* camera controls */}
                 <CameraControls />
 
+                {/* video player */}
                 <VideoPlayer />
 
               </div>
@@ -226,6 +217,12 @@ export default class App extends React.Component {
               <div className='ui purple padded segment'>
                 <h1 className='ui dividing header'>network</h1>
                 <NetworkSparkline data={networkSpeed.toJS()}/>
+              </div>
+
+              {/* bearing visualization */}
+              <div className='ui red padded segment'>
+                <h1 className='ui dividing header'>bearing</h1>
+                <BearingVisualization x={1} y={1} z={1} />
               </div>
 
             </div>
