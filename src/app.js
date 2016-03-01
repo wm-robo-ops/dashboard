@@ -27,6 +27,7 @@ import AllCamerasView from './components/all_cameras_view';
 import BearingVisualization from './components/bearing_viz';
 import NetworkSparkline from './components/network_sparkline';
 import RockCoordinatesForm from './components/rock_coordinates_form';
+import MainCameraView from './components/main_camera_view';
 
 const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
 
@@ -34,6 +35,7 @@ const BIG_DADDY = 'bigDaddy';
 const SCOUT = 'scout';
 const FLYER = 'flyer';
 const ALL_CAMERAS = 'allCameras';
+const MAIN_CAMERA = 'mainCamera';
 const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
@@ -90,7 +92,8 @@ const names = {
   [BIG_DADDY]: 'Big Daddy',
   [SCOUT]: 'Scout',
   [FLYER]: 'Flyer',
-  [ALL_CAMERAS]: 'All Cameras'
+  [ALL_CAMERAS]: 'All Cameras',
+  [MAIN_CAMERA]: 'Main Camera'
 };
 
 export default class App extends React.Component {
@@ -134,13 +137,15 @@ export default class App extends React.Component {
   }
 
   render() {
-    let data = this.state.data;
-    let loc = data.getIn([this.state.view, 'location']);
-    let bearing = data.getIn([this.state.view, 'bearing']);
-    let batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
-    let networkSpeed = data.getIn([this.state.view, 'networkSpeed']);
-    let vehicleLocations = this.getVehicleLocationData();
-    let rockLocations = data.get('rocks').toJS();
+    var data = this.state.data;
+    if ([BIG_DADDY, SCOUT, FLYER].some(v => v === this.state.view)) {
+      var loc = data.getIn([this.state.view, 'location']);
+      var bearing = data.getIn([this.state.view, 'bearing']);
+      var batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
+      var networkSpeed = data.getIn([this.state.view, 'networkSpeed']);
+      var vehicleLocations = this.getVehicleLocationData();
+      var rockLocations = data.get('rocks').toJS();
+    }
 
     return <div>
 
@@ -149,6 +154,9 @@ export default class App extends React.Component {
         <div className='item'><h2>W&M Robo Ops</h2></div>
         <div onClick={this.changeView.bind(this, ALL_CAMERAS)} className={`item ${this.state.view === ALL_CAMERAS ? 'active' : ''}`}>
           <div>All Cameras</div>
+        </div>
+        <div onClick={this.changeView.bind(this, MAIN_CAMERA)} className={`item ${this.state.view === MAIN_CAMERA ? 'active' : ''}`}>
+          <div>Main Camera</div>
         </div>
         <div onClick={this.changeView.bind(this, BIG_DADDY)} className={`item ${this.state.view === BIG_DADDY ? 'active' : ''}`}>
           {data.getIn([BIG_DADDY, 'batteryLevel']) < 20 && <i className='icon warning red'></i>}
@@ -173,7 +181,9 @@ export default class App extends React.Component {
 
         {this.state.view === ALL_CAMERAS && <AllCamerasView />}
 
-        {this.state.view !== ALL_CAMERAS && <div>
+        {this.state.view === MAIN_CAMERA && <MainCameraView />}
+
+        {((this.state.view !== ALL_CAMERAS) && (this.state.view !== MAIN_CAMERA)) && <div>
 
           <div className='ui grid'>
             {/* cameras */}
