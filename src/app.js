@@ -27,14 +27,15 @@ import {
 // components
 import Battery from './components/battery';
 import MainMap from './components/main_map';
-import BearingMap from './components/bearing_map';
+//import BearingMap from './components/bearing_map';
 import VideoPlayer from './components/video_player';
-import CameraControls from './components/camera_controls';
 import AllCamerasView from './components/all_cameras_view';
 import BearingVisualization from './components/bearing_viz';
 import NetworkSparkline from './components/network_sparkline';
 import RockCoordinatesForm from './components/rock_coordinates_form';
 import MainCameraView from './components/main_camera_view';
+import ZoomControl from './components/zoom_control';
+import PanControl from './components/pan_control';
 
 const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
 
@@ -190,8 +191,8 @@ export default class App extends React.Component {
   render() {
     var data = this.state.data;
     if (vehicles.some(v => v === this.state.view)) {
-      var loc = data.getIn([this.state.view, 'location']);
-      var bearing = data.getIn([this.state.view, 'bearing']);
+      //var loc = data.getIn([this.state.view, 'location']);
+      //var bearing = data.getIn([this.state.view, 'bearing']);
       var batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
       var networkSpeed = data.getIn([this.state.view, 'networkSpeed']).toJS();
       var vehicleLocations = this.getVehicleLocationData();
@@ -238,38 +239,47 @@ export default class App extends React.Component {
         {((this.state.view !== ALL_CAMERAS) && (this.state.view !== MAIN_CAMERA)) && <div>
 
           <div className='ui grid'>
-            {/* cameras */}
-            <div className='ten wide column'>
+
+            <div className='three wide column'>
+              {/* zoom control */}
               <div className='ui teal padded segment'>
-                <h1 className='ui dividing header'>cameras</h1>
+                <h1 className='ui dividing header'>zoom</h1>
+                <ZoomControl />
+              </div>
 
-                {/* camera controls */}
-                <CameraControls />
-
-                {/* video player */}
-                <VideoPlayer />
-
+              {/* pan control */}
+              <div className='ui teal padded segment'>
+                <h1 className='ui dividing header'>pan</h1>
+                <PanControl />
               </div>
             </div>
-            {/* /cameras */}
 
-            {/* metrics */}
+            <div className='seven wide column'>
+              <div className='ui teal padded segment'>
+                <h1 className='ui dividing header'>cameras</h1>
+                <VideoPlayer />
+              </div>
+            </div>
+
+            {/* location */}
             <div className='six wide column'>
-
-              {/* location */}
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>location</h1>
                 <MainMap vehicles={vehicleLocations} rockLocations={rockLocations} removeRock={this.removeRock}/>
-                <BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>
+                {/*<BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>*/}
               </div>
+            </div>
 
-              {/* rock form */}
+            {/* rock form */}
+            <div className='five wide column'>
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>add rock</h1>
                 <RockCoordinatesForm submit={this.addRock} vehicleLocations={vehicleLocations}/>
               </div>
+            </div>
 
-              {/* battery level */}
+            {/* battery level */}
+            <div className='five wide column'>
               <div className='ui pink padded segment'>
                 <h1 className='ui dividing header'>battery</h1>
                 <Battery batteryLevel={batteryLevel}/>
@@ -280,15 +290,16 @@ export default class App extends React.Component {
                 <h1 className='ui dividing header'>network</h1>
                 <NetworkSparkline speed={networkSpeed}/>
               </div>
+            </div>
 
-              {/* bearing visualization */}
+            {/* bearing visualization */}
+            <div className='six wide column'>
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>bearing</h1>
                 <BearingVisualization x={pitch.get(0)} y={pitch.get(1)} z={pitch.get(2)} />
               </div>
-
             </div>
-            {/* /metrics */}
+
 
           </div>
 

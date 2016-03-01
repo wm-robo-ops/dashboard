@@ -33,7 +33,7 @@ export default class BearingDiagram extends React.Component {
     this.scene.add(this.circle);
 
     this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(400, 200);
+    this.renderer.setSize(370, 220);
 
     this.refs.container.appendChild(this.renderer.domElement);
   }
