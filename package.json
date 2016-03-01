@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "budo ./index.js --serve=bundle.js --live --open -- -t [ babelify --presets [ es2015 react ] ] | garnish",
-    "test": "test/run.sh",
+    "test": "./node_modules/eslint/bin/eslint.js ./src && ./test/run.sh",
     "build": "browserify --transform [ babelify --presets [ es2015 react ] ] --debug -p [ minifyify --map bundle.map.json --output bundle.map.json ] index.js -o bundle.js"
   },
   "repository": {
@@ -36,8 +36,11 @@
     "redux": "^3.0.6"
   },
   "devDependencies": {
+    "babel-eslint": "^5.0.0",
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
+    "eslint": "^2.2.0",
+    "eslint-plugin-react": "^4.1.0",
     "minifyify": "^7.3.1"
   }
 }

@@ -1,4 +1,4 @@
-const URL = '';
+const URL = 'http://localhost:3000';
 
 export function fetchStats() {
   return new Promise((resolve, reject) => {

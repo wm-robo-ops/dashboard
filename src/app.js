@@ -1,21 +1,28 @@
 import React from 'react';
 import Immutable from 'immutable';
 import { createStore } from 'redux';
+
 import {
   addRock,
   removeRock,
+  updatePitch,
   updateBearing,
   updateBattery,
   updateLocation,
   updateNetworkSpeed
 } from './actions';
+import dashboardApp from './reducers';
+
 import {
+  getPitch,
   getBearing,
   getLocation,
   getBatteryLevel,
   getNetworkSpeed
 } from './vehicle_client';
-import dashboardApp from './reducers';
+import {
+  fetchStats
+} from './api';
 
 // components
 import Battery from './components/battery';
@@ -40,30 +47,62 @@ const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
   bigDaddy: {
-    batteryLevel: getBatteryLevel(BIG_DADDY),
-    location: getLocation(BIG_DADDY),
-    networkSpeed: [getNetworkSpeed(BIG_DADDY)],
+    batteryLevel: 100,
+    location: [0, 0],
+    networkSpeed: [0],
     color: '#00ff99',
-    cameras: []
+    cameras: [],
+    pitch: [0, 0, 0]
   },
   scout: {
-    batteryLevel: getBatteryLevel(SCOUT),
-    location: getLocation(SCOUT),
-    networkSpeed: [getNetworkSpeed(SCOUT)],
+    batteryLevel: 100,
+    location: [0, 0],
+    networkSpeed: [0],
     color: '#ff00ff',
-    cameras: []
+    cameras: [],
+    pitch: [0, 0, 0]
   },
   flyer: {
-    batteryLevel: getBatteryLevel(FLYER),
-    location: getLocation(FLYER),
-    networkSpeed: [getNetworkSpeed(FLYER)],
+    batteryLevel: 100,
+    location: [0, 0],
+    networkSpeed: [0],
     color: '#ffff00',
-    cameras: []
+    cameras: [],
+    pitch: [0, 0, 0]
   },
   rocks: []
 }));
 
-function updateStatus() {
+function updateFromServer() {
+  fetchStats()
+    .then(stats => {
+      for (var vehicle in stats) {
+        store.dispatch(updateBattery({
+          vehicle,
+          batteryLevel: stats[vehicle].batteryLevel
+        }));
+        store.dispatch(updateLocation({
+          vehicle,
+          location: stats[vehicle].location
+        }));
+        store.dispatch(updateNetworkSpeed({
+          vehicle,
+          data: stats[vehicle].networkSpeed
+        }));
+        store.dispatch(updateBearing({
+          vehicle,
+          bearing: stats[vehicle].bearing
+        }));
+        store.dispatch(updatePitch({
+          vehicle,
+          pitch: stats[vehicle].pitch
+        }));
+      }
+    })
+    .catch(e => console.log(e));
+}
+
+function mock() {
   for (var i = 0; i < vehicles.length; i++) {
     let vehicle = vehicles[i];
     store.dispatch(updateBattery({
@@ -82,11 +121,24 @@ function updateStatus() {
       vehicle,
       bearing: getBearing(vehicle)
     }));
+    store.dispatch(updatePitch({
+      vehicle,
+      pitch: getPitch(vehicle)
+    }));
+  }
+}
+
+function updateStats() {
+  var isDemo = location.search.split('=')[1] === 'true';
+  if (!isDemo) {
+    updateFromServer();
+  } else {
+    mock();
   }
 }
 
 // poll for battery and location information
-window.setInterval(updateStatus, POLL_INTERVAL);
+window.setInterval(updateStats, POLL_INTERVAL);
 
 const names = {
   [BIG_DADDY]: 'Big Daddy',
@@ -102,8 +154,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       data: store.getState(),
-      view: BIG_DADDY,
-      videoQuality: 'Medium'
+      view: BIG_DADDY
     };
   }
 
@@ -138,13 +189,14 @@ export default class App extends React.Component {
 
   render() {
     var data = this.state.data;
-    if ([BIG_DADDY, SCOUT, FLYER].some(v => v === this.state.view)) {
+    if (vehicles.some(v => v === this.state.view)) {
       var loc = data.getIn([this.state.view, 'location']);
       var bearing = data.getIn([this.state.view, 'bearing']);
       var batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
-      var networkSpeed = data.getIn([this.state.view, 'networkSpeed']);
+      var networkSpeed = data.getIn([this.state.view, 'networkSpeed']).toJS();
       var vehicleLocations = this.getVehicleLocationData();
       var rockLocations = data.get('rocks').toJS();
+      var pitch = data.getIn([this.state.view, 'pitch']);
     }
 
     return <div>
@@ -226,13 +278,13 @@ export default class App extends React.Component {
               {/* network and quality*/}
               <div className='ui purple padded segment'>
                 <h1 className='ui dividing header'>network</h1>
-                <NetworkSparkline data={networkSpeed.toJS()}/>
+                <NetworkSparkline speed={networkSpeed}/>
               </div>
 
               {/* bearing visualization */}
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>bearing</h1>
-                <BearingVisualization x={1} y={1} z={1} />
+                <BearingVisualization x={pitch.get(0)} y={pitch.get(1)} z={pitch.get(2)} />
               </div>
 
             </div>

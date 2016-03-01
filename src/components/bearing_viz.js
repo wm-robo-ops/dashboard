@@ -22,7 +22,7 @@ export default class BearingDiagram extends React.Component {
     for (var i = 0; i < boxGeom.faces.length; i++) {
       boxGeom.faces[i].color.setHex(Math.random() * 0xffffff);
     }
-    var boxMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, vertexColor: THREE.FaceColors });
+    var boxMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     this.box = new THREE.Mesh(boxGeom, boxMaterial);
     this.scene.add(this.box);
 

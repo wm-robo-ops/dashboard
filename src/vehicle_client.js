@@ -10,13 +10,16 @@ export function getLocation(/*vehicle*/) {
   ];
 }
 
-var time = 1;
 export function getNetworkSpeed(/*vehicle*/) {
-  return { time: time++, speed: random(0, 10, true) };
+  return random(0, 10, true);
 }
 
 export function getBearing() {
   return random(0, 179, true);
+}
+
+export function getPitch() {
+  return [random(0, 2 * Math.PI), random(0, 2 * Math.PI), random(0, 2 * Math.PI)];
 }
 
 function random(min, max, integer) {

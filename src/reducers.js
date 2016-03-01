@@ -5,6 +5,7 @@ import {
   LOCATION_UPDATE,
   NETWORK_SPEED_UPDATE,
   UPDATE_BEARING,
+  PITCH_UPDATE,
   ADD_ROCK,
   REMOVE_ROCK
 } from './actions';
@@ -24,6 +25,9 @@ function dashboardApp(state, action) {
       return s;
     case UPDATE_BEARING:
       return state.setIn([vehicle, 'bearing'], action.bearing);
+    case PITCH_UPDATE:
+      return state.setIn([vehicle, 'pitch'], Immutable.List(action.pitch)); // eslint-disable-line new-cap
+
     case ADD_ROCK:
       return state.set('rocks', state.get('rocks').push(Immutable.fromJS({ coordinates: action.coordinates, id: hat()}))); // eslint-disable-line new-cap
     case REMOVE_ROCK:
