@@ -7,10 +7,20 @@ export default class BearingPitchRollVisualization extends React.Component {
     super(props);
     this.setup = this.setup.bind(this);
     this.update = this.update.bind(this);
+    this.resize = this.resize.bind(this);
   }
 
   componentDidMount() {
     this.setup();
+    window.addEventListener('resize', this.resize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resize);
+  }
+
+  resize() {
+    this.renderer.setSize(this.refs.container.parentNode.offsetWidth, 220);
   }
 
   setup() {
@@ -33,7 +43,7 @@ export default class BearingPitchRollVisualization extends React.Component {
     this.scene.add(this.circle);
 
     this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(370, 220);
+    this.renderer.setSize(this.refs.container.parentNode.offsetWidth, 220);
 
     this.refs.container.appendChild(this.renderer.domElement);
   }
@@ -54,7 +64,7 @@ export default class BearingPitchRollVisualization extends React.Component {
   }
 
   render() {
-    return <div>
+    return <div style={{width: '100%'}}>
       <div ref='container'></div>
     </div>;
   }
