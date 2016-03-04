@@ -18,3 +18,4 @@ html, body {}
   color: #fff;
   background-color: #000;
 }
+.hover-red:hover { color: red; }

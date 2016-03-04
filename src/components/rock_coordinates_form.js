@@ -6,7 +6,8 @@ export default class RockCoordinatesForm extends React.Component {
     super(props);
     this.state = {
       lon: null,
-      lat: null
+      lat: null,
+      color: null
     };
   }
 
@@ -19,8 +20,13 @@ export default class RockCoordinatesForm extends React.Component {
   }
 
   setVehicleLocation() {
-    let coords = this.refs.select.value.split(',').map(parseFloat);
+    let coords = this.refs.vehicleSelect.value.split(',').map(parseFloat);
     this.setState({ lon: coords[0], lat: coords[1] });
+  }
+
+  setColor() {
+    let color = this.refs.colorSelect.value;
+    this.setState({ color });
   }
 
   submit(fromSelect) {
@@ -29,10 +35,15 @@ export default class RockCoordinatesForm extends React.Component {
     }
     for (var key in this.state) {
       if (this.state[key] === null) {
-        return console.log('invalid coordinates'); // visible warning
+        return console.log('ERROR: Invalid coordinates or color'); // visible warning
       }
     }
-    this.props.submit([this.state.lon, this.state.lat]);
+    this.props.submit(Object.assign({}, this.state)); // MUTATIONS?!?!
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.setState({ lon: null, lat: null, color: null });
   }
 
   render() {
@@ -40,13 +51,15 @@ export default class RockCoordinatesForm extends React.Component {
 
     return <div>
 
-      <div className='ui selection dropdown'>
-        <input type="hidden" name="gender"/>
-        <i className="dropdown icon"></i>
-        <div className="default text">Color</div>
-        <div className="menu">
-          <div className="item" data-value="1">Male</div>
-          <div className="item" data-value="0">Female</div>
+      <div className=''>
+        <div className='ui form'>
+          <div className='field'>
+            <label>color</label>
+            <select className='ui fluid dropdown' ref='colorSelect' onChange={this.setColor.bind(this)}>
+              <option>---</option>
+              {Object.keys(this.props.colors).map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -72,7 +85,7 @@ export default class RockCoordinatesForm extends React.Component {
           <div className='ui form'>
             <div className='field'>
               <label>use vehicle location</label>
-              <select className='ui fluid dropdown' ref='select' onChange={this.setVehicleLocation.bind(this)}>
+              <select className='ui fluid dropdown' ref='vehicleSelect' onChange={this.setVehicleLocation.bind(this)}>
                 <option>---</option>
                 {vehicles.map(v => <option key={v.vehicle} value={v.coordinates}>{v.name}</option>)}
               </select>

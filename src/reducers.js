@@ -1,5 +1,4 @@
 import Immutable from 'immutable';
-import hat from 'hat';
 import {
   BATTERY_UPDATE,
   LOCATION_UPDATE,
@@ -7,7 +6,8 @@ import {
   UPDATE_BEARING,
   PITCH_UPDATE,
   ADD_ROCK,
-  REMOVE_ROCK
+  REMOVE_ROCK,
+  SET_ROCKS
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -27,11 +27,18 @@ function dashboardApp(state, action) {
       return state.setIn([vehicle, 'bearing'], action.bearing);
     case PITCH_UPDATE:
       return state.setIn([vehicle, 'pitch'], Immutable.List(action.pitch)); // eslint-disable-line new-cap
-
     case ADD_ROCK:
-      return state.set('rocks', state.get('rocks').push(Immutable.fromJS({ coordinates: action.coordinates, id: hat()}))); // eslint-disable-line new-cap
+      let data = {
+        lat: action.lat,
+        lon: action.lon,
+        color: action.color,
+        id: action.id
+      };
+      return state.set('rocks', state.get('rocks').push(Immutable.fromJS(data))); // eslint-disable-line new-cap
     case REMOVE_ROCK:
       return state.set('rocks', state.get('rocks').filter(r => r.get('id') !== action.id));
+    case SET_ROCKS:
+      return state.set('rocks', Immutable.fromJS(action.rocks));
   }
   return state;
 }

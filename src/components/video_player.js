@@ -1,4 +1,5 @@
 import React from 'react';
+import jsmpeg from 'jsmpeg';
 
 export default class VideoPlayer extends React.Component {
 
@@ -6,11 +7,16 @@ export default class VideoPlayer extends React.Component {
     super(props);
   }
 
+  componentDidMount() {
+    var address = 'ws://localhost:8084';
+    var client = new WebSocket(address);
+    var canvas = this.refs.videoCanvas;
+    var player = new jsmpeg(client, { canvas }); // eslint-disable-line new-cap, no-unused-vars
+  }
+
   render() {
     return <div style={{width: '100%'}}>
-      <video src="http://v2v.cc/~j/theora_testsuite/320x240.ogg" controls style={{width: '100%'}}>
-        Your browser does not support the <code>video</code> element.
-      </video>
+      <canvas ref='videoCanvas' style={{width: '100%'}}/>
     </div>;
   }
 

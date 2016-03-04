@@ -1,9 +1,11 @@
 import React from 'react';
 import Immutable from 'immutable';
 import { createStore } from 'redux';
+import hat from 'hat';
 
 import {
   addRock,
+  setRocks,
   removeRock,
   updatePitch,
   updateBearing,
@@ -21,21 +23,25 @@ import {
   getNetworkSpeed
 } from './vehicle_client';
 import {
-  fetchStats
+  getStats,
+  getRocks,
+  postRock,
+  deleteRock
 } from './api';
 
 // components
 import Battery from './components/battery';
 import MainMap from './components/main_map';
-//import BearingMap from './components/bearing_map';
+import RockList from './components/rock_list';
+import PanControl from './components/pan_control';
+import ZoomControl from './components/zoom_control';
 import VideoPlayer from './components/video_player';
+import SettingsView from './components/settings_view';
+import MainCameraView from './components/main_camera_view';
 import AllCamerasView from './components/all_cameras_view';
-import BearingVisualization from './components/bearing_viz';
 import NetworkSparkline from './components/network_sparkline';
 import RockCoordinatesForm from './components/rock_coordinates_form';
-import MainCameraView from './components/main_camera_view';
-import ZoomControl from './components/zoom_control';
-import PanControl from './components/pan_control';
+import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
 
 const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
 
@@ -44,6 +50,7 @@ const SCOUT = 'scout';
 const FLYER = 'flyer';
 const ALL_CAMERAS = 'allCameras';
 const MAIN_CAMERA = 'mainCamera';
+const SETTINGS = 'settings';
 const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
@@ -51,7 +58,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevel: 100,
     location: [0, 0],
     networkSpeed: [0],
-    color: '#00ff99',
+    color: '#00ff00',
     cameras: [],
     pitch: [0, 0, 0]
   },
@@ -75,7 +82,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
 }));
 
 function updateFromServer() {
-  fetchStats()
+  getStats()
     .then(stats => {
       for (var vehicle in stats) {
         store.dispatch(updateBattery({
@@ -101,6 +108,11 @@ function updateFromServer() {
       }
     })
     .catch(e => console.log(e));
+
+  getRocks()
+    .then(rocks => {
+      store.dispatch(setRocks(rocks));
+    });
 }
 
 function mock() {
@@ -146,7 +158,17 @@ const names = {
   [SCOUT]: 'Scout',
   [FLYER]: 'Flyer',
   [ALL_CAMERAS]: 'All Cameras',
-  [MAIN_CAMERA]: 'Main Camera'
+  [MAIN_CAMERA]: 'Main Camera',
+  [SETTINGS]: 'Settings'
+};
+
+const colors = {
+  purple: '',
+  green: '',
+  blue: '',
+  red: '',
+  orange: '',
+  yellow: ''
 };
 
 export default class App extends React.Component {
@@ -180,12 +202,15 @@ export default class App extends React.Component {
     });
   }
 
-  addRock(coordinates) {
-    store.dispatch(addRock(coordinates));
+  addRock(data) {
+    data.id = hat();
+    store.dispatch(addRock(data));
+    postRock(data);
   }
 
   removeRock(id) {
     store.dispatch(removeRock(id));
+    deleteRock(id);
   }
 
   render() {
@@ -196,7 +221,7 @@ export default class App extends React.Component {
       var batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
       var networkSpeed = data.getIn([this.state.view, 'networkSpeed']).toJS();
       var vehicleLocations = this.getVehicleLocationData();
-      var rockLocations = data.get('rocks').toJS();
+      var rockData = data.get('rocks').toJS();
       var pitch = data.getIn([this.state.view, 'pitch']);
     }
 
@@ -223,6 +248,9 @@ export default class App extends React.Component {
           {data.getIn([FLYER, 'batteryLevel']) < 20 && <i className='icon warning red'></i>}
           Flyer
         </div>
+        <div onClick={this.changeView.bind(this, SETTINGS)} className={`item ${this.state.view === SETTINGS ? 'active' : ''}`}>
+          Settings
+        </div>
       </div>
 
 
@@ -236,7 +264,9 @@ export default class App extends React.Component {
 
         {this.state.view === MAIN_CAMERA && <MainCameraView />}
 
-        {((this.state.view !== ALL_CAMERAS) && (this.state.view !== MAIN_CAMERA)) && <div>
+        {this.state.view === SETTINGS && <SettingsView />}
+
+        {((this.state.view !== ALL_CAMERAS) && (this.state.view !== MAIN_CAMERA) && (this.state.view !== SETTINGS)) && <div>
 
           <div className='ui grid'>
 
@@ -256,7 +286,7 @@ export default class App extends React.Component {
 
             <div className='seven wide column'>
               <div className='ui teal padded segment'>
-                <h1 className='ui dividing header'>cameras</h1>
+                <h1 className='ui dividing header'>camera</h1>
                 <VideoPlayer />
               </div>
             </div>
@@ -265,8 +295,7 @@ export default class App extends React.Component {
             <div className='six wide column'>
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>location</h1>
-                <MainMap vehicles={vehicleLocations} rockLocations={rockLocations} removeRock={this.removeRock}/>
-                {/*<BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>*/}
+                <MainMap vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
               </div>
             </div>
 
@@ -274,7 +303,7 @@ export default class App extends React.Component {
             <div className='five wide column'>
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>add rock</h1>
-                <RockCoordinatesForm submit={this.addRock} vehicleLocations={vehicleLocations}/>
+                <RockCoordinatesForm submit={this.addRock} vehicleLocations={vehicleLocations} colors={colors}/>
               </div>
             </div>
 
@@ -292,11 +321,27 @@ export default class App extends React.Component {
               </div>
             </div>
 
-            {/* bearing visualization */}
+            {/* bearing-pitch-roll visualization */}
+            <div className='six wide column'>
+              <div className='ui red padded segment'>
+                <h1 className='ui dividing header'>bearing, pitch, roll</h1>
+                <BearingPitchRollVisualization x={pitch.get(0)} y={pitch.get(1)} z={pitch.get(2)} />
+              </div>
+            </div>
+
+            {/* rock list */}
+            <div className='six wide column'>
+              <div className='ui red padded segment'>
+                <h1 className='ui dividing header'>Rocks</h1>
+                <RockList rocks={rockData} removeRock={this.removeRock} />
+              </div>
+            </div>
+
+            {/* bearing map */}
             <div className='six wide column'>
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>bearing</h1>
-                <BearingVisualization x={pitch.get(0)} y={pitch.get(1)} z={pitch.get(2)} />
+                {/*<BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>*/}
               </div>
             </div>
 

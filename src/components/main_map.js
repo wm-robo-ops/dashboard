@@ -25,7 +25,7 @@ export default class MainMap extends React.Component {
     var set = () => {
       // rock layer
       this.map.addSource('rocksSource', {
-        data: this.getRockGeoJSON(this.props.rockLocations),
+        data: this.getRockGeoJSON(this.props.rockData),
         type: 'geojson'
       });
       this.map.addLayer(rocksStyle);
@@ -62,7 +62,7 @@ export default class MainMap extends React.Component {
           },
           geometry: {
             type: 'Point',
-            coordinates: r.coordinates
+            coordinates: [r.lon, r.lat]
           }
         };
       })
@@ -87,7 +87,7 @@ export default class MainMap extends React.Component {
     props.vehicles.forEach(v => {
       this.map.getSource(v.vehicle).setData(this.getVehicleGeoJSON(v.coordinates));
     });
-    this.map.getSource('rocksSource').setData(this.getRockGeoJSON(props.rockLocations));
+    this.map.getSource('rocksSource').setData(this.getRockGeoJSON(props.rockData));
   }
 
   mapClick(e) {

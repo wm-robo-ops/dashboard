@@ -1,10 +1,11 @@
-export const BATTERY_UPDATE = 'BATTERY_UPDATE';
-export const LOCATION_UPDATE = 'LOCATION_UPDATE';
-export const NETWORK_SPEED_UPDATE = 'NETWORK_SPEED_UPDATE';
-export const UPDATE_BEARING = 'UPDATE_BEARING';
 export const ADD_ROCK = 'ADD_ROCK';
+export const SET_ROCKS = 'SET_ROCKS';
 export const REMOVE_ROCK = 'REMOVE_ROCK';
 export const PITCH_UPDATE = 'PITCH_UPDATE';
+export const BATTERY_UPDATE = 'BATTERY_UPDATE';
+export const UPDATE_BEARING = 'UPDATE_BEARING';
+export const LOCATION_UPDATE = 'LOCATION_UPDATE';
+export const NETWORK_SPEED_UPDATE = 'NETWORK_SPEED_UPDATE';
 
 export function updateBattery(data) {
   let { vehicle, batteryLevel } = data;
@@ -16,9 +17,8 @@ export function updateLocation(data) {
   return { type: LOCATION_UPDATE, vehicle, location };
 }
 
-export function updateNetworkSpeed(d) {
-  let { vehicle, data } = d;
-  return { type: NETWORK_SPEED_UPDATE, vehicle, data };
+export function updateNetworkSpeed(data) {
+  return Object.assign({ type: NETWORK_SPEED_UPDATE }, data);
 }
 
 export function updateBearing(data) {
@@ -31,8 +31,12 @@ export function updatePitch(data) {
   return { type: PITCH_UPDATE, vehicle, pitch };
 }
 
-export function addRock(coordinates) {
-  return { type: ADD_ROCK, coordinates };
+export function addRock(data) {
+  return Object.assign({ type: ADD_ROCK }, data);
+}
+
+export function setRocks(rocks) {
+  return { type: SET_ROCKS, rocks };
 }
 
 export function removeRock(id) {

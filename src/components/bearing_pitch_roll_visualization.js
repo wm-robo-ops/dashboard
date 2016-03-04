@@ -1,7 +1,7 @@
 /* global THREE */
 import React from 'react';
 
-export default class BearingDiagram extends React.Component {
+export default class BearingPitchRollVisualization extends React.Component {
 
   constructor(props) {
     super(props);
