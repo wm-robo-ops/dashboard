@@ -43,7 +43,7 @@ import NetworkSparkline from './components/network_sparkline';
 import RockCoordinatesForm from './components/rock_coordinates_form';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
 
-const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
+const POLL_INTERVAL = 3000; // milliseconds to wait between polling vehicles
 
 const BIG_DADDY = 'bigDaddy';
 const SCOUT = 'scout';
@@ -225,7 +225,16 @@ export default class App extends React.Component {
       var pitch = data.getIn([this.state.view, 'pitch']);
     }
 
+    var lowBattery = vehicles.some(v => {
+      return data.getIn([v, 'batteryLevel']) < 20;
+    });
+
     return <div>
+
+      {lowBattery && <audio preload autoPlay>
+        <source src="./lowBattery.mp3" type="audio/mpeg"/>
+        Your browser does not support the audio tag
+      </audio>}
 
       {/* menu */}
       <div className='ui sidebar inverted vertical menu visible very thin'>
