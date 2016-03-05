@@ -14,7 +14,8 @@ function dashboardApp(state, action) {
   let { vehicle } = action;
   switch (action.type) {
     case BATTERY_UPDATE:
-      return state.setIn([vehicle, 'batteryLevel'], action.batteryLevel);
+      state = state.setIn([vehicle, 'batteryLevel'], action.batteryLevel);
+      return state.setIn([vehicle, 'batteryLevelHistory'], state.getIn([vehicle, 'batteryLevelHistory']).push(action.batteryLevel));
     case LOCATION_UPDATE:
       return state.setIn([vehicle, 'location'], Immutable.List(action.location)); // eslint-disable-line new-cap
     case NETWORK_SPEED_UPDATE:
