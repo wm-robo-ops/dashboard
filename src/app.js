@@ -46,8 +46,7 @@ import PanControl from './components/pan_control';
 import ZoomControl from './components/zoom_control';
 import VideoPlayer from './components/video_player';
 import SettingsView from './components/settings_view';
-import MainCameraView from './components/main_camera_view';
-import AllCamerasView from './components/all_cameras_view';
+import CamerasView from './components/cameras_view';
 import NetworkSparkline from './components/network_sparkline';
 import RockCoordinatesForm from './components/rock_coordinates_form';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
@@ -58,8 +57,7 @@ const POLL_INTERVAL = 3000; // milliseconds to wait between polling vehicles
 const BIG_DADDY = 'bigDaddy';
 const SCOUT = 'scout';
 const FLYER = 'flyer';
-const ALL_CAMERAS = 'allCameras';
-const MAIN_CAMERA = 'mainCamera';
+const CAMERAS = 'cameras';
 const SETTINGS = 'settings';
 const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
 
@@ -183,8 +181,7 @@ const names = {
   [BIG_DADDY]: 'Big Daddy',
   [SCOUT]: 'Scout',
   [FLYER]: 'Flyer',
-  [ALL_CAMERAS]: 'All Cameras',
-  [MAIN_CAMERA]: 'Main Camera',
+  [CAMERAS]: 'Cameras',
   [SETTINGS]: 'Settings'
 };
 
@@ -268,11 +265,8 @@ export default class App extends React.Component {
       {/* sidebar */}
       <div className='ui sidebar inverted vertical menu visible very thin'>
         <div className='item'><h2>W&M Robo Ops</h2></div>
-        <div onClick={this.changeView.bind(this, ALL_CAMERAS)} className={`item ${this.state.view === ALL_CAMERAS ? 'active' : ''}`}>
-          <div>All Cameras</div>
-        </div>
-        <div onClick={this.changeView.bind(this, MAIN_CAMERA)} className={`item ${this.state.view === MAIN_CAMERA ? 'active' : ''}`}>
-          <div>Main Camera</div>
+        <div onClick={this.changeView.bind(this, CAMERAS)} className={`item ${this.state.view === CAMERAS ? 'active' : ''}`}>
+          <div>Cameras</div>
         </div>
         <div onClick={this.changeView.bind(this, BIG_DADDY)} className={`item ${this.state.view === BIG_DADDY ? 'active' : ''}`}>
           {data.getIn([BIG_DADDY, 'batteryLevel']) < data.get('minBattery') && <i className='icon warning red'></i>}
@@ -298,9 +292,7 @@ export default class App extends React.Component {
           <h1 className='ui block header center'>{names[this.state.view]}</h1>
         </div>
 
-        {this.state.view === ALL_CAMERAS && <AllCamerasView />}
-
-        {this.state.view === MAIN_CAMERA && <MainCameraView />}
+        {this.state.view === CAMERAS && <CamerasView />}
 
         {this.state.view === SETTINGS && <SettingsView
           muted={data.get('muted')}
@@ -310,7 +302,7 @@ export default class App extends React.Component {
           minBattery={data.get('minBattery')}
         />}
 
-        {((this.state.view !== ALL_CAMERAS) && (this.state.view !== MAIN_CAMERA) && (this.state.view !== SETTINGS)) && <div>
+        {((this.state.view !== CAMERAS) && (this.state.view !== SETTINGS)) && <div>
 
           <div className='ui grid'>
 
