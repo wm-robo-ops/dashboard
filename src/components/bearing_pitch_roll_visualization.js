@@ -20,7 +20,7 @@ export default class BearingPitchRollVisualization extends React.Component {
       try {
         var data = JSON.parse(e.data);
         this.update(deg2rad(parseFloat(data.roll)), deg2rad(parseFloat(data.heading)), deg2rad(parseFloat(data.pitch)));
-        this.renderer.render(this.scene, this.camera);
+        window.renderer.render(this.scene, this.camera);
       }
       catch(err) {
         console.log(err);
@@ -33,7 +33,7 @@ export default class BearingPitchRollVisualization extends React.Component {
   }
 
   resize() {
-    this.renderer.setSize(this.refs.container.parentNode.offsetWidth, 220);
+    window.renderer.setSize(this.refs.container.parentNode.offsetWidth, 220);
   }
 
   setup() {
@@ -55,10 +55,11 @@ export default class BearingPitchRollVisualization extends React.Component {
     this.circle.rotation.x = Math.PI / 2;
     this.scene.add(this.circle);
 
-    this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(this.refs.container.parentNode.offsetWidth, 220);
+    if (!window.renderer)
+      window.renderer = new THREE.WebGLRenderer();
+    window.renderer.setSize(this.refs.container.parentNode.offsetWidth, 220);
 
-    this.refs.container.appendChild(this.renderer.domElement);
+    this.refs.container.appendChild(window.renderer.domElement);
   }
 
   update(x, y, z) {
@@ -69,14 +70,8 @@ export default class BearingPitchRollVisualization extends React.Component {
     this.circle.rotation.y = y;
     this.circle.rotation.z = z;
 
-    this.renderer.render(this.scene, this.camera);
+    window.renderer.render(this.scene, this.camera);
   }
-
-  /*
-  componentWillReceiveProps(props) {
-    this.update(props.x, props.y, props.z);
-  }
-  */
 
   render() {
     return <div style={{width: '100%'}}>
