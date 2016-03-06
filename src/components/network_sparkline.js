@@ -5,7 +5,7 @@ import {
   SparklinesSpots
 } from 'react-sparklines';
 
-export default class NetworkSparkline extends React.Component {
+class NetworkSparkline extends React.Component {
   render() {
     let { speed } = this.props;
     return (
@@ -16,3 +16,9 @@ export default class NetworkSparkline extends React.Component {
     );
   }
 }
+
+NetworkSparkline.propTypes = {
+  speed: React.PropTypes.arrayOf(React.PropTypes.number).isRequired
+};
+
+export default NetworkSparkline;

@@ -1,7 +1,7 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 
-export default class MainMap extends React.Component {
+class MainMap extends React.Component {
 
   constructor(props) {
     super(props);
@@ -122,6 +122,23 @@ export default class MainMap extends React.Component {
     </div>;
   }
 }
+
+MainMap.propTypes = {
+  vehicles: React.PropTypes.arrayOf(React.PropTypes.shape({
+    vehicle: React.PropTypes.string.isRequired,
+    coordinates: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    color: React.PropTypes.string.isRequired,
+    name: React.PropTypes.string.isRequired
+  })),
+  rockData: React.PropTypes.arrayOf(React.PropTypes.shape({
+    color: React.PropTypes.string.isRequired,
+    coordinates: React.PropTypes.arrayOf(React.PropTypes.numbers).isRequired,
+    id: React.PropTypes.string.isRequired
+  })),
+  removeRock: React.PropTypes.func.isRequired
+};
+
+export default MainMap;
 
 function createVehicleStyle(v) {
   return {

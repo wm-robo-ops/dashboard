@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class RockList extends React.Component {
+class RockList extends React.Component {
 
   constructor(props) {
     super(props);
@@ -36,3 +36,15 @@ export default class RockList extends React.Component {
   }
 
 }
+
+RockList.propTypes = {
+  removeRock: React.PropTypes.func.isRequired,
+  rocks: React.PropTypes.arrayOf(React.PropTypes.shape({
+    id: React.PropTypes.string.isRequired,
+    color: React.PropTypes.string.isRequired,
+    lon: React.PropTypes.number.isRequired,
+    lat: React.PropTypes.number.isRequired
+  })).isRequired
+};
+
+export default RockList;

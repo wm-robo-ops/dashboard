@@ -13,6 +13,19 @@ export default class BearingPitchRollVisualization extends React.Component {
   componentDidMount() {
     this.setup();
     window.addEventListener('resize', this.resize);
+
+    var address = 'ws://localhost:9999';
+    var client = new WebSocket(address);
+    client.onmessage = (e) => {
+      try {
+        var data = JSON.parse(e.data);
+        this.update(deg2rad(parseFloat(data.roll)), deg2rad(parseFloat(data.heading)), deg2rad(parseFloat(data.pitch)));
+        this.renderer.render(this.scene, this.camera);
+      }
+      catch(err) {
+        console.log(err);
+      }
+    };
   }
 
   componentWillUnmount() {
@@ -59,9 +72,11 @@ export default class BearingPitchRollVisualization extends React.Component {
     this.renderer.render(this.scene, this.camera);
   }
 
+  /*
   componentWillReceiveProps(props) {
     this.update(props.x, props.y, props.z);
   }
+  */
 
   render() {
     return <div style={{width: '100%'}}>
@@ -69,4 +84,8 @@ export default class BearingPitchRollVisualization extends React.Component {
     </div>;
   }
 
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
 }

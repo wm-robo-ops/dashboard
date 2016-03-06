@@ -3,6 +3,7 @@ import Immutable from 'immutable';
 import { createStore } from 'redux';
 import hat from 'hat';
 
+// actions
 import {
   addRock,
   setRocks,
@@ -13,21 +14,26 @@ import {
   updateLocation,
   updateNetworkSpeed
 } from './actions';
+
+// reducers
 import dashboardApp from './reducers';
 
-import {
-  getPitch,
-  getBearing,
-  getLocation,
-  getBatteryLevel,
-  getNetworkSpeed
-} from './vehicle_client';
+// API
 import {
   getStats,
   getRocks,
   postRock,
   deleteRock
 } from './api';
+
+// mock API
+import {
+  getPitch,
+  getBearing,
+  getLocation,
+  getBatteryLevel,
+  getNetworkSpeed
+} from './mock_client';
 
 // components
 import Battery from './components/battery';
@@ -78,7 +84,18 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     cameras: [],
     pitch: [0, 0, 0]
   },
-  rocks: []
+  rocks: [],
+  video: {
+    [BIG_DADDY]: {
+      camera1: ''
+    },
+    [SCOUT]: {
+      camera1: ''
+    },
+    [FLYER]: {
+      camera1: ''
+    }
+  }
 }));
 
 function updateFromServer() {
@@ -227,7 +244,7 @@ export default class App extends React.Component {
 
     return <div>
 
-      {/* menu */}
+      {/* sidebar */}
       <div className='ui sidebar inverted vertical menu visible very thin'>
         <div className='item'><h2>W&M Robo Ops</h2></div>
         <div onClick={this.changeView.bind(this, ALL_CAMERAS)} className={`item ${this.state.view === ALL_CAMERAS ? 'active' : ''}`}>
