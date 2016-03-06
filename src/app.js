@@ -48,8 +48,9 @@ import AllCamerasView from './components/all_cameras_view';
 import NetworkSparkline from './components/network_sparkline';
 import RockCoordinatesForm from './components/rock_coordinates_form';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
+import BatterySparkline from './components/battery_sparkline';
 
-const POLL_INTERVAL = 1000; // milliseconds to wait between polling vehicles
+const POLL_INTERVAL = 3000; // milliseconds to wait between polling vehicles
 
 const BIG_DADDY = 'bigDaddy';
 const SCOUT = 'scout';
@@ -62,6 +63,7 @@ const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
 var store = createStore(dashboardApp, Immutable.fromJS({
   bigDaddy: {
     batteryLevel: 100,
+    batteryLevelHistory: [0, 100],
     location: [0, 0],
     networkSpeed: [0],
     color: '#00ff00',
@@ -70,6 +72,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   scout: {
     batteryLevel: 100,
+    batteryLevelHistory: [0, 100],
     location: [0, 0],
     networkSpeed: [0],
     color: '#ff00ff',
@@ -78,6 +81,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   flyer: {
     batteryLevel: 100,
+    batteryLevelHistory: [0, 100],
     location: [0, 0],
     networkSpeed: [0],
     color: '#ffff00',
@@ -236,13 +240,23 @@ export default class App extends React.Component {
       //var loc = data.getIn([this.state.view, 'location']);
       //var bearing = data.getIn([this.state.view, 'bearing']);
       var batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
+      var batteryLevelHistory = data.getIn([this.state.view, 'batteryLevelHistory']).toJS();
       var networkSpeed = data.getIn([this.state.view, 'networkSpeed']).toJS();
       var vehicleLocations = this.getVehicleLocationData();
       var rockData = data.get('rocks').toJS();
       var pitch = data.getIn([this.state.view, 'pitch']);
     }
 
+    var lowBattery = vehicles.some(v => {
+      return data.getIn([v, 'batteryLevel']) < 20;
+    });
+
     return <div>
+
+      {lowBattery && <audio preload autoPlay>
+        <source src="./lowBattery.mp3" type="audio/mpeg"/>
+        Your browser does not support the audio tag
+      </audio>}
 
       {/* sidebar */}
       <div className='ui sidebar inverted vertical menu visible very thin'>
@@ -329,6 +343,7 @@ export default class App extends React.Component {
               <div className='ui pink padded segment'>
                 <h1 className='ui dividing header'>battery</h1>
                 <Battery batteryLevel={batteryLevel}/>
+                <BatterySparkline level={batteryLevelHistory}/>
               </div>
 
               {/* network and quality*/}
