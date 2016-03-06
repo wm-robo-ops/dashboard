@@ -1,3 +1,5 @@
+export const MUTE = 'MUTE';
+export const UNMUTE = 'UNMUTE';
 export const ADD_ROCK = 'ADD_ROCK';
 export const SET_ROCKS = 'SET_ROCKS';
 export const REMOVE_ROCK = 'REMOVE_ROCK';
@@ -41,4 +43,12 @@ export function setRocks(rocks) {
 
 export function removeRock(id) {
   return { type: REMOVE_ROCK, id };
+}
+
+export function mute() {
+  return { type: MUTE };
+}
+
+export function unmute() {
+  return { type: UNMUTE };
 }

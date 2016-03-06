@@ -6,8 +6,27 @@ export default class SettingsView extends React.Component {
     super(props);
   }
 
+  onChange() {
+    if (this.props.muted)
+      this.props.unmute();
+    else
+      this.props.mute();
+  }
+
   render() {
     return <div>
+      <div className='ui segments'>
+        <div className='ui padded segment'>
+          <h2>Sound</h2>
+        </div>
+        <div className='ui padded segment'>
+        <div className='ui checkbox'>
+          <input type='checkbox' name='cb' onChange={this.onChange.bind(this)} checked={this.props.muted} />
+          <label>Mute Battery Alert</label>
+        </div>
+        </div>
+      </div>
+
       <div className='ui segments'>
         <div className='ui padded segment'>
           <h2>Camera IP Addresses</h2>
@@ -72,3 +91,9 @@ export default class SettingsView extends React.Component {
   }
 
 }
+
+SettingsView.propTypes = {
+  muted: React.PropTypes.bool.isRequired
+}
+
+export default SettingsView;

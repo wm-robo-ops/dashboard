@@ -5,6 +5,8 @@ import hat from 'hat';
 
 // actions
 import {
+  mute,
+  unmute,
   addRock,
   setRocks,
   removeRock,
@@ -99,7 +101,9 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     [FLYER]: {
       camera1: ''
     }
-  }
+  },
+  muted: false,
+  minBattery: 20
 }));
 
 function updateFromServer() {
@@ -237,8 +241,6 @@ export default class App extends React.Component {
   render() {
     var data = this.state.data;
     if (vehicles.some(v => v === this.state.view)) {
-      //var loc = data.getIn([this.state.view, 'location']);
-      //var bearing = data.getIn([this.state.view, 'bearing']);
       var batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
       var batteryLevelHistory = data.getIn([this.state.view, 'batteryLevelHistory']).toJS();
       var networkSpeed = data.getIn([this.state.view, 'networkSpeed']).toJS();
@@ -248,13 +250,13 @@ export default class App extends React.Component {
     }
 
     var lowBattery = vehicles.some(v => {
-      return data.getIn([v, 'batteryLevel']) < 20;
+      return data.getIn([v, 'batteryLevel']) < data.get('minBattery');
     });
 
     return <div>
 
-      {lowBattery && <audio preload autoPlay>
-        <source src="./lowBattery.mp3" type="audio/mpeg"/>
+      {(lowBattery && !data.get('muted')) && <audio preload autoPlay>
+        <source src='./lowBattery.mp3' type='audio/mpeg'/>
         Your browser does not support the audio tag
       </audio>}
 
@@ -268,15 +270,15 @@ export default class App extends React.Component {
           <div>Main Camera</div>
         </div>
         <div onClick={this.changeView.bind(this, BIG_DADDY)} className={`item ${this.state.view === BIG_DADDY ? 'active' : ''}`}>
-          {data.getIn([BIG_DADDY, 'batteryLevel']) < 20 && <i className='icon warning red'></i>}
+          {data.getIn([BIG_DADDY, 'batteryLevel']) < data.get('minBattery') && <i className='icon warning red'></i>}
           Big Daddy
         </div>
         <div onClick={this.changeView.bind(this, SCOUT)} className={`item ${this.state.view === SCOUT ? 'active' : ''}`}>
-          {data.getIn([SCOUT, 'batteryLevel']) < 20 && <i className='icon warning red'></i>}
+          {data.getIn([SCOUT, 'batteryLevel']) < data.get('minBattery') && <i className='icon warning red'></i>}
           Scout
         </div>
         <div onClick={this.changeView.bind(this, FLYER)} className={`item ${this.state.view === FLYER ? 'active' : ''}`}>
-          {data.getIn([FLYER, 'batteryLevel']) < 20 && <i className='icon warning red'></i>}
+          {data.getIn([FLYER, 'batteryLevel']) < data.get('minBattery') && <i className='icon warning red'></i>}
           Flyer
         </div>
         <div onClick={this.changeView.bind(this, SETTINGS)} className={`item ${this.state.view === SETTINGS ? 'active' : ''}`}>
@@ -295,7 +297,7 @@ export default class App extends React.Component {
 
         {this.state.view === MAIN_CAMERA && <MainCameraView />}
 
-        {this.state.view === SETTINGS && <SettingsView />}
+        {this.state.view === SETTINGS && <SettingsView muted={data.get('muted')} mute={store.dispatch.bind(this, mute())} unmute={store.dispatch.bind(this, unmute())} />}
 
         {((this.state.view !== ALL_CAMERAS) && (this.state.view !== MAIN_CAMERA) && (this.state.view !== SETTINGS)) && <div>
 
@@ -345,12 +347,6 @@ export default class App extends React.Component {
                 <Battery batteryLevel={batteryLevel}/>
                 <BatterySparkline level={batteryLevelHistory}/>
               </div>
-
-              {/* network and quality*/}
-              <div className='ui purple padded segment'>
-                <h1 className='ui dividing header'>network</h1>
-                <NetworkSparkline speed={networkSpeed}/>
-              </div>
             </div>
 
             {/* bearing-pitch-roll visualization */}
@@ -369,8 +365,16 @@ export default class App extends React.Component {
               </div>
             </div>
 
+            {/* network and quality*/}
+            <div className='five wide column'>
+              <div className='ui purple padded segment'>
+                <h1 className='ui dividing header'>network</h1>
+                <NetworkSparkline speed={networkSpeed}/>
+              </div>
+            </div>
+
             {/* bearing map */}
-            <div className='six wide column'>
+            <div className='five wide column'>
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>bearing</h1>
                 {/*<BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>*/}

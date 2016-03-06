@@ -96,6 +96,7 @@ class MainMap extends React.Component {
       layer: 'rocks'
     }, (err, results) => {
       if (err) console.log(err);
+      if (!results.length) return;
       this.props.removeRock(results[0].properties.id);
     });
   }
@@ -132,8 +133,9 @@ MainMap.propTypes = {
   })),
   rockData: React.PropTypes.arrayOf(React.PropTypes.shape({
     color: React.PropTypes.string.isRequired,
-    coordinates: React.PropTypes.arrayOf(React.PropTypes.numbers).isRequired,
-    id: React.PropTypes.string.isRequired
+    id: React.PropTypes.string.isRequired,
+    lon: React.PropTypes.number.isRequired,
+    lat: React.PropTypes.number.isRequired
   })),
   removeRock: React.PropTypes.func.isRequired
 };

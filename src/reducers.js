@@ -7,7 +7,9 @@ import {
   PITCH_UPDATE,
   ADD_ROCK,
   REMOVE_ROCK,
-  SET_ROCKS
+  SET_ROCKS,
+  MUTE,
+  UNMUTE
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -40,6 +42,10 @@ function dashboardApp(state, action) {
       return state.set('rocks', state.get('rocks').filter(r => r.get('id') !== action.id));
     case SET_ROCKS:
       return state.set('rocks', Immutable.fromJS(action.rocks));
+    case MUTE:
+      return state.set('muted', true);
+    case UNMUTE:
+      return state.set('muted', false);
   }
   return state;
 }
