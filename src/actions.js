@@ -7,6 +7,7 @@ export const PITCH_UPDATE = 'PITCH_UPDATE';
 export const BATTERY_UPDATE = 'BATTERY_UPDATE';
 export const UPDATE_BEARING = 'UPDATE_BEARING';
 export const LOCATION_UPDATE = 'LOCATION_UPDATE';
+export const SET_MIN_BATTERY = 'SET_MIN_BATTERY';
 export const NETWORK_SPEED_UPDATE = 'NETWORK_SPEED_UPDATE';
 
 export function updateBattery(data) {
@@ -51,4 +52,8 @@ export function mute() {
 
 export function unmute() {
   return { type: UNMUTE };
+}
+
+export function setMinBattery(min) {
+  return { type: SET_MIN_BATTERY, min };
 }

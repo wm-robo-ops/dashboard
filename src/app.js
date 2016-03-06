@@ -11,6 +11,7 @@ import {
   setRocks,
   removeRock,
   updatePitch,
+  setMinBattery,
   updateBearing,
   updateBattery,
   updateLocation,
@@ -238,6 +239,10 @@ export default class App extends React.Component {
     deleteRock(id);
   }
 
+  setMinBattery(min) {
+    store.dispatch(setMinBattery(min));
+  }
+
   render() {
     var data = this.state.data;
     if (vehicles.some(v => v === this.state.view)) {
@@ -297,7 +302,13 @@ export default class App extends React.Component {
 
         {this.state.view === MAIN_CAMERA && <MainCameraView />}
 
-        {this.state.view === SETTINGS && <SettingsView muted={data.get('muted')} mute={store.dispatch.bind(this, mute())} unmute={store.dispatch.bind(this, unmute())} />}
+        {this.state.view === SETTINGS && <SettingsView
+          muted={data.get('muted')}
+          mute={store.dispatch.bind(this, mute())}
+          unmute={store.dispatch.bind(this, unmute())}
+          setMinBattery={this.setMinBattery}
+          minBattery={data.get('minBattery')}
+        />}
 
         {((this.state.view !== ALL_CAMERAS) && (this.state.view !== MAIN_CAMERA) && (this.state.view !== SETTINGS)) && <div>
 

@@ -9,7 +9,8 @@ import {
   REMOVE_ROCK,
   SET_ROCKS,
   MUTE,
-  UNMUTE
+  UNMUTE,
+  SET_MIN_BATTERY
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -46,6 +47,8 @@ function dashboardApp(state, action) {
       return state.set('muted', true);
     case UNMUTE:
       return state.set('muted', false);
+    case SET_MIN_BATTERY:
+      return state.set('minBattery', action.min);
   }
   return state;
 }

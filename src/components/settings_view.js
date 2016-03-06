@@ -6,24 +6,35 @@ export default class SettingsView extends React.Component {
     super(props);
   }
 
-  onChange() {
+  onMuteCheckBoxChange() {
     if (this.props.muted)
       this.props.unmute();
     else
       this.props.mute();
   }
 
+  onMinBatterySliderChange(e) {
+    this.props.setMinBattery(+e.target.value);
+  }
+
   render() {
     return <div>
       <div className='ui segments'>
         <div className='ui padded segment'>
-          <h2>Sound</h2>
+          <h2>Alerts</h2>
         </div>
         <div className='ui padded segment'>
-        <div className='ui checkbox'>
-          <input type='checkbox' name='cb' onChange={this.onChange.bind(this)} checked={this.props.muted} />
-          <label>Mute Battery Alert</label>
+          <div className='ui checkbox'>
+            <input style={{width: '100%'}} type='checkbox' name='cb' onChange={this.onMuteCheckBoxChange.bind(this)} checked={this.props.muted} />
+            <label>Mute Battery Alert</label>
+          </div>
         </div>
+        <div className='ui padded segment'>
+          <div>
+            <div>Minimum battery level for alerts</div>
+            <input type='range' name='cb' min='0' max='100' value={this.props.minBattery} onChange={this.onMinBatterySliderChange.bind(this)} />
+            <div>{`${this.props.minBattery}%`}</div>
+          </div>
         </div>
       </div>
 
@@ -93,7 +104,11 @@ export default class SettingsView extends React.Component {
 }
 
 SettingsView.propTypes = {
-  muted: React.PropTypes.bool.isRequired
-}
+  muted: React.PropTypes.bool.isRequired,
+  mute: React.PropTypes.func.isRequired,
+  unmute: React.PropTypes.func.isRequired,
+  setMinBattery: React.PropTypes.func.isRequired,
+  minBattery: React.PropTypes.number.isRequired
+};
 
 export default SettingsView;
