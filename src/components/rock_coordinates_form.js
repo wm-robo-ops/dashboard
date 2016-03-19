@@ -40,10 +40,15 @@ export default class RockCoordinatesForm extends React.Component {
     }
     this.props.submit(Object.assign({}, this.state)); // MUTATIONS?!?!
     this.resetForm();
+    this.dropdown_clear();
   }
 
   resetForm() {
     this.setState({ lon: null, lat: null, color: null });
+    this.refs.colorSelect.value = '---';
+    this.refs.vehicleSelect.value = '---';
+    this.refs.lonInput.value = '';
+    this.refs.latInput.value = '';
   }
 
   render() {
@@ -56,7 +61,7 @@ export default class RockCoordinatesForm extends React.Component {
           <div className='field'>
             <label>color</label>
             <select className='ui fluid dropdown' ref='colorSelect' onChange={this.setColor.bind(this)}>
-              <option>---</option>
+              <option ref='default'>---</option>
               {Object.keys(this.props.colors).map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
@@ -69,11 +74,11 @@ export default class RockCoordinatesForm extends React.Component {
           <div className='ui form'>
             <div className='field'>
               <label>longitude</label>
-              <input type='text' placeholder='longitude' onChange={this.setLon.bind(this)}/>
+              <input type='text' placeholder='longitude' ref='lonInput' onChange={this.setLon.bind(this)}/>
             </div>
             <div className='field'>
               <label>latitude</label>
-              <input type='text' placeholder='latitude' onChange={this.setLat.bind(this)}/>
+              <input type='text' placeholder='latitude' ref='latInput' onChange={this.setLat.bind(this)}/>
             </div>
             <button className='ui button' type='submit' onClick={this.submit.bind(this)}>Add</button>
           </div>
