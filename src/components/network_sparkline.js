@@ -10,7 +10,7 @@ class NetworkSparkline extends React.Component {
     let { speed } = this.props;
     return (
       <Sparklines data={speed} width={310} height={70} margin={6}>
-        <SparklinesLine style={{fill: 'none', strokeWidth: 3}} />
+        <SparklinesLine color='#000' style={{fill: 'none', strokeWidth: 3}} />
         <SparklinesSpots size={4} style={{ stroke: '#000', strokeWidth: 2, fill: 'white'}} />
       </Sparklines>
     );

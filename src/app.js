@@ -1,3 +1,4 @@
+/* eslint no-multi-spaces:0 */
 import React from 'react';
 import Immutable from 'immutable';
 import { createStore } from 'redux';
@@ -39,18 +40,18 @@ import {
 } from './mock_client';
 
 // components
-import Battery from './components/battery';
-import MainMap from './components/main_map';
-import RockList from './components/rock_list';
-import PanControl from './components/pan_control';
-import ZoomControl from './components/zoom_control';
-import VideoPlayer from './components/video_player';
-import SettingsView from './components/settings_view';
-import CamerasView from './components/cameras_view';
-import NetworkSparkline from './components/network_sparkline';
-import RockCoordinatesForm from './components/rock_coordinates_form';
+import Battery                       from './components/battery';
+import MainMap                       from './components/main_map';
+import RockList                      from './components/rock_list';
+import PanControl                    from './components/pan_control';
+import ZoomControl                   from './components/zoom_control';
+import VideoPlayer                   from './components/video_player';
+import CamerasView                   from './components/cameras_view';
+import SettingsView                  from './components/settings_view';
+import BatterySparkline              from './components/battery_sparkline';
+import NetworkSparkline              from './components/network_sparkline';
+import RockCoordinatesForm           from './components/rock_coordinates_form';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
-import BatterySparkline from './components/battery_sparkline';
 
 const POLL_INTERVAL = 3000; // milliseconds to wait between polling vehicles
 
@@ -101,7 +102,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
       camera1: ''
     }
   },
-  muted: false,
+  muted: true,
   minBattery: 20
 }));
 
@@ -320,11 +321,9 @@ export default class App extends React.Component {
               </div>
             </div>
 
+            {/* video */}
             <div className='seven wide column'>
-              <div className='ui teal padded segment'>
-                <h1 className='ui dividing header'>camera</h1>
-                <VideoPlayer />
-              </div>
+              <VideoPlayer name='camera'/>
             </div>
 
             {/* location */}

@@ -11,12 +11,19 @@ export default class VideoPlayer extends React.Component {
     var address = 'ws://localhost:8084';
     var client = new WebSocket(address);
     var canvas = this.refs.videoCanvas;
-    var player = new jsmpeg(client, { canvas }); // eslint-disable-line new-cap, no-unused-vars
+    this.player = new jsmpeg(client, { canvas }); // eslint-disable-line new-cap, no-unused-vars
+  }
+
+  componentWillUnmount() {
+    this.player = null; // force GC on jsmpeg
   }
 
   render() {
-    return <div style={{width: '100%'}}>
-      <canvas ref='videoCanvas' style={{width: '100%'}}/>
+    return <div className='ui black padded segment'>
+      <h1 className='ui dividing header'>{this.props.name}</h1>
+      <div style={{width: '100%'}}>
+        <canvas ref='videoCanvas' style={{width: '100%'}}/>
+      </div>
     </div>;
   }
 

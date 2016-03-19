@@ -24,46 +24,33 @@ export default class CamerasView extends React.Component {
     window.removeEventListener('keyup', this.onEscape);
   }
 
-  enlarge() {
-    this.setState({ selected: true });
+  enlarge(active) {
+    this.setState({ selected: true, active });
   }
 
   render() {
     return <div>
 
-      {this.state.selected && <div className='ui teal padded segment' onClick={this.onEscape}>
-        <h1 className='ui dividing header'></h1>
-        <VideoPlayer />
+      {this.state.selected && <div onClick={this.onEscape}>
+        <VideoPlayer name={this.state.active}/>
       </div>}
 
       {!this.state.selected && <div className='ui grid'>
 
-        <div className='eight wide column' onClick={this.enlarge}>
-          <div className='ui teal padded segment'>
-            <h1 className='ui dividing header'></h1>
-            <VideoPlayer />
-          </div>
+        <div className='eight wide column' onClick={this.enlarge.bind(this, 'Big Daddy Main')}>
+          <VideoPlayer name='Big Daddy Main'/>
         </div>
 
-        <div className='eight wide column' onClick={this.enlarge}>
-          <div className='ui teal padded segment'>
-            <h1 className='ui dividing header'></h1>
-            <VideoPlayer />
-          </div>
+        <div className='eight wide column' onClick={this.enlarge.bind(this, 'Big Daddy Arm')}>
+          <VideoPlayer name='Big Daddy Arm'/>
         </div>
 
-        <div className='eight wide column' onClick={this.enlarge}>
-          <div className='ui teal padded segment'>
-            <h1 className='ui dividing header'></h1>
-            <VideoPlayer />
-          </div>
+        <div className='eight wide column' onClick={this.enlarge.bind(this, 'Scout')}>
+          <VideoPlayer name='Scout'/>
         </div>
 
-        <div className='eight wide column' onClick={this.enlarge}>
-          <div className='ui teal padded segment'>
-            <h1 className='ui dividing header'></h1>
-            <VideoPlayer />
-          </div>
+        <div className='eight wide column' onClick={this.enlarge.bind(this, 'Flyer')}>
+          <VideoPlayer name='Flyer'/>
         </div>
 
       </div>}

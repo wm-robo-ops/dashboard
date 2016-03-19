@@ -90,6 +90,10 @@ class MainMap extends React.Component {
     this.map.getSource('rocksSource').setData(this.getRockGeoJSON(props.rockData));
   }
 
+  componentWillUnmount() {
+    this.map = null;
+  }
+
   mapClick(e) {
     this.map.featuresAt(e.point, {
       radius: 1,

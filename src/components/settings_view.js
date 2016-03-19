@@ -47,13 +47,13 @@ export default class SettingsView extends React.Component {
           <form className='ui form'>
             <h4 className='ui dividing header'>Big Daddy</h4>
             <div className='field'>
-              <label>Camera 1</label>
+              <label>Main</label>
               <div className='field'>
                 <input type='text' placeholder='IP Address' />
               </div>
             </div>
             <div className='field'>
-              <label>Camera 2</label>
+              <label>Arm</label>
               <div className='field'>
                 <input type='text' placeholder='IP Address' />
               </div>
@@ -65,13 +65,7 @@ export default class SettingsView extends React.Component {
           <form className='ui form'>
             <h4 className='ui dividing header'>Scout</h4>
             <div className='field'>
-              <label>Camera 1</label>
-              <div className='field'>
-                <input type='text' placeholder='IP Address' />
-              </div>
-            </div>
-            <div className='field'>
-              <label>Camera 2</label>
+              <label>Main</label>
               <div className='field'>
                 <input type='text' placeholder='IP Address' />
               </div>
@@ -83,13 +77,7 @@ export default class SettingsView extends React.Component {
           <form className='ui form'>
             <h4 className='ui dividing header'>Rover</h4>
             <div className='field'>
-              <label>Camera 1</label>
-              <div className='field'>
-                <input type='text' placeholder='IP Address' />
-              </div>
-            </div>
-            <div className='field'>
-              <label>Camera 2</label>
+              <label>Main</label>
               <div className='field'>
                 <input type='text' placeholder='IP Address' />
               </div>
