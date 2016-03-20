@@ -1,16 +1,18 @@
 import Immutable from 'immutable';
 import {
-  BATTERY_UPDATE,
-  LOCATION_UPDATE,
-  NETWORK_SPEED_UPDATE,
-  UPDATE_BEARING,
-  PITCH_UPDATE,
-  ADD_ROCK,
-  REMOVE_ROCK,
-  SET_ROCKS,
   MUTE,
   UNMUTE,
-  SET_MIN_BATTERY
+  ADD_ROCK,
+  SET_ROCKS,
+  REMOVE_ROCK,
+  PITCH_UPDATE,
+  TOGGLE_CAMERA,
+  UPDATE_BEARING,
+  BATTERY_UPDATE,
+  SET_MIN_BATTERY,
+  LOCATION_UPDATE,
+  SET_ALL_CAMERAS,
+  NETWORK_SPEED_UPDATE
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -49,6 +51,10 @@ function dashboardApp(state, action) {
       return state.set('muted', false);
     case SET_MIN_BATTERY:
       return state.set('minBattery', action.min);
+    case TOGGLE_CAMERA:
+      return state.setIn(['cameras', action.camera, 'on'], !state.getIn(['cameras', action.camera, 'on']));
+    case SET_ALL_CAMERAS:
+      return state.set('cameras', Immutable.fromJS(action.cameras));
   }
   return state;
 }

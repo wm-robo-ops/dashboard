@@ -7,14 +7,19 @@ export default class SettingsView extends React.Component {
   }
 
   onMuteCheckBoxChange() {
-    if (this.props.muted)
+    if (this.props.muted) {
       this.props.unmute();
-    else
+    } else {
       this.props.mute();
+    }
   }
 
   onMinBatterySliderChange(e) {
     this.props.setMinBattery(+e.target.value);
+  }
+
+  onVideoToggle(camera) {
+    this.props.toggleCamera(camera);
   }
 
   render() {
@@ -25,15 +30,65 @@ export default class SettingsView extends React.Component {
         </div>
         <div className='ui padded segment'>
           <div className='ui checkbox'>
-            <input style={{width: '100%'}} type='checkbox' name='cb' onChange={this.onMuteCheckBoxChange.bind(this)} checked={this.props.muted} />
+            <input
+              style={{width: '100%'}}
+              type='checkbox'
+              name='cb'
+              onChange={this.onMuteCheckBoxChange.bind(this)}
+              checked={this.props.muted}
+            />
             <label>Mute Battery Alert</label>
           </div>
         </div>
         <div className='ui padded segment'>
           <div>
             <div>Minimum battery level for alerts</div>
-            <input type='range' name='cb' min='0' max='100' value={this.props.minBattery} onChange={this.onMinBatterySliderChange.bind(this)} />
+            <input
+              type='range'
+              name='cb'
+              min='0'
+              max='100'
+              value={this.props.minBattery}
+              onChange={this.onMinBatterySliderChange.bind(this)}
+            />
             <div>{`${this.props.minBattery}%`}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* video stream toggles */}
+      <div className='ui segments'>
+        <div className='ui padded segment'>
+          <h2>Toggle Camera Feeds</h2>
+        </div>
+        <div className='ui padded segment'>
+          {/*  */}
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.cameras.bigDaddyMain.on} onChange={this.onVideoToggle.bind(this, 'bigDaddyMain')}/>
+              <label>Big Daddy Main</label>
+            </div>
+          </div>
+          {/*  */}
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.cameras.bigDaddyArm.on} onChange={this.onVideoToggle.bind(this, 'bigDaddyArm')}/>
+              <label>Big Daddy Arm</label>
+            </div>
+          </div>
+          {/*  */}
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.cameras.scout.on} onChange={this.onVideoToggle.bind(this, 'scout')}/>
+              <label>Scout</label>
+            </div>
+          </div>
+          {/*  */}
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.cameras.flyer.on} onChange={this.onVideoToggle.bind(this, 'flyer')}/>
+              <label>Flyer</label>
+            </div>
           </div>
         </div>
       </div>

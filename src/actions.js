@@ -4,10 +4,12 @@ export const ADD_ROCK = 'ADD_ROCK';
 export const SET_ROCKS = 'SET_ROCKS';
 export const REMOVE_ROCK = 'REMOVE_ROCK';
 export const PITCH_UPDATE = 'PITCH_UPDATE';
+export const TOGGLE_CAMERA = 'TOGGLE_CAMERA';
 export const BATTERY_UPDATE = 'BATTERY_UPDATE';
 export const UPDATE_BEARING = 'UPDATE_BEARING';
 export const LOCATION_UPDATE = 'LOCATION_UPDATE';
 export const SET_MIN_BATTERY = 'SET_MIN_BATTERY';
+export const SET_ALL_CAMERAS = 'SET_ALL_CAMERAS';
 export const NETWORK_SPEED_UPDATE = 'NETWORK_SPEED_UPDATE';
 
 export function updateBattery(data) {
@@ -56,4 +58,12 @@ export function unmute() {
 
 export function setMinBattery(min) {
   return { type: SET_MIN_BATTERY, min };
+}
+
+export function toggleCamera(camera) {
+  return { type: TOGGLE_CAMERA, camera };
+}
+
+export function setAllCameras(cameras) {
+  return { type: SET_ALL_CAMERAS, cameras };
 }

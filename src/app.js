@@ -12,9 +12,11 @@ import {
   setRocks,
   removeRock,
   updatePitch,
+  toggleCamera,
   setMinBattery,
   updateBearing,
   updateBattery,
+  setAllCameras,
   updateLocation,
   updateNetworkSpeed
 } from './actions';
@@ -27,7 +29,8 @@ import {
   getStats,
   getRocks,
   postRock,
-  deleteRock
+  deleteRock,
+  toggleCameraAPI
 } from './api';
 
 // mock API
@@ -53,7 +56,7 @@ import NetworkSparkline              from './components/network_sparkline';
 import RockCoordinatesForm           from './components/rock_coordinates_form';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
 
-const POLL_INTERVAL = 3000; // milliseconds to wait between polling vehicles
+const POLL_INTERVAL = 2000; // milliseconds to wait between polling vehicles
 
 const BIG_DADDY = 'bigDaddy';
 const SCOUT = 'scout';
@@ -69,7 +72,6 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     location: [0, 0],
     networkSpeed: [0],
     color: '#00ff00',
-    cameras: [],
     pitch: [0, 0, 0]
   },
   scout: {
@@ -78,7 +80,6 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     location: [0, 0],
     networkSpeed: [0],
     color: '#ff00ff',
-    cameras: [],
     pitch: [0, 0, 0]
   },
   flyer: {
@@ -87,19 +88,21 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     location: [0, 0],
     networkSpeed: [0],
     color: '#ffff00',
-    cameras: [],
     pitch: [0, 0, 0]
   },
   rocks: [],
-  video: {
-    [BIG_DADDY]: {
-      camera1: ''
+  cameras: {
+    bigDaddyMain: {
+      on: false
     },
-    [SCOUT]: {
-      camera1: ''
+    bigDaddyArm: {
+      on: false
     },
-    [FLYER]: {
-      camera1: ''
+    scout: {
+      on: false
+    },
+    flyer: {
+      on: false
     }
   },
   muted: true,
@@ -109,27 +112,30 @@ var store = createStore(dashboardApp, Immutable.fromJS({
 function updateFromServer() {
   getStats()
     .then(stats => {
-      for (var vehicle in stats) {
+      let vs = stats.vehicles;
+      let cameras = stats.cameras;
+      for (var vehicle in vs) {
         store.dispatch(updateBattery({
           vehicle,
-          batteryLevel: stats[vehicle].batteryLevel
+          batteryLevel: vs[vehicle].batteryLevel
         }));
         store.dispatch(updateLocation({
           vehicle,
-          location: stats[vehicle].location
+          location: vs[vehicle].location
         }));
         store.dispatch(updateNetworkSpeed({
           vehicle,
-          data: stats[vehicle].networkSpeed
+          data: vs[vehicle].networkSpeed
         }));
         store.dispatch(updateBearing({
           vehicle,
-          bearing: stats[vehicle].bearing
+          bearing: vs[vehicle].bearing
         }));
         store.dispatch(updatePitch({
           vehicle,
-          pitch: stats[vehicle].pitch
+          pitch: vs[vehicle].pitch
         }));
+        store.dispatch(setAllCameras(cameras));
       }
     })
     .catch(e => console.log(e));
@@ -241,8 +247,16 @@ export default class App extends React.Component {
     store.dispatch(setMinBattery(min));
   }
 
+  toggleCamera(camera) {
+    store.dispatch(toggleCamera(camera));
+    toggleCameraAPI(camera);
+  }
+
   render() {
     var data = this.state.data;
+
+    var minBattery = data.get('minBattery');
+
     if (vehicles.some(v => v === this.state.view)) {
       var batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
       var batteryLevelHistory = data.getIn([this.state.view, 'batteryLevelHistory']).toJS();
@@ -250,6 +264,10 @@ export default class App extends React.Component {
       var vehicleLocations = this.getVehicleLocationData();
       var rockData = data.get('rocks').toJS();
       var pitch = data.getIn([this.state.view, 'pitch']);
+    }
+
+    if (this.state.view === SETTINGS) {
+      var cameras = data.get('cameras').toJS();
     }
 
     var lowBattery = vehicles.some(v => {
@@ -270,15 +288,15 @@ export default class App extends React.Component {
           <div>Cameras</div>
         </div>
         <div onClick={this.changeView.bind(this, BIG_DADDY)} className={`item ${this.state.view === BIG_DADDY ? 'active' : ''}`}>
-          {data.getIn([BIG_DADDY, 'batteryLevel']) < data.get('minBattery') && <i className='icon warning red'></i>}
+          {data.getIn([BIG_DADDY, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>}
           Big Daddy
         </div>
         <div onClick={this.changeView.bind(this, SCOUT)} className={`item ${this.state.view === SCOUT ? 'active' : ''}`}>
-          {data.getIn([SCOUT, 'batteryLevel']) < data.get('minBattery') && <i className='icon warning red'></i>}
+          {data.getIn([SCOUT, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>}
           Scout
         </div>
         <div onClick={this.changeView.bind(this, FLYER)} className={`item ${this.state.view === FLYER ? 'active' : ''}`}>
-          {data.getIn([FLYER, 'batteryLevel']) < data.get('minBattery') && <i className='icon warning red'></i>}
+          {data.getIn([FLYER, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>}
           Flyer
         </div>
         <div onClick={this.changeView.bind(this, SETTINGS)} className={`item ${this.state.view === SETTINGS ? 'active' : ''}`}>
@@ -296,6 +314,8 @@ export default class App extends React.Component {
         {this.state.view === CAMERAS && <CamerasView />}
 
         {this.state.view === SETTINGS && <SettingsView
+          cameras={cameras}
+          toggleCamera={this.toggleCamera}
           muted={data.get('muted')}
           mute={store.dispatch.bind(this, mute())}
           unmute={store.dispatch.bind(this, unmute())}

@@ -45,3 +45,16 @@ export function deleteRock(id) {
       .catch(e => reject(e));
   });
 }
+
+export function toggleCameraAPI(camera) {
+  return new Promise((resolve, reject) => {
+    fetch(`${URL}/video/${camera}/on`, {
+      method: 'POST'
+    })
+      .then(res => res.text())
+      .then(text => {
+        if (text !== 'ok') reject('Could not toggle stream');
+      })
+      .catch(e => reject(e));
+  });
+}
