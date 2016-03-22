@@ -4,6 +4,7 @@ import {
   UNMUTE,
   ADD_ROCK,
   SET_ROCKS,
+  TOGGLE_GPS,
   REMOVE_ROCK,
   PITCH_UPDATE,
   TOGGLE_CAMERA,
@@ -12,6 +13,7 @@ import {
   SET_MIN_BATTERY,
   LOCATION_UPDATE,
   SET_ALL_CAMERAS,
+  TOGGLE_DOF_DEVICE,
   NETWORK_SPEED_UPDATE
 } from './actions';
 
@@ -55,6 +57,10 @@ function dashboardApp(state, action) {
       return state.setIn(['cameras', action.camera, 'on'], !state.getIn(['cameras', action.camera, 'on']));
     case SET_ALL_CAMERAS:
       return state.set('cameras', Immutable.fromJS(action.cameras));
+    case TOGGLE_GPS:
+      return state.setIn(['gps', action.vehicle], !state.getIn(['gps', action.vehicle]));
+    case TOGGLE_DOF_DEVICE:
+      return state.setIn(['dofDevice', action.vehicle], !state.getIn(['dofDevice', action.vehicle]));
   }
   return state;
 }

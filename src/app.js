@@ -10,6 +10,7 @@ import {
   unmute,
   addRock,
   setRocks,
+  toggleGPS,
   removeRock,
   updatePitch,
   toggleCamera,
@@ -18,8 +19,11 @@ import {
   updateBattery,
   setAllCameras,
   updateLocation,
+  toggleDOFDevice,
   updateNetworkSpeed
 } from './actions';
+
+// TEST REMEMBER TO REMOVE
 
 // reducers
 import dashboardApp from './reducers';
@@ -30,7 +34,10 @@ import {
   getRocks,
   postRock,
   deleteRock,
-  toggleCameraAPI
+  capturePhoto,
+  toggleGPSAPI,
+  toggleCameraAPI,
+  toggleDOFDeviceAPI
 } from './api';
 
 // mock API
@@ -51,6 +58,7 @@ import ZoomControl                   from './components/zoom_control';
 import VideoPlayer                   from './components/video_player';
 import CamerasView                   from './components/cameras_view';
 import SettingsView                  from './components/settings_view';
+import PhotoLibrary                  from './components/photo_library';
 import BatterySparkline              from './components/battery_sparkline';
 import NetworkSparkline              from './components/network_sparkline';
 import RockCoordinatesForm           from './components/rock_coordinates_form';
@@ -104,6 +112,21 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     flyer: {
       on: false
     }
+  },
+  gps: {
+    bigDaddy: false,
+    scout: false,
+    flyer: false
+  },
+  dofDevice: {
+    bigDaddy: false,
+    scout: false,
+    flyer: false
+  },
+  photoCameras: {
+    bigDaddy: ['bigDaddy1', 'bigDaddy2'],
+    scout: ['scout1'],
+    flyer: ['flyer1']
   },
   muted: true,
   minBattery: 20
@@ -252,6 +275,20 @@ export default class App extends React.Component {
     toggleCameraAPI(camera);
   }
 
+  toggleGPS(vehicle) {
+    store.dispatch(toggleGPS(vehicle));
+    toggleGPSAPI(vehicle);
+  }
+
+  toggleDOFDevice(vehicle) {
+    store.dispatch(toggleDOFDevice(vehicle));
+    toggleDOFDeviceAPI(vehicle);
+  }
+
+  capturePhoto(camera) {
+    capturePhoto(camera);
+  }
+
   render() {
     var data = this.state.data;
 
@@ -264,10 +301,13 @@ export default class App extends React.Component {
       var vehicleLocations = this.getVehicleLocationData();
       var rockData = data.get('rocks').toJS();
       var pitch = data.getIn([this.state.view, 'pitch']);
+      var photoCameras = data.getIn(['photoCameras', this.state.view]);
     }
 
     if (this.state.view === SETTINGS) {
       var cameras = data.get('cameras').toJS();
+      var gps = data.get('gps').toJS();
+      var dofDevice = data.get('dofDevice').toJS();
     }
 
     var lowBattery = vehicles.some(v => {
@@ -315,7 +355,11 @@ export default class App extends React.Component {
 
         {this.state.view === SETTINGS && <SettingsView
           cameras={cameras}
+          gps={gps}
+          dofDevice={dofDevice}
           toggleCamera={this.toggleCamera}
+          toggleDOFDevice={this.toggleDOFDevice}
+          toggleGPS={this.toggleGPS}
           muted={data.get('muted')}
           mute={store.dispatch.bind(this, mute())}
           unmute={store.dispatch.bind(this, unmute())}
@@ -395,6 +439,14 @@ export default class App extends React.Component {
               </div>
             </div>
 
+            {/* photo library */}
+            <div className='five wide column'>
+              <div className='ui red padded segment'>
+                <h1 className='ui dividing header'>photos</h1>
+                <PhotoLibrary cameras={photoCameras} capture={this.capturePhoto}/>
+              </div>
+            </div>
+
             {/* bearing map */}
             <div className='five wide column'>
               <div className='ui red padded segment'>
@@ -402,7 +454,6 @@ export default class App extends React.Component {
                 {/*<BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>*/}
               </div>
             </div>
-
 
           </div>
 

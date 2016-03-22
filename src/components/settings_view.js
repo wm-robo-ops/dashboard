@@ -22,6 +22,14 @@ export default class SettingsView extends React.Component {
     this.props.toggleCamera(camera);
   }
 
+  onGPSToggle(vehicle) {
+    this.props.toggleGPS(vehicle);
+  }
+
+  onDOFDeviceToggle(vehicle) {
+    this.props.toggleDOFDevice(vehicle);
+  }
+
   render() {
     return <div>
       <div className='ui segments'>
@@ -59,37 +67,79 @@ export default class SettingsView extends React.Component {
       {/* video stream toggles */}
       <div className='ui segments'>
         <div className='ui padded segment'>
-          <h2>Toggle Camera Feeds</h2>
+          <h2>Toggle Sensors</h2>
         </div>
         <div className='ui padded segment'>
-          {/*  */}
+
+          {/* Cameras */}
+          <h3>Cameras</h3>
           <div>
             <div className='ui toggle checkbox'>
               <input type='checkbox' checked={this.props.cameras.bigDaddyMain.on} onChange={this.onVideoToggle.bind(this, 'bigDaddyMain')}/>
               <label>Big Daddy Main</label>
             </div>
           </div>
-          {/*  */}
           <div>
             <div className='ui toggle checkbox'>
               <input type='checkbox' checked={this.props.cameras.bigDaddyArm.on} onChange={this.onVideoToggle.bind(this, 'bigDaddyArm')}/>
               <label>Big Daddy Arm</label>
             </div>
           </div>
-          {/*  */}
           <div>
             <div className='ui toggle checkbox'>
               <input type='checkbox' checked={this.props.cameras.scout.on} onChange={this.onVideoToggle.bind(this, 'scout')}/>
               <label>Scout</label>
             </div>
           </div>
-          {/*  */}
           <div>
             <div className='ui toggle checkbox'>
               <input type='checkbox' checked={this.props.cameras.flyer.on} onChange={this.onVideoToggle.bind(this, 'flyer')}/>
               <label>Flyer</label>
             </div>
           </div>
+
+          {/* GPS */}
+          <h3>GPS</h3>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.gps.bigDaddy} onChange={this.onGPSToggle.bind(this, 'bigDaddy')}/>
+              <label>Big Daddy</label>
+            </div>
+          </div>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.gps.scout} onChange={this.onGPSToggle.bind(this, 'scout')}/>
+              <label>Scout</label>
+            </div>
+          </div>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.gps.flyer} onChange={this.onGPSToggle.bind(this, 'flyer')}/>
+              <label>Flyer</label>
+            </div>
+          </div>
+
+          {/* DOF Device */}
+          <h3>DOF Device</h3>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.dofDevice.bigDaddy} onChange={this.onDOFDeviceToggle.bind(this, 'bigDaddy')}/>
+              <label>Big Daddy</label>
+            </div>
+          </div>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.dofDevice.scout} onChange={this.onDOFDeviceToggle.bind(this, 'scout')}/>
+              <label>Scout</label>
+            </div>
+          </div>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.props.dofDevice.flyer} onChange={this.onDOFDeviceToggle.bind(this, 'flyer')}/>
+              <label>Flyer</label>
+            </div>
+          </div>
+
         </div>
       </div>
 

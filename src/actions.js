@@ -2,6 +2,7 @@ export const MUTE = 'MUTE';
 export const UNMUTE = 'UNMUTE';
 export const ADD_ROCK = 'ADD_ROCK';
 export const SET_ROCKS = 'SET_ROCKS';
+export const TOGGLE_GPS = 'TOGGLE_GPS';
 export const REMOVE_ROCK = 'REMOVE_ROCK';
 export const PITCH_UPDATE = 'PITCH_UPDATE';
 export const TOGGLE_CAMERA = 'TOGGLE_CAMERA';
@@ -10,6 +11,7 @@ export const UPDATE_BEARING = 'UPDATE_BEARING';
 export const LOCATION_UPDATE = 'LOCATION_UPDATE';
 export const SET_MIN_BATTERY = 'SET_MIN_BATTERY';
 export const SET_ALL_CAMERAS = 'SET_ALL_CAMERAS';
+export const TOGGLE_DOF_DEVICE = 'TOGGLE_DOF_DEVICE';
 export const NETWORK_SPEED_UPDATE = 'NETWORK_SPEED_UPDATE';
 
 export function updateBattery(data) {
@@ -66,4 +68,12 @@ export function toggleCamera(camera) {
 
 export function setAllCameras(cameras) {
   return { type: SET_ALL_CAMERAS, cameras };
+}
+
+export function toggleGPS(vehicle) {
+  return { type: TOGGLE_GPS, vehicle };
+}
+
+export function toggleDOFDevice(vehicle) {
+  return { type: TOGGLE_DOF_DEVICE, vehicle };
 }

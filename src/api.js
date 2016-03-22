@@ -58,3 +58,42 @@ export function toggleCameraAPI(camera) {
       .catch(e => reject(e));
   });
 }
+
+export function toggleGPSAPI(vehicle) {
+  return new Promise((resolve, reject) => {
+    fetch(`${URL}/gps/${vehicle}/on`, {
+      method: 'POST'
+    })
+      .then(res => res.text())
+      .then(text => {
+        if (text !== 'ok') reject('Could not toggle gps for', vehicle);
+      })
+      .catch(e => reject(e));
+  });
+}
+
+export function toggleDOFDeviceAPI(vehicle) {
+  return new Promise((resolve, reject) => {
+    fetch(`${URL}/dofdevice/${vehicle}/on`, {
+      method: 'POST'
+    })
+      .then(res => res.text())
+      .then(text => {
+        if (text !== 'ok') reject('Could not toggle gps for', vehicle);
+      })
+      .catch(e => reject(e));
+  });
+}
+
+export function capturePhoto(camera) {
+  return new Promise((resolve, reject) => {
+    fetch(`${URL}/photo/${camera}`, {
+      method: 'POST'
+    })
+      .then(res => res.text())
+      .then(text => {
+        if (text !== 'ok') reject('Could not capture photo', camera);
+      })
+      .catch(e => reject(e));
+  });
+}
