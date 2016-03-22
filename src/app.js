@@ -14,6 +14,7 @@ import {
   removeRock,
   updatePitch,
   toggleCamera,
+  updatePhotos,
   setMinBattery,
   updateBearing,
   updateBattery,
@@ -33,6 +34,7 @@ import {
   getStats,
   getRocks,
   postRock,
+  getPhotos,
   deleteRock,
   capturePhoto,
   toggleGPSAPI,
@@ -58,19 +60,21 @@ import ZoomControl                   from './components/zoom_control';
 import VideoPlayer                   from './components/video_player';
 import CamerasView                   from './components/cameras_view';
 import SettingsView                  from './components/settings_view';
-import PhotoLibrary                  from './components/photo_library';
+import CapturePhoto                  from './components/capture_photo';
 import BatterySparkline              from './components/battery_sparkline';
 import NetworkSparkline              from './components/network_sparkline';
+import PhotoLibraryView              from './components/photo_library_view';
 import RockCoordinatesForm           from './components/rock_coordinates_form';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
 
 const POLL_INTERVAL = 2000; // milliseconds to wait between polling vehicles
 
-const BIG_DADDY = 'bigDaddy';
 const SCOUT = 'scout';
 const FLYER = 'flyer';
 const CAMERAS = 'cameras';
 const SETTINGS = 'settings';
+const BIG_DADDY = 'bigDaddy';
+const PHOTO_LIBRARY = 'photoLibrary';
 const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
@@ -100,18 +104,10 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   rocks: [],
   cameras: {
-    bigDaddyMain: {
-      on: false
-    },
-    bigDaddyArm: {
-      on: false
-    },
-    scout: {
-      on: false
-    },
-    flyer: {
-      on: false
-    }
+    bigDaddyMain: { on: false, ip: '' },
+    bigDaddyArm: { on: false, ip: '' },
+    scout: { on: false, ip: '' },
+    flyer: { on: false, ip: '' }
   },
   gps: {
     bigDaddy: false,
@@ -129,7 +125,8 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     flyer: ['flyer1']
   },
   muted: true,
-  minBattery: 20
+  minBattery: 20,
+  photos: []
 }));
 
 function updateFromServer() {
@@ -164,9 +161,10 @@ function updateFromServer() {
     .catch(e => console.log(e));
 
   getRocks()
-    .then(rocks => {
-      store.dispatch(setRocks(rocks));
-    });
+    .then(rocks => store.dispatch(setRocks(rocks)));
+
+  getPhotos()
+    .then(photos => store.dispatch(updatePhotos(photos)));
 }
 
 function mock() {
@@ -212,6 +210,7 @@ const names = {
   [SCOUT]: 'Scout',
   [FLYER]: 'Flyer',
   [CAMERAS]: 'Cameras',
+  [PHOTO_LIBRARY]: 'Photo Library',
   [SETTINGS]: 'Settings'
 };
 
@@ -339,6 +338,9 @@ export default class App extends React.Component {
           {data.getIn([FLYER, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>}
           Flyer
         </div>
+        <div onClick={this.changeView.bind(this, PHOTO_LIBRARY)} className={`item ${this.state.view === PHOTO_LIBRARY ? 'active' : ''}`}>
+          Photo Library
+        </div>
         <div onClick={this.changeView.bind(this, SETTINGS)} className={`item ${this.state.view === SETTINGS ? 'active' : ''}`}>
           Settings
         </div>
@@ -352,6 +354,8 @@ export default class App extends React.Component {
         </div>
 
         {this.state.view === CAMERAS && <CamerasView />}
+
+        {this.state.view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos')} />}
 
         {this.state.view === SETTINGS && <SettingsView
           cameras={cameras}
@@ -367,7 +371,7 @@ export default class App extends React.Component {
           minBattery={data.get('minBattery')}
         />}
 
-        {((this.state.view !== CAMERAS) && (this.state.view !== SETTINGS)) && <div>
+        {vehicles.some(v => v === this.state.view) && <div>
 
           <div className='ui grid'>
 
@@ -439,11 +443,11 @@ export default class App extends React.Component {
               </div>
             </div>
 
-            {/* photo library */}
+            {/* capature photo */}
             <div className='five wide column'>
               <div className='ui red padded segment'>
-                <h1 className='ui dividing header'>photos</h1>
-                <PhotoLibrary cameras={photoCameras} capture={this.capturePhoto}/>
+                <h1 className='ui dividing header'>capture photo</h1>
+                <CapturePhoto cameras={photoCameras} capture={this.capturePhoto}/>
               </div>
             </div>
 

@@ -7,6 +7,7 @@ import {
   TOGGLE_GPS,
   REMOVE_ROCK,
   PITCH_UPDATE,
+  UPDATE_PHOTOS,
   TOGGLE_CAMERA,
   UPDATE_BEARING,
   BATTERY_UPDATE,
@@ -61,6 +62,8 @@ function dashboardApp(state, action) {
       return state.setIn(['gps', action.vehicle], !state.getIn(['gps', action.vehicle]));
     case TOGGLE_DOF_DEVICE:
       return state.setIn(['dofDevice', action.vehicle], !state.getIn(['dofDevice', action.vehicle]));
+    case UPDATE_PHOTOS:
+      return state.set('photos', action.photos);
   }
   return state;
 }

@@ -97,3 +97,14 @@ export function capturePhoto(camera) {
       .catch(e => reject(e));
   });
 }
+
+export function getPhotos() {
+  return new Promise((resolve, reject) => {
+    fetch(`${URL}/photo`, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then(data => resolve(data))
+      .catch(e => reject(e));
+  });
+}

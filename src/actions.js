@@ -5,6 +5,7 @@ export const SET_ROCKS = 'SET_ROCKS';
 export const TOGGLE_GPS = 'TOGGLE_GPS';
 export const REMOVE_ROCK = 'REMOVE_ROCK';
 export const PITCH_UPDATE = 'PITCH_UPDATE';
+export const UPDATE_PHOTOS = 'UPDATE_PHOTOS';
 export const TOGGLE_CAMERA = 'TOGGLE_CAMERA';
 export const BATTERY_UPDATE = 'BATTERY_UPDATE';
 export const UPDATE_BEARING = 'UPDATE_BEARING';
@@ -76,4 +77,8 @@ export function toggleGPS(vehicle) {
 
 export function toggleDOFDevice(vehicle) {
   return { type: TOGGLE_DOF_DEVICE, vehicle };
+}
+
+export function updatePhotos(photos) {
+  return { type: UPDATE_PHOTOS, photos };
 }
