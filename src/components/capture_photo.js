@@ -8,9 +8,7 @@ export default class CapturePhoto extends React.Component {
 
   render() {
     return <div>
-      {this.props.cameras.map(c => <div key={c}>
-        <button onClick={this.props.capture.bind(this, c)}>{c}</button>
-      </div>)}
+      <button onClick={this.props.capture.bind(this, this.props.camera)}>{this.props.camera}</button>
     </div>;
   }
 

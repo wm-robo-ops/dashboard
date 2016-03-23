@@ -85,14 +85,14 @@ export function toggleDOFDeviceAPI(vehicle) {
   });
 }
 
-export function capturePhoto(camera) {
+export function capturePhoto(name) {
   return new Promise((resolve, reject) => {
-    fetch(`${URL}/photo/${camera}`, {
+    fetch(`${URL}/photo/${name}`, {
       method: 'POST'
     })
       .then(res => res.text())
       .then(text => {
-        if (text !== 'ok') reject('Could not capture photo', camera);
+        if (text !== 'ok') reject('Could not capture photo', name);
       })
       .catch(e => reject(e));
   });

@@ -75,7 +75,19 @@ const CAMERAS = 'cameras';
 const SETTINGS = 'settings';
 const BIG_DADDY = 'bigDaddy';
 const PHOTO_LIBRARY = 'photoLibrary';
-const vehicles = [ BIG_DADDY, SCOUT, FLYER ];
+const vehicles = [BIG_DADDY, SCOUT, FLYER];
+
+const BIG_DADDY_MAIN = 'BIG_DADDY_MAIN';
+const BIG_DADDY_ARM = 'BIG_DADDY_ARM';
+const SCOUT_1 = 'SCOUT_1';
+const FLYER_1 = 'FLYER_1';
+
+const photoCameras = {
+  [BIG_DADDY_MAIN]: { vehicle: BIG_DADDY },
+  [BIG_DADDY_ARM]: { vehicle: BIG_DADDY },
+  [SCOUT_1]: { vehicle: SCOUT },
+  [FLYER_1]: { vehicle: FLYER }
+};
 
 var store = createStore(dashboardApp, Immutable.fromJS({
   bigDaddy: {
@@ -118,11 +130,6 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     bigDaddy: false,
     scout: false,
     flyer: false
-  },
-  photoCameras: {
-    bigDaddy: ['bigDaddy1', 'bigDaddy2'],
-    scout: ['scout1'],
-    flyer: ['flyer1']
   },
   muted: true,
   minBattery: 20,
@@ -223,6 +230,9 @@ const colors = {
   yellow: ''
 };
 
+/**
+ * App class
+ */
 export default class App extends React.Component {
 
   constructor(props) {
@@ -231,6 +241,7 @@ export default class App extends React.Component {
       data: store.getState(),
       view: BIG_DADDY
     };
+    this.capturePhoto = this.capturePhoto.bind(this);
   }
 
   componentDidMount() {
@@ -285,7 +296,14 @@ export default class App extends React.Component {
   }
 
   capturePhoto(camera) {
-    capturePhoto(camera);
+    var vehicle = photoCameras[camera].vehicle;
+    var date = new Date();
+    var time = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+    var lonLat = this.state.data.getIn([vehicle, 'location']);
+    var loc = `${lonLat.get(0)}_${lonLat.get(1)}`;
+    var bearing = this.state.data.getIn([vehicle, 'pitch', 0]);
+    var name = `${camera.replace(/_/g, '~')}_${time}_${loc}_${bearing}.png`;
+    capturePhoto(name);
   }
 
   render() {
@@ -300,7 +318,6 @@ export default class App extends React.Component {
       var vehicleLocations = this.getVehicleLocationData();
       var rockData = data.get('rocks').toJS();
       var pitch = data.getIn([this.state.view, 'pitch']);
-      var photoCameras = data.getIn(['photoCameras', this.state.view]);
     }
 
     if (this.state.view === SETTINGS) {
@@ -447,7 +464,7 @@ export default class App extends React.Component {
             <div className='five wide column'>
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>capture photo</h1>
-                <CapturePhoto cameras={photoCameras} capture={this.capturePhoto}/>
+                <CapturePhoto camera={BIG_DADDY_MAIN} capture={this.capturePhoto}/>
               </div>
             </div>
 
