@@ -29,8 +29,8 @@ export default class PhotoLibraryView extends React.Component {
 
   render() {
     return <div>
-      {this.state.selected && <PhotoLarge url={this.state.active} />}
-      {!this.state.selected && this.props.photos.map(p => <PhotoCard key={p} url={p} enlarge={this.enlarge}/>)}
+      {this.state.selected && <PhotoLarge serverIP={this.props.serverIP} url={this.state.active} />}
+      {!this.state.selected && this.props.photos.map(p => <PhotoCard serverIP={this.props.serverIP} key={p} url={p} enlarge={this.enlarge}/>)}
     </div>;
   }
 }
@@ -45,7 +45,7 @@ class PhotoCard extends React.Component {
     var bearing = data[4];
     return <div className='ui card' onClick={this.props.enlarge.bind(this, this.props.url)}>
       <div className='image'>
-        <img src={`http://localhost:5555/${this.props.url}`}/>
+        <img src={`http://${this.props.serverIP}:5555/${this.props.url}`}/>
           <div className='content'>
             <div className='description'>
               <div>camera: {camera}</div>
@@ -62,7 +62,7 @@ class PhotoCard extends React.Component {
 class PhotoLarge extends React.Component {
   render() {
     return <div>
-      <img style={{width: '100%'}} src={`http://localhost:5555/${this.props.url}`}/>
+      <img style={{width: '100%'}} src={`http://${this.props.serverIP}:5555/${this.props.url}`}/>
     </div>;
   }
 }

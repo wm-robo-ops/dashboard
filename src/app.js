@@ -389,7 +389,7 @@ export default class App extends React.Component {
 
         {this.state.view === CAMERAS && <CamerasView serverIP={serverIP} />}
 
-        {this.state.view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos')} />}
+        {this.state.view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos')} serverIP={serverIP} />}
 
         {this.state.view === SETTINGS && <SettingsView
           cameras={cameras}
