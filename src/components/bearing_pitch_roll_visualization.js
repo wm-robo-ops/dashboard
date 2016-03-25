@@ -14,7 +14,7 @@ export default class BearingPitchRollVisualization extends React.Component {
     this.setup();
     window.addEventListener('resize', this.resize);
 
-    var address = 'ws://localhost:9999';
+    var address = 'ws://192.168.1.132:9999';
     var client = new WebSocket(address);
     client.onmessage = (e) => {
       try {

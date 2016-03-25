@@ -13,7 +13,7 @@ import {
   toggleGPS,
   removeRock,
   updatePitch,
-  toggleCamera,
+  toggleVideo,
   updatePhotos,
   setMinBattery,
   updateBearing,
@@ -21,26 +21,18 @@ import {
   setAllCameras,
   updateLocation,
   toggleDOFDevice,
-  updateNetworkSpeed
+  updateNetworkSpeed,
+  setAllGPS,
+  setAllDOFDevice,
+  setServerIP
 } from './actions';
-
-// TEST REMEMBER TO REMOVE
 
 // reducers
 import dashboardApp from './reducers';
 
 // API
-import {
-  getStats,
-  getRocks,
-  postRock,
-  getPhotos,
-  deleteRock,
-  capturePhoto,
-  toggleGPSAPI,
-  toggleCameraAPI,
-  toggleDOFDeviceAPI
-} from './api';
+import Api from './api';
+var API = new Api();
 
 // mock API
 import {
@@ -133,14 +125,17 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   muted: true,
   minBattery: 20,
-  photos: []
+  photos: [],
+  serverIP: 'localhost'
 }));
 
 function updateFromServer() {
-  getStats()
+  API.getStats()
     .then(stats => {
       let vs = stats.vehicles;
-      let cameras = stats.cameras;
+      store.dispatch(setAllCameras(stats.cameras));
+      store.dispatch(setAllGPS(stats.gps));
+      store.dispatch(setAllDOFDevice(stats.dofDevice));
       for (var vehicle in vs) {
         store.dispatch(updateBattery({
           vehicle,
@@ -162,15 +157,14 @@ function updateFromServer() {
           vehicle,
           pitch: vs[vehicle].pitch
         }));
-        store.dispatch(setAllCameras(cameras));
       }
     })
     .catch(e => console.log(e));
 
-  getRocks()
+  API.getRocks()
     .then(rocks => store.dispatch(setRocks(rocks)));
 
-  getPhotos()
+  API.getPhotos()
     .then(photos => store.dispatch(updatePhotos(photos)));
 }
 
@@ -241,7 +235,10 @@ export default class App extends React.Component {
       data: store.getState(),
       view: BIG_DADDY
     };
+    this.toggleGPS = this.toggleGPS.bind(this);
+    this.toggleVideo = this.toggleVideo.bind(this);
     this.capturePhoto = this.capturePhoto.bind(this);
+    this.toggleDOFDevice = this.toggleDOFDevice.bind(this);
   }
 
   componentDidMount() {
@@ -268,31 +265,46 @@ export default class App extends React.Component {
   addRock(data) {
     data.id = hat();
     store.dispatch(addRock(data));
-    postRock(data);
+    API.postRock(data);
   }
 
   removeRock(id) {
     store.dispatch(removeRock(id));
-    deleteRock(id);
+    API.deleteRock(id);
   }
 
   setMinBattery(min) {
     store.dispatch(setMinBattery(min));
   }
 
-  toggleCamera(camera) {
-    store.dispatch(toggleCamera(camera));
-    toggleCameraAPI(camera);
+  toggleVideo(camera) {
+    if (this.state.data.getIn(['cameras', camera, 'on'])) {
+      store.dispatch(toggleVideo(camera));
+      toggleVideo(camera, false);
+    } else {
+      store.dispatch(toggleVideo(camera));
+      toggleVideo(camera, true);
+    }
   }
 
   toggleGPS(vehicle) {
-    store.dispatch(toggleGPS(vehicle));
-    toggleGPSAPI(vehicle);
+    if (this.state.data.getIn(['gps', vehicle])) {
+      store.dispatch(toggleGPS(vehicle));
+      API.toggleGPS(vehicle, false);
+    } else {
+      store.dispatch(toggleGPS(vehicle));
+      API.toggleGPS(vehicle, true);
+    }
   }
 
   toggleDOFDevice(vehicle) {
-    store.dispatch(toggleDOFDevice(vehicle));
-    toggleDOFDeviceAPI(vehicle);
+    if (this.state.data.getIn(['dofDevice', vehicle])) {
+      store.dispatch(toggleDOFDevice(vehicle));
+      API.toggleDOFDevice(vehicle, false);
+    } else {
+      store.dispatch(toggleDOFDevice(vehicle));
+      API.toggleDOFDevice(vehicle, true);
+    }
   }
 
   capturePhoto(camera) {
@@ -303,7 +315,12 @@ export default class App extends React.Component {
     var loc = `${lonLat.get(0)}_${lonLat.get(1)}`;
     var bearing = this.state.data.getIn([vehicle, 'pitch', 0]);
     var name = `${camera.replace(/_/g, '~')}_${time}_${loc}_${bearing}.png`;
-    capturePhoto(name);
+    API.capturePhoto(name);
+  }
+
+  setServerIP(ip) {
+    store.dispatch(setServerIP(ip));
+    API.setIP(ip);
   }
 
   render() {
@@ -378,7 +395,7 @@ export default class App extends React.Component {
           cameras={cameras}
           gps={gps}
           dofDevice={dofDevice}
-          toggleCamera={this.toggleCamera}
+          toggleVideo={this.toggleVideo}
           toggleDOFDevice={this.toggleDOFDevice}
           toggleGPS={this.toggleGPS}
           muted={data.get('muted')}
@@ -386,6 +403,8 @@ export default class App extends React.Component {
           unmute={store.dispatch.bind(this, unmute())}
           setMinBattery={this.setMinBattery}
           minBattery={data.get('minBattery')}
+          serverIP={data.get('serverIP')}
+          setServerIP={this.setServerIP}
         />}
 
         {vehicles.some(v => v === this.state.view) && <div>

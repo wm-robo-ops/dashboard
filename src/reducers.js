@@ -8,14 +8,17 @@ import {
   REMOVE_ROCK,
   PITCH_UPDATE,
   UPDATE_PHOTOS,
-  TOGGLE_CAMERA,
+  TOGGLE_VIDEO,
   UPDATE_BEARING,
   BATTERY_UPDATE,
   SET_MIN_BATTERY,
   LOCATION_UPDATE,
   SET_ALL_CAMERAS,
   TOGGLE_DOF_DEVICE,
-  NETWORK_SPEED_UPDATE
+  NETWORK_SPEED_UPDATE,
+  SET_ALL_GPS,
+  SET_ALL_DOF_DEVICE,
+  SET_SERVER_IP
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -54,16 +57,22 @@ function dashboardApp(state, action) {
       return state.set('muted', false);
     case SET_MIN_BATTERY:
       return state.set('minBattery', action.min);
-    case TOGGLE_CAMERA:
+    case TOGGLE_VIDEO:
       return state.setIn(['cameras', action.camera, 'on'], !state.getIn(['cameras', action.camera, 'on']));
     case SET_ALL_CAMERAS:
       return state.set('cameras', Immutable.fromJS(action.cameras));
     case TOGGLE_GPS:
       return state.setIn(['gps', action.vehicle], !state.getIn(['gps', action.vehicle]));
+    case SET_ALL_GPS:
+      return state.set('gps', Immutable.fromJS(action.gps));
     case TOGGLE_DOF_DEVICE:
       return state.setIn(['dofDevice', action.vehicle], !state.getIn(['dofDevice', action.vehicle]));
+    case SET_ALL_DOF_DEVICE:
+      return state.set('dofDevice', Immutable.fromJS(action.dofDevice));
     case UPDATE_PHOTOS:
       return state.set('photos', action.photos);
+    case SET_SERVER_IP:
+      return state.set('serverIP', action.ip);
   }
   return state;
 }

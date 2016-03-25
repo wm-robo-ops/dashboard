@@ -19,7 +19,7 @@ export default class SettingsView extends React.Component {
   }
 
   onVideoToggle(camera) {
-    this.props.toggleCamera(camera);
+    this.props.toggleVideo(camera);
   }
 
   onGPSToggle(vehicle) {
@@ -28,6 +28,10 @@ export default class SettingsView extends React.Component {
 
   onDOFDeviceToggle(vehicle) {
     this.props.toggleDOFDevice(vehicle);
+  }
+
+  setServerIP() {
+    this.props.setServerIP(this.refs.serverIPInput.value);
   }
 
   render() {
@@ -143,6 +147,24 @@ export default class SettingsView extends React.Component {
         </div>
       </div>
 
+      {/* Server IP address */}
+      <div className='ui segments'>
+        <div className='ui padded segment'>
+          <h2>Server IP Address</h2>
+        </div>
+        <div className='ui padded segment'>
+          <form className='ui form'>
+            <div className='field'>
+              <div className='field'>
+                <input type='text' ref='serverIPInput' placeholder={this.props.serverIP} onChange={() => {}}/>
+              </div>
+            </div>
+          </form>
+          <button className='ui button' onClick={this.setServerIP.bind(this)}>Set</button>
+        </div>
+      </div>
+
+      {/* Camera IP addresses */}
       <div className='ui segments'>
         <div className='ui padded segment'>
           <h2>Camera IP Addresses</h2>

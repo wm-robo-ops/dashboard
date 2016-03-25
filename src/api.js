@@ -1,110 +1,119 @@
-const URL = 'http://localhost:5555';
+export default class API {
+  constructor() {
+    this.URL = 'http://localhost:5555';
+    this.setIP = this.setIP.bind(this);
+  }
 
-export function getStats() {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}/stats`)
-      .then(res => res.json())
-      .then(data => resolve(data))
-      .catch(e => reject(e));
-  });
-}
+  setIP(ip) {
+    this.URL = `http://${ip}:5555`;
+  }
 
-export function getRocks() {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}/rocks`)
-      .then(res => res.json())
-      .then(data => resolve(data))
-      .catch(e => reject(e));
-  });
-}
+  getStats() {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/stats`)
+        .then(res => res.json())
+        .then(data => resolve(data))
+        .catch(e => reject(e));
+    });
+  }
 
-export function postRock(data) {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}/rocks/add`, {
-      method: 'POST',
-      headers: new Headers({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(data)
-    })
-      .then(res => res.text())
-      .then(text => {
-        if (text !== 'ok') reject('DELETE failed');
+  getRocks() {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/rocks`)
+        .then(res => res.json())
+        .then(data => resolve(data))
+        .catch(e => reject(e));
+    });
+  }
+
+  postRock(data) {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/rocks/add`, {
+        method: 'POST',
+        headers: new Headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(data)
       })
-      .catch(e => reject(e));
-  });
-}
+        .then(res => res.text())
+        .then(text => {
+          if (text !== 'ok') reject('DELETE failed');
+        })
+        .catch(e => reject(e));
+    });
+  }
 
-export function deleteRock(id) {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}/rocks/remove/${id}`, {
-      method: 'DELETE'
-    })
-      .then(res => res.text())
-      .then(text => {
-        if (text !== 'ok') reject('DELETE failed');
+  deleteRock(id) {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/rocks/remove/${id}`, {
+        method: 'DELETE'
       })
-      .catch(e => reject(e));
-  });
-}
+        .then(res => res.text())
+        .then(text => {
+          if (text !== 'ok') reject(text);
+        })
+        .catch(e => reject(e));
+    });
+  }
 
-export function toggleCameraAPI(camera) {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}/video/${camera}/on`, {
-      method: 'POST'
-    })
-      .then(res => res.text())
-      .then(text => {
-        if (text !== 'ok') reject('Could not toggle stream');
+  toggleVideo(camera, start) {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/video/${camera}/${start ? 'on' : 'off'}`, {
+        method: 'POST'
       })
-      .catch(e => reject(e));
-  });
-}
+        .then(res => res.text())
+        .then(text => {
+          if (text !== 'ok') reject(text);
+        })
+        .catch(e => reject(e));
+    });
+  }
 
-export function toggleGPSAPI(vehicle) {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}/gps/${vehicle}/on`, {
-      method: 'POST'
-    })
-      .then(res => res.text())
-      .then(text => {
-        if (text !== 'ok') reject('Could not toggle gps for', vehicle);
+  toggleGPS(vehicle, start) {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/gps/${vehicle}/${start ? 'on' : 'off'}`, {
+        method: 'POST'
       })
-      .catch(e => reject(e));
-  });
-}
+        .then(res => res.text())
+        .then(text => {
+          if (text !== 'ok') reject(text);
+        })
+        .catch(e => reject(e));
+    });
+  }
 
-export function toggleDOFDeviceAPI(vehicle) {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}/dofdevice/${vehicle}/on`, {
-      method: 'POST'
-    })
-      .then(res => res.text())
-      .then(text => {
-        if (text !== 'ok') reject('Could not toggle gps for', vehicle);
+  toggleDOFDevice(vehicle, start) {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/dofdevice/${vehicle}/${start ? 'on' : 'off'}`, {
+        method: 'POST'
       })
-      .catch(e => reject(e));
-  });
-}
+        .then(res => res.text())
+        .then(text => {
+          if (text !== 'ok') reject(text);
+        })
+        .catch(e => reject(e));
+    });
+  }
 
-export function capturePhoto(name) {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}/photo/${name}`, {
-      method: 'POST'
-    })
-      .then(res => res.text())
-      .then(text => {
-        if (text !== 'ok') reject('Could not capture photo', name);
+  capturePhoto(name) {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/photo/${name}`, {
+        method: 'POST'
       })
-      .catch(e => reject(e));
-  });
-}
+        .then(res => res.text())
+        .then(text => {
+          if (text !== 'ok') reject(text);
+        })
+        .catch(e => reject(e));
+    });
+  }
 
-export function getPhotos() {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}/photo`, {
-      method: 'GET'
-    })
-      .then(res => res.json())
-      .then(data => resolve(data))
-      .catch(e => reject(e));
-  });
+  getPhotos() {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/photo`, {
+        method: 'GET'
+      })
+        .then(res => res.json())
+        .then(data => resolve(data))
+        .catch(e => reject(e));
+    });
+  }
 }

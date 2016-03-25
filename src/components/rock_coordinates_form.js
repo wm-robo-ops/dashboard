@@ -40,7 +40,6 @@ export default class RockCoordinatesForm extends React.Component {
     }
     this.props.submit(Object.assign({}, this.state)); // MUTATIONS?!?!
     this.resetForm();
-    this.dropdown_clear();
   }
 
   resetForm() {
