@@ -28,7 +28,7 @@ export default class PhotoLibraryView extends React.Component {
   }
 
   render() {
-    return <div>
+    return <div className='ui grid'>
       {this.state.selected && <PhotoLarge serverIP={this.props.serverIP} url={this.state.active} />}
       {!this.state.selected && this.props.photos.map(p => <PhotoCard serverIP={this.props.serverIP} key={p} url={p} enlarge={this.enlarge}/>)}
     </div>;
@@ -43,17 +43,19 @@ class PhotoCard extends React.Component {
     var lon = data[2];
     var lat = data[3];
     var bearing = data[4];
-    return <div className='ui card' onClick={this.props.enlarge.bind(this, this.props.url)}>
-      <div className='image'>
-        <img src={`http://${this.props.serverIP}:5555/${this.props.url}`}/>
-          <div className='content'>
-            <div className='description'>
-              <div>camera: {camera}</div>
-              <div>time: {time}</div>
-              <div>coordinates: {`(${lon}, ${lat})`}</div>
-              <div>bearing: {bearing}</div>
+    return <div className='five wide column'>
+      <div className='ui card' onClick={this.props.enlarge.bind(this, this.props.url)}>
+        <div className='image'>
+          <img src={`http://${this.props.serverIP}:5555/${this.props.url}`}/>
+            <div className='content'>
+              <div className='description'>
+                <div>camera: {camera}</div>
+                <div>time: {time}</div>
+                <div>coordinates: {`(${lon}, ${lat})`}</div>
+                <div>bearing: {bearing}</div>
+              </div>
             </div>
-          </div>
+        </div>
       </div>
     </div>;
   }

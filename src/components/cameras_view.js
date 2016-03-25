@@ -32,7 +32,7 @@ export default class CamerasView extends React.Component {
     return <div>
 
       {this.state.selected && <div onClick={this.onEscape}>
-        <VideoPlayer name={this.state.active}/>
+        <VideoPlayer serverIP={this.props.serverIP} name={this.state.active}/>
       </div>}
 
       {!this.state.selected && <div className='ui grid'>
