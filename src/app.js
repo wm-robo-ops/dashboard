@@ -327,6 +327,7 @@ export default class App extends React.Component {
     var data = this.state.data;
 
     var minBattery = data.get('minBattery');
+    var serverIP = data.get('serverIP');
 
     if (vehicles.some(v => v === this.state.view)) {
       var batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
@@ -334,7 +335,6 @@ export default class App extends React.Component {
       var networkSpeed = data.getIn([this.state.view, 'networkSpeed']).toJS();
       var vehicleLocations = this.getVehicleLocationData();
       var rockData = data.get('rocks').toJS();
-      var pitch = data.getIn([this.state.view, 'pitch']);
     }
 
     if (this.state.view === SETTINGS) {
@@ -403,7 +403,7 @@ export default class App extends React.Component {
           unmute={store.dispatch.bind(this, unmute())}
           setMinBattery={this.setMinBattery}
           minBattery={data.get('minBattery')}
-          serverIP={data.get('serverIP')}
+          serverIP={serverIP}
           setServerIP={this.setServerIP}
         />}
 
@@ -427,7 +427,7 @@ export default class App extends React.Component {
 
             {/* video */}
             <div className='seven wide column'>
-              <VideoPlayer name='camera'/>
+              <VideoPlayer serverIP={serverIP} name='camera'/>
             </div>
 
             {/* location */}
@@ -459,7 +459,7 @@ export default class App extends React.Component {
             <div className='six wide column'>
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>bearing, pitch, roll</h1>
-                <BearingPitchRollVisualization x={pitch.get(0)} y={pitch.get(1)} z={pitch.get(2)} />
+                <BearingPitchRollVisualization serverIP={serverIP} />
               </div>
             </div>
 
