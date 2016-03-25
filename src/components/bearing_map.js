@@ -73,3 +73,8 @@ function createMarkerStyle(color) {
     'interactive': true
   };
 }
+
+BearingMap.propTypes = {
+  bearing: React.propTypes.number.isRequired,
+  markerColor: React.propTypes.string.isRequired
+};

@@ -223,7 +223,20 @@ SettingsView.propTypes = {
   mute: React.PropTypes.func.isRequired,
   unmute: React.PropTypes.func.isRequired,
   setMinBattery: React.PropTypes.func.isRequired,
-  minBattery: React.PropTypes.number.isRequired
+  minBattery: React.PropTypes.number.isRequired,
+  gps: React.PropTypes.shape({
+    bigDaddy: React.PropTypes.bool.isRequired,
+    scout: React.PropTypes.bool.isRequired,
+    flyer: React.PropTypes.bool.isRequired
+  }).isRequired,
+  dofDevice: React.PropTypes.shape({
+    bigDaddy: React.PropTypes.bool.isRequired,
+    scout: React.PropTypes.bool.isRequired,
+    flyer: React.PropTypes.bool.isRequired
+  }).isRequired,
+  toggleVideo: React.PropTypes.func.isRequired,
+  toggleDOFDevice: React.PropTypes.func.isRequired,
+  toggleGPS: React.PropTypes.func.isRequired,
+  serverIP: React.PropTypes.string.isRequired
 };
 
-export default SettingsView;

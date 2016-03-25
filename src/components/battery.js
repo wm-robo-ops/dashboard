@@ -1,6 +1,6 @@
 import React from 'React';
 
-class BatteryPanel extends React.Component {
+export default class BatteryPanel extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -14,7 +14,6 @@ class BatteryPanel extends React.Component {
 }
 
 BatteryPanel.propTypes = {
-  batteryLevel: React.PropTypes.number
+  batteryLevel: React.PropTypes.number.isRequired
 };
 
-export default BatteryPanel;

@@ -28,3 +28,8 @@ export default class VideoPlayer extends React.Component {
   }
 
 }
+
+VideoPlayer.propTypes = {
+  serverIP: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired
+};

@@ -84,3 +84,7 @@ export default class BearingPitchRollVisualization extends React.Component {
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
+
+BearingPitchRollVisualization.propTypes = {
+  serverIP: React.PropTypes.string.isRequired
+};

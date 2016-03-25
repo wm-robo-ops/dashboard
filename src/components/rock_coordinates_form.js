@@ -104,3 +104,9 @@ export default class RockCoordinatesForm extends React.Component {
   }
 
 }
+
+RockCoordinatesForm.propTypes = {
+  submit: React.PropTypes.func.isRequired,
+  vehicleLocations: React.PropTypes.array.isRequired,
+  colors: React.PropTypes.object.isRequired
+};

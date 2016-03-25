@@ -280,10 +280,10 @@ export default class App extends React.Component {
   toggleVideo(camera) {
     if (this.state.data.getIn(['cameras', camera, 'on'])) {
       store.dispatch(toggleVideo(camera));
-      toggleVideo(camera, false);
+      API.toggleVideo(camera, false);
     } else {
       store.dispatch(toggleVideo(camera));
-      toggleVideo(camera, true);
+      API.toggleVideo(camera, true);
     }
   }
 
@@ -387,7 +387,7 @@ export default class App extends React.Component {
           <h1 className='ui block header center'>{names[this.state.view]}</h1>
         </div>
 
-        {this.state.view === CAMERAS && <CamerasView />}
+        {this.state.view === CAMERAS && <CamerasView serverIP={serverIP} />}
 
         {this.state.view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos')} />}
 

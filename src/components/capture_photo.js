@@ -13,3 +13,8 @@ export default class CapturePhoto extends React.Component {
   }
 
 }
+
+CapturePhoto.propTypes = {
+  capture: React.PropTypes.func.isRequired,
+  camera: React.PropTypes.string.isRequired
+};

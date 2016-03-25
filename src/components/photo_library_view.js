@@ -66,3 +66,7 @@ class PhotoLarge extends React.Component {
     </div>;
   }
 }
+
+PhotoLibraryView.propTypes = {
+  photos: React.PropTypes.arrayOf(React.PropTypes.string).isRequired
+};
