@@ -242,6 +242,12 @@ export default class App extends React.Component {
     this.toggleVideo = this.toggleVideo.bind(this);
     this.capturePhoto = this.capturePhoto.bind(this);
     this.toggleDOFDevice = this.toggleDOFDevice.bind(this);
+    this.checkPassword = this.checkPassword.bind(this);
+  }
+
+  componentWillMount() {
+    if (localStorage.roboOpsPassword)
+      this.checkPassword(localStorage.roboOpsPassword);
   }
 
   componentDidMount() {
@@ -329,6 +335,7 @@ export default class App extends React.Component {
   checkPassword(password) {
     API.checkPassword(password)
       .then(() => {
+        localStorage.setItem('roboOpsPassword', password);
         this.setState({ correctPassword: true});
       })
       .catch(() => {
