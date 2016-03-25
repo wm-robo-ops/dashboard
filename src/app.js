@@ -32,7 +32,6 @@ import dashboardApp from './reducers';
 
 // API
 import Api from './api';
-var API = new Api();
 
 // mock API
 import {
@@ -53,6 +52,7 @@ import VideoPlayer                   from './components/video_player';
 import CamerasView                   from './components/cameras_view';
 import SettingsView                  from './components/settings_view';
 import CapturePhoto                  from './components/capture_photo';
+import PasswordModal                 from './components/password_modal';
 import BatterySparkline              from './components/battery_sparkline';
 import NetworkSparkline              from './components/network_sparkline';
 import PhotoLibraryView              from './components/photo_library_view';
@@ -126,8 +126,10 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   muted: true,
   minBattery: 20,
   photos: [],
-  serverIP: 'localhost'
+  serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com'
 }));
+
+var API = new Api(store.getState().get('serverIP'));
 
 function updateFromServer() {
   API.getStats()
@@ -233,7 +235,8 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       data: store.getState(),
-      view: BIG_DADDY
+      view: BIG_DADDY,
+      correctPassword: false
     };
     this.toggleGPS = this.toggleGPS.bind(this);
     this.toggleVideo = this.toggleVideo.bind(this);
@@ -323,6 +326,16 @@ export default class App extends React.Component {
     API.setIP(ip);
   }
 
+  checkPassword(password) {
+    API.checkPassword(password)
+      .then(() => {
+        this.setState({ correctPassword: true});
+      })
+      .catch(() => {
+        alert('Incorrect Password!');
+      });
+  }
+
   render() {
     var data = this.state.data;
 
@@ -348,6 +361,10 @@ export default class App extends React.Component {
     });
 
     return <div>
+
+      {(!this.state.correctPassword) && <PasswordModal checkPassword={this.checkPassword.bind(this)}/>}
+
+      {this.state.correctPassword && <div>
 
       {(lowBattery && !data.get('muted')) && <audio preload autoPlay>
         <source src='./lowBattery.mp3' type='audio/mpeg'/>
@@ -500,6 +517,8 @@ export default class App extends React.Component {
         </div>}
 
       </div>
+
+      </div>}
 
     </div>;
   }

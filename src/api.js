@@ -1,6 +1,6 @@
 export default class API {
-  constructor() {
-    this.URL = 'http://localhost:5555';
+  constructor(ip) {
+    this.URL = `http://${ip}:5555`;
     this.setIP = this.setIP.bind(this);
   }
 
@@ -114,6 +114,22 @@ export default class API {
         .then(res => res.json())
         .then(data => resolve(data))
         .catch(e => reject(e));
+    });
+  }
+
+  checkPassword(password) {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/password`, {
+        method: 'POST',
+        headers: new Headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ password })
+      })
+        .then(res => res.text())
+        .then(text => {
+          if (text === 'ok') resolve(true);
+          else reject(false);
+        })
+        .catch(() => reject('ERROR: Network error in password request'));
     });
   }
 }
