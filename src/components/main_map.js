@@ -28,7 +28,9 @@ class MainMap extends React.Component {
         data: this.getRockGeoJSON(this.props.rockData),
         type: 'geojson'
       });
-      this.map.addLayer(rocksStyle);
+      this.map.batch(batch => {
+        Object.keys(colors).map(color => batch.addLayer(getRockStyle(color)));
+      });
 
       // vehicles layer
       let { vehicles } = this.props;
@@ -58,7 +60,8 @@ class MainMap extends React.Component {
         return {
           type: 'Feature',
           properties: {
-            id: r.id
+            id: r.id,
+            color: r.color
           },
           geometry: {
             type: 'Point',
@@ -81,7 +84,7 @@ class MainMap extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    if (!this.map.loaded()) {
+    if (!this.map || !this.map.loaded()) {
       return;
     }
     props.vehicles.forEach(v => {
@@ -95,14 +98,15 @@ class MainMap extends React.Component {
   }
 
   mapClick(e) {
-    this.map.featuresAt(e.point, {
-      radius: 1,
-      layer: 'rocks'
-    }, (err, results) => {
-      if (err) console.log(err);
-      if (!results.length) return;
-      this.props.removeRock(results[0].properties.id);
-    });
+    var features = this.map.queryRenderedFeatures(e.point, { layers: Object.keys(colors).map(c => c + 'Rocks' )});
+    if (!features.length) {
+      return;
+    }
+    var feature = features[0];
+    new mapboxgl.Popup()
+      .setLngLat(feature.geometry.coordinates)
+      .setHTML(`${feature.properties.color} rock!`)
+      .addTo(this.map);
   }
 
   render() {
@@ -160,14 +164,24 @@ function createVehicleStyle(v) {
   };
 }
 
-var rocksStyle = {
-  'id': 'rocks',
-  'type': 'circle',
-  'source': 'rocksSource',
-  'filter': ['all', ['==', '$type', 'Point']],
-  'paint': {
-    'circle-radius': 5,
-    'circle-color': '#fff'
-  },
-  'interactive': true
+function getRockStyle(color) {
+  return {
+    'id': color + 'Rocks',
+    'type': 'circle',
+    'source': 'rocksSource',
+    'filter': ['all', ['==', '$type', 'Point'], ['==', 'color', color]],
+    'paint': {
+      'circle-radius': 8,
+      'circle-color': colors[color]
+    }
+  };
+}
+
+const colors = {
+  purple: '#551A8B',
+  orange: '#FFA500',
+  yellow: '#FFFF00',
+  green: '#008000',
+  blue: '#0000FF',
+  red: '#FF0000'
 };

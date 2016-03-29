@@ -58,6 +58,7 @@ import NetworkSparkline              from './components/network_sparkline';
 import PhotoLibraryView              from './components/photo_library_view';
 import RockCoordinatesForm           from './components/rock_coordinates_form';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
+import BearingMap from './components/bearing_map';
 
 const POLL_INTERVAL = 2000; // milliseconds to wait between polling vehicles
 
@@ -87,7 +88,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevelHistory: [0, 100],
     location: [0, 0],
     networkSpeed: [0],
-    color: '#00ff00',
+    color: '#000000',
     pitch: [0, 0, 0]
   },
   scout: {
@@ -95,7 +96,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevelHistory: [0, 100],
     location: [0, 0],
     networkSpeed: [0],
-    color: '#ff00ff',
+    color: '#000000',
     pitch: [0, 0, 0]
   },
   flyer: {
@@ -103,7 +104,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     batteryLevelHistory: [0, 100],
     location: [0, 0],
     networkSpeed: [0],
-    color: '#ffff00',
+    color: '#000000',
     pitch: [0, 0, 0]
   },
   rocks: [],
@@ -336,9 +337,10 @@ export default class App extends React.Component {
     API.checkPassword(password)
       .then(() => {
         localStorage.setItem('roboOpsPassword', password);
-        this.setState({ correctPassword: true});
+        this.setState({correctPassword: true});
       })
-      .catch(() => {
+      .catch(e => {
+        console.log(e);
         alert('Incorrect Password!');
       });
   }
@@ -355,6 +357,9 @@ export default class App extends React.Component {
       var networkSpeed = data.getIn([this.state.view, 'networkSpeed']).toJS();
       var vehicleLocations = this.getVehicleLocationData();
       var rockData = data.get('rocks').toJS();
+      var loc = data.getIn([this.state.view, 'location']).toJS();
+      var bearing = data.getIn([this.state.view, 'pitch']).get(0);
+      var color = data.getIn([this.state.view, 'color']);
     }
 
     if (this.state.view === SETTINGS) {
@@ -369,9 +374,9 @@ export default class App extends React.Component {
 
     return <div>
 
-      {(!this.state.correctPassword) && <PasswordModal checkPassword={this.checkPassword.bind(this)}/>}
+      {(this.state.correctPassword === false) && <PasswordModal checkPassword={this.checkPassword.bind(this)}/>}
 
-      {this.state.correctPassword && <div>
+      {(this.state.correctPassword === true) && <div>
 
       {(lowBattery && !data.get('muted')) && <audio preload autoPlay>
         <source src='./lowBattery.mp3' type='audio/mpeg'/>
@@ -512,10 +517,10 @@ export default class App extends React.Component {
             </div>
 
             {/* bearing map */}
-            <div className='five wide column'>
+            <div className='seven wide column'>
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>bearing</h1>
-                {/*<BearingMap bearing={bearing} center={loc} markerColor={'#ff00ff'}/>*/}
+                {<BearingMap bearing={bearing} center={loc} markerColor={color}/>}
               </div>
             </div>
 

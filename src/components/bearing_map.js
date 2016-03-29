@@ -5,6 +5,7 @@ export default class BearingMap extends React.Component {
 
   constructor(props) {
     super(props);
+    this.getGeoJSON = this.getGeoJSON.bind(this);
   }
 
   componentDidMount() {
@@ -14,8 +15,10 @@ export default class BearingMap extends React.Component {
       container: this.refs.map,
       style: 'mapbox://styles/mapbox/satellite-v8',
       center: [-95.081320, 29.564835],
-      zoom: 16
+      zoom: 18.5,
+      pitch: 150
     });
+    this.map.setPitch(150);
     this.setStyle();
   }
 
@@ -48,13 +51,20 @@ export default class BearingMap extends React.Component {
   }
 
   componentWillReceiveProps(props) {
+    if (!this.map || !this.map.loaded()) {
+      return;
+    }
     this.map.setBearing(props.bearing);
-    //this.map.setCenter(props.center);
+    this.map.setCenter(props.center);
+  }
+
+  componentWillUnmount() {
+    this.map = null;
   }
 
   render() {
-    return <div style={{border: '5px solid #000', width: '33%'}}>
-      <div style={{width: '100%', height: '100px'}} ref='map' id='map'></div>
+    return <div style={{width: '100%'}}>
+      <div style={{width: '100%', height: '300px'}} ref='map' id='map'></div>
     </div>;
   }
 
@@ -75,6 +85,6 @@ function createMarkerStyle(color) {
 }
 
 BearingMap.propTypes = {
-  bearing: React.propTypes.number.isRequired,
-  markerColor: React.propTypes.string.isRequired
+  bearing: React.PropTypes.number.isRequired,
+  markerColor: React.PropTypes.string.isRequired
 };
