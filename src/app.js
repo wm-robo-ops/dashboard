@@ -131,6 +131,9 @@ var store = createStore(dashboardApp, Immutable.fromJS({
 }));
 
 var API = new Api(store.getState().get('serverIP'));
+window.deleteRock = function(id) {
+  API.deleteRock(id);
+};
 
 function updateFromServer() {
   API.getStats()

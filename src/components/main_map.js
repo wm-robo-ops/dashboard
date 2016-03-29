@@ -103,9 +103,19 @@ class MainMap extends React.Component {
       return;
     }
     var feature = features[0];
+    var content = '<div style="text-align: center">' +
+                    '<div style="padding: 10px">' +
+                      feature.properties.color + ' rock!' +
+                    '</div>' +
+                    '<div >' +
+                      '<button onclick="window.deleteRock(\'' + feature.properties.id + '\')">' +
+                        'delete' +
+                      '</button>' +
+                    '</div>' +
+                  '</div>';
     new mapboxgl.Popup()
       .setLngLat(feature.geometry.coordinates)
-      .setHTML(`${feature.properties.color} rock!`)
+      .setHTML(content)
       .addTo(this.map);
   }
 
