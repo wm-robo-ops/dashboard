@@ -9,12 +9,13 @@ export default class VideoPlayer extends React.Component {
 
   componentDidMount() {
     var address = `ws://${this.props.serverIP}:8084`;
-    var client = new WebSocket(address);
+    this.client = new WebSocket(address);
     var canvas = this.refs.videoCanvas;
-    this.player = new jsmpeg(client, { canvas }); // eslint-disable-line new-cap, no-unused-vars
+    this.player = new jsmpeg(this.client, { canvas }); // eslint-disable-line new-cap, no-unused-vars
   }
 
   componentWillUnmount() {
+    this.client.close();
     this.player = null; // force GC on jsmpeg
   }
 
