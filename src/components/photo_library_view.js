@@ -16,7 +16,10 @@ export default class PhotoLibraryView extends React.Component {
   }
 
   enlarge(pic) {
-    this.setState({ selected: true, active: pic });
+    if (this.state.selected)
+      this.setState({ selected: false });
+    else
+      this.setState({ selected: true, active: pic });
   }
 
   componentDidMount() {
@@ -29,44 +32,38 @@ export default class PhotoLibraryView extends React.Component {
 
   render() {
     return <div className='ui grid'>
-      {this.state.selected && <PhotoLarge serverIP={this.props.serverIP} url={this.state.active} />}
-      {!this.state.selected && this.props.photos.map(p => <PhotoCard serverIP={this.props.serverIP} key={p} url={p} enlarge={this.enlarge}/>)}
+      {this.state.selected && <PhotoCard serverIP={this.props.serverIP} url={this.state.active} enlarge={this.enlarge} enlarged={true}/>}
+      {!this.state.selected && this.props.photos.map(p => <PhotoCard serverIP={this.props.serverIP} key={p} url={p} enlarge={this.enlarge} enlarged={false}/>)}
     </div>;
   }
 }
 
 class PhotoCard extends React.Component {
   render() {
-    var { url } = this.props;
+    var { url, enlarged } = this.props;
     var idx = url.lastIndexOf('.');
     var data = url.slice(0, idx).split('_');
     var camera = data[0].replace(/~/g, ' ');
-    var time = data[1];
+    var time = data[1].replace(/-/g, ':');
     var lon = data[2];
     var lat = data[3];
     var bearing = data[4];
-    return <div className='five wide column'>
-      <div className='ui card' onClick={this.props.enlarge.bind(this, url)}>
+    return <div className={`${enlarged ? 'eighteen' : 'five'} wide column`}>
+      <div className='ui fluid blue card' onClick={this.props.enlarge.bind(this, url)}>
+        <div className='content'>
+          {camera}
+          <div className='right floated meta'>{time}</div>
+        </div>
         <div className='image'>
           <img src={`http://${this.props.serverIP}:5555/${url}`}/>
-            <div className='content'>
-              <div className='description'>
-                <div>camera: {camera}</div>
-                <div>time: {time}</div>
-                <div>coordinates: {`(${lon}, ${lat})`}</div>
-                <div>bearing: {bearing}</div>
-              </div>
-            </div>
+        </div>
+        <div className='extra content'>
+          <div>coordinates:</div>
+          <div>{`(${lon}, ${lat})`}</div>
+          <div>bearing:</div>
+          <div>{bearing}</div>
         </div>
       </div>
-    </div>;
-  }
-}
-
-class PhotoLarge extends React.Component {
-  render() {
-    return <div>
-      <img style={{width: '100%'}} src={`http://${this.props.serverIP}:5555/${this.props.url}`}/>
     </div>;
   }
 }
