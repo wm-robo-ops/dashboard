@@ -64,18 +64,6 @@ const BIG_DADDY = 'bigDaddy';
 const PHOTO_LIBRARY = 'photoLibrary';
 const vehicles = [BIG_DADDY, SCOUT, FLYER];
 
-const BIG_DADDY_MAIN = 'BIG_DADDY_MAIN';
-const BIG_DADDY_ARM = 'BIG_DADDY_ARM';
-const SCOUT_1 = 'SCOUT_1';
-const FLYER_1 = 'FLYER_1';
-
-const photoCameras = {
-  [BIG_DADDY_MAIN]: { vehicle: BIG_DADDY },
-  [BIG_DADDY_ARM]: { vehicle: BIG_DADDY },
-  [SCOUT_1]: { vehicle: SCOUT },
-  [FLYER_1]: { vehicle: FLYER }
-};
-
 var store = createStore(dashboardApp, Immutable.fromJS({
   bigDaddy: {
     batteryLevel: 100,
@@ -317,8 +305,7 @@ export default class App extends React.Component {
   }
 
   capturePhoto(camera) {
-    console.log(photoCameras[camera]);
-    var vehicle = photoCameras[camera].vehicle;
+    var vehicle = store.getState().getIn(['cameras', camera, 'vehicle']);
     var date = new Date();
     var time = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
     var lonLat = this.state.data.getIn([vehicle, 'location']);
@@ -429,7 +416,7 @@ export default class App extends React.Component {
 
         {view === CAMERAS && <CamerasView serverIP={serverIP} capturePhoto={this.capturePhoto} cameras={cameras}/>}
 
-        {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos')} serverIP={serverIP} />}
+        {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos').toJS()} serverIP={serverIP} />}
 
         {view === SETTINGS && <SettingsView
           cameras={cameras}

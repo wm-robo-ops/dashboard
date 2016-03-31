@@ -28,7 +28,7 @@ function dashboardApp(state, action) {
       state = state.setIn([vehicle, 'batteryLevel'], action.batteryLevel);
       return state.setIn([vehicle, 'batteryLevelHistory'], state.getIn([vehicle, 'batteryLevelHistory']).push(action.batteryLevel));
     case LOCATION_UPDATE:
-      return state.setIn([vehicle, 'location'], Immutable.List(action.location)); // eslint-disable-line new-cap
+      return state.setIn([vehicle, 'location'], Immutable.List(action.location));
     case NETWORK_SPEED_UPDATE:
       let s = state.setIn([vehicle, 'networkSpeed'], state.getIn([vehicle, 'networkSpeed']).push(Immutable.fromJS(action.data)));
       if (s.getIn([vehicle, 'networkSpeed']).size > 10) {
@@ -38,7 +38,7 @@ function dashboardApp(state, action) {
     case UPDATE_BEARING:
       return state.setIn([vehicle, 'bearing'], action.bearing);
     case PITCH_UPDATE:
-      return state.setIn([vehicle, 'pitch'], Immutable.List(action.pitch)); // eslint-disable-line new-cap
+      return state.setIn([vehicle, 'pitch'], Immutable.List(action.pitch));
     case ADD_ROCK:
       let data = {
         lat: action.lat,
@@ -46,7 +46,7 @@ function dashboardApp(state, action) {
         color: action.color,
         id: action.id
       };
-      return state.set('rocks', state.get('rocks').push(Immutable.fromJS(data))); // eslint-disable-line new-cap
+      return state.set('rocks', state.get('rocks').push(Immutable.fromJS(data)));
     case REMOVE_ROCK:
       return state.set('rocks', state.get('rocks').filter(r => r.get('id') !== action.id));
     case SET_ROCKS:
@@ -70,7 +70,7 @@ function dashboardApp(state, action) {
     case SET_ALL_DOF_DEVICE:
       return state.set('dofDevice', Immutable.fromJS(action.dofDevice));
     case UPDATE_PHOTOS:
-      return state.set('photos', action.photos);
+      return state.set('photos', Immutable.List(action.photos));
     case SET_SERVER_IP:
       return state.set('serverIP', action.ip);
   }

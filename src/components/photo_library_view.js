@@ -37,16 +37,18 @@ export default class PhotoLibraryView extends React.Component {
 
 class PhotoCard extends React.Component {
   render() {
-    var data = this.props.url.split('.')[0].split('_');
-    var camera = data[0];
+    var { url } = this.props;
+    var idx = url.lastIndexOf('.');
+    var data = url.slice(0, idx).split('_');
+    var camera = data[0].replace(/~/g, ' ');
     var time = data[1];
     var lon = data[2];
     var lat = data[3];
     var bearing = data[4];
     return <div className='five wide column'>
-      <div className='ui card' onClick={this.props.enlarge.bind(this, this.props.url)}>
+      <div className='ui card' onClick={this.props.enlarge.bind(this, url)}>
         <div className='image'>
-          <img src={`http://${this.props.serverIP}:5555/${this.props.url}`}/>
+          <img src={`http://${this.props.serverIP}:5555/${url}`}/>
             <div className='content'>
               <div className='description'>
                 <div>camera: {camera}</div>

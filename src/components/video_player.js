@@ -12,7 +12,7 @@ export default class VideoPlayer extends React.Component {
     var address = `ws://${this.props.serverIP}:8084`;
     this.client = new WebSocket(address);
     var canvas = this.refs.videoCanvas;
-    this.player = new jsmpeg(this.client, { canvas }); // eslint-disable-line new-cap, no-unused-vars
+    this.player = new jsmpeg(this.client, { canvas });
   }
 
   componentWillUnmount() {
