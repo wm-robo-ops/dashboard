@@ -44,7 +44,7 @@ export default class CamerasView extends React.Component {
 
       {!this.state.selected && <div className='ui grid'>
 
-        {Object.keys(cameras).map(cam => <div key={cam} className='eight wide column' onClick={this.enlarge.bind(this, cameras[cam].vehicle)}>
+        {Object.keys(cameras).map(cam => <div key={cam} className='eight wide column' onClick={this.enlarge.bind(this, cam)}>
           <VideoPlayer
             name={cameras[cam].vehicle}
             nameReadable={cameras[cam].nameReadable}
