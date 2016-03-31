@@ -29,29 +29,28 @@ export default class CamerasView extends React.Component {
   }
 
   render() {
+    var { cameras } = this.props;
+    var { active } = this.state;
+
     return <div>
 
       {this.state.selected && <div onClick={this.onEscape}>
-        <VideoPlayer serverIP={this.props.serverIP} name={this.state.active}/>
+        <VideoPlayer
+          serverIP={this.props.serverIP}
+          name={cameras[active].vehicle}
+          nameReadable={cameras[active].nameReadable}
+          capturePhoto={this.props.capturePhoto}/>
       </div>}
 
       {!this.state.selected && <div className='ui grid'>
 
-        <div className='eight wide column' onClick={this.enlarge.bind(this, 'Big Daddy Main')}>
-          <VideoPlayer name='Big Daddy Main' serverIP={this.props.serverIP}/>
-        </div>
-
-        <div className='eight wide column' onClick={this.enlarge.bind(this, 'Big Daddy Arm')}>
-          <VideoPlayer name='Big Daddy Arm' serverIP={this.props.serverIP}/>
-        </div>
-
-        <div className='eight wide column' onClick={this.enlarge.bind(this, 'Scout')}>
-          <VideoPlayer name='Scout' serverIP={this.props.serverIP}/>
-        </div>
-
-        <div className='eight wide column' onClick={this.enlarge.bind(this, 'Flyer')}>
-          <VideoPlayer name='Flyer' serverIP={this.props.serverIP}/>
-        </div>
+        {Object.keys(cameras).map(cam => <div key={cam} className='eight wide column' onClick={this.enlarge.bind(this, cameras[cam].vehicle)}>
+          <VideoPlayer
+            name={cameras[cam].vehicle}
+            nameReadable={cameras[cam].nameReadable}
+            serverIP={this.props.serverIP}
+            capturePhoto={this.props.capturePhoto}/>
+        </div>)}
 
       </div>}
 
@@ -61,5 +60,7 @@ export default class CamerasView extends React.Component {
 }
 
 CamerasView.propTypes = {
-  serverIP: React.PropTypes.string.isRequired
+  serverIP: React.PropTypes.string.isRequired,
+  capturePhoto: React.PropTypes.func.isRequired,
+  cameras: React.PropTypes.object.isRequired
 };

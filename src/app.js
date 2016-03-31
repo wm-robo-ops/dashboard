@@ -43,22 +43,16 @@ import {
 } from './mock_client';
 
 // components
-import Battery                       from './components/battery';
 import MainMap                       from './components/main_map';
 import RockList                      from './components/rock_list';
-import PanControl                    from './components/pan_control';
-import ZoomControl                   from './components/zoom_control';
+import BearingMap                    from './components/bearing_map';
+import RockAddForm                   from './components/rock_add_form';
 import VideoPlayer                   from './components/video_player';
 import CamerasView                   from './components/cameras_view';
 import SettingsView                  from './components/settings_view';
-import CapturePhoto                  from './components/capture_photo';
 import PasswordModal                 from './components/password_modal';
-import BatterySparkline              from './components/battery_sparkline';
-import NetworkSparkline              from './components/network_sparkline';
 import PhotoLibraryView              from './components/photo_library_view';
-import RockCoordinatesForm           from './components/rock_coordinates_form';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
-import BearingMap from './components/bearing_map';
 
 const POLL_INTERVAL = 2000; // milliseconds to wait between polling vehicles
 
@@ -109,10 +103,10 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   rocks: [],
   cameras: {
-    bigDaddyMain: { on: false, ip: '' },
-    bigDaddyArm: { on: false, ip: '' },
-    scout: { on: false, ip: '' },
-    flyer: { on: false, ip: '' }
+    bigDaddyMain: { vehicle: BIG_DADDY, on: false, ip: '', nameReadable: 'Big Daddy Main' },
+    bigDaddyArm: { vehicle: BIG_DADDY, on: false, ip: '', nameReadable: 'Big Daddy Arm' },
+    scout: { vehicle: SCOUT, on: false, ip: '', nameReadable: 'Scout Main' },
+    flyer: { vehicle: FLYER, on: false, ip: '', nameReadable: 'Flyer Main' }
   },
   gps: {
     bigDaddy: false,
@@ -143,17 +137,19 @@ function updateFromServer() {
       store.dispatch(setAllGPS(stats.gps));
       store.dispatch(setAllDOFDevice(stats.dofDevice));
       for (var vehicle in vs) {
+        /*
         store.dispatch(updateBattery({
           vehicle,
           batteryLevel: vs[vehicle].batteryLevel
         }));
-        store.dispatch(updateLocation({
-          vehicle,
-          location: vs[vehicle].location
-        }));
         store.dispatch(updateNetworkSpeed({
           vehicle,
           data: vs[vehicle].networkSpeed
+        }));
+        */
+        store.dispatch(updateLocation({
+          vehicle,
+          location: vs[vehicle].location
         }));
         store.dispatch(updateBearing({
           vehicle,
@@ -321,6 +317,7 @@ export default class App extends React.Component {
   }
 
   capturePhoto(camera) {
+    console.log(photoCameras[camera]);
     var vehicle = photoCameras[camera].vehicle;
     var date = new Date();
     var time = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
@@ -350,30 +347,41 @@ export default class App extends React.Component {
 
   render() {
     var data = this.state.data;
+    var view = this.state.view;
 
-    var minBattery = data.get('minBattery');
+    //var minBattery = data.get('minBattery');
     var serverIP = data.get('serverIP');
 
-    if (vehicles.some(v => v === this.state.view)) {
-      var batteryLevel = data.getIn([this.state.view, 'batteryLevel']);
-      var batteryLevelHistory = data.getIn([this.state.view, 'batteryLevelHistory']).toJS();
-      var networkSpeed = data.getIn([this.state.view, 'networkSpeed']).toJS();
+    var cameras = data.get('cameras').toJS();
+
+    if (vehicles.some(v => v === view)) {
+      //var batteryLevel = data.getIn([view, 'batteryLevel']);
+      //var batteryLevelHistory = data.getIn([view, 'batteryLevelHistory']).toJS();
+      //var networkSpeed = data.getIn([view, 'networkSpeed']).toJS();
       var vehicleLocations = this.getVehicleLocationData();
       var rockData = data.get('rocks').toJS();
-      var loc = data.getIn([this.state.view, 'location']).toJS();
-      var bearing = data.getIn([this.state.view, 'pitch']).get(0);
-      var color = data.getIn([this.state.view, 'color']);
+      var loc = data.getIn([view, 'location']).toJS();
+      var bearing = data.getIn([view, 'pitch']).get(0);
+      var color = data.getIn([view, 'color']);
+      cameras = Object.keys(cameras)
+        .map(c => {
+          var cam = cameras[c];
+          cam.name = c;
+          return cam;
+        })
+        .filter(c => c.vehicle === view);
     }
 
-    if (this.state.view === SETTINGS) {
-      var cameras = data.get('cameras').toJS();
+    if (view === SETTINGS) {
       var gps = data.get('gps').toJS();
       var dofDevice = data.get('dofDevice').toJS();
     }
 
+    /*
     var lowBattery = vehicles.some(v => {
       return data.getIn([v, 'batteryLevel']) < data.get('minBattery');
     });
+    */
 
     return <div>
 
@@ -381,33 +389,33 @@ export default class App extends React.Component {
 
       {(this.state.correctPassword === true) && <div>
 
-      {(lowBattery && !data.get('muted')) && <audio preload autoPlay>
+      {/*(lowBattery && !data.get('muted')) && <audio preload autoPlay>
         <source src='./lowBattery.mp3' type='audio/mpeg'/>
         Your browser does not support the audio tag
-      </audio>}
+      </audio>*/}
 
       {/* sidebar */}
       <div className='ui sidebar inverted vertical menu visible very thin'>
-        <div className='item'><h2>W&M Robo Ops</h2></div>
-        <div onClick={this.changeView.bind(this, CAMERAS)} className={`item ${this.state.view === CAMERAS ? 'active' : ''}`}>
+        <div className='item'><h2>Robo Ops</h2></div>
+        <div onClick={this.changeView.bind(this, CAMERAS)} className={`item ${view === CAMERAS ? 'active' : ''}`}>
           <div>Cameras</div>
         </div>
-        <div onClick={this.changeView.bind(this, BIG_DADDY)} className={`item ${this.state.view === BIG_DADDY ? 'active' : ''}`}>
-          {data.getIn([BIG_DADDY, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>}
+        <div onClick={this.changeView.bind(this, BIG_DADDY)} className={`item ${view === BIG_DADDY ? 'active' : ''}`}>
+          {/*data.getIn([BIG_DADDY, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>*/}
           Big Daddy
         </div>
-        <div onClick={this.changeView.bind(this, SCOUT)} className={`item ${this.state.view === SCOUT ? 'active' : ''}`}>
-          {data.getIn([SCOUT, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>}
+        <div onClick={this.changeView.bind(this, SCOUT)} className={`item ${view === SCOUT ? 'active' : ''}`}>
+          {/*data.getIn([SCOUT, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>*/}
           Scout
         </div>
-        <div onClick={this.changeView.bind(this, FLYER)} className={`item ${this.state.view === FLYER ? 'active' : ''}`}>
-          {data.getIn([FLYER, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>}
+        <div onClick={this.changeView.bind(this, FLYER)} className={`item ${view === FLYER ? 'active' : ''}`}>
+          {/*data.getIn([FLYER, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>*/}
           Flyer
         </div>
-        <div onClick={this.changeView.bind(this, PHOTO_LIBRARY)} className={`item ${this.state.view === PHOTO_LIBRARY ? 'active' : ''}`}>
+        <div onClick={this.changeView.bind(this, PHOTO_LIBRARY)} className={`item ${view === PHOTO_LIBRARY ? 'active' : ''}`}>
           Photo Library
         </div>
-        <div onClick={this.changeView.bind(this, SETTINGS)} className={`item ${this.state.view === SETTINGS ? 'active' : ''}`}>
+        <div onClick={this.changeView.bind(this, SETTINGS)} className={`item ${view === SETTINGS ? 'active' : ''}`}>
           Settings
         </div>
       </div>
@@ -416,14 +424,14 @@ export default class App extends React.Component {
       <div className='pusher' style={{padding: '25px', marginLeft: '210px'}}>
 
         <div style={{marginBottom: '20px'}}>
-          <h1 className='ui block header center'>{names[this.state.view]}</h1>
+          <h1 className='ui block header center'>{names[view]}</h1>
         </div>
 
-        {this.state.view === CAMERAS && <CamerasView serverIP={serverIP} />}
+        {view === CAMERAS && <CamerasView serverIP={serverIP} capturePhoto={this.capturePhoto} cameras={cameras}/>}
 
-        {this.state.view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos')} serverIP={serverIP} />}
+        {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos')} serverIP={serverIP} />}
 
-        {this.state.view === SETTINGS && <SettingsView
+        {view === SETTINGS && <SettingsView
           cameras={cameras}
           gps={gps}
           dofDevice={dofDevice}
@@ -439,89 +447,78 @@ export default class App extends React.Component {
           setServerIP={this.setServerIP}
         />}
 
-        {vehicles.some(v => v === this.state.view) && <div>
+        {vehicles.some(v => v === view) && <div>
 
           <div className='ui grid'>
 
-            <div className='three wide column'>
-              {/* zoom control */}
+            {/*<div className='three wide column'>
               <div className='ui teal padded segment'>
                 <h1 className='ui dividing header'>zoom</h1>
                 <ZoomControl />
               </div>
 
-              {/* pan control */}
               <div className='ui teal padded segment'>
                 <h1 className='ui dividing header'>pan</h1>
                 <PanControl />
               </div>
-            </div>
+            </div>*/}
 
             {/* video */}
-            <div className='seven wide column'>
-              <VideoPlayer serverIP={serverIP} name='camera'/>
+            {cameras.map(cam => <div className='eight wide column' key={cam.name}>
+              <VideoPlayer serverIP={serverIP} name={cam.name} capturePhoto={this.capturePhoto} nameReadable={cam.nameReadable}/>
             </div>
+            )}
 
             {/* location */}
-            <div className='six wide column'>
+            <div className='eight wide column'>
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>location</h1>
                 <MainMap vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
               </div>
             </div>
 
-            {/* rock form */}
-            <div className='five wide column'>
+            <div className='eight wide column'>
+              {/* rock form */}
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>add rock</h1>
-                <RockCoordinatesForm submit={this.addRock} vehicleLocations={vehicleLocations} colors={colors}/>
+                <RockAddForm submit={this.addRock} vehicleLocations={vehicleLocations} colors={colors}/>
               </div>
-            </div>
 
-            {/* battery level */}
-            <div className='five wide column'>
-              <div className='ui pink padded segment'>
-                <h1 className='ui dividing header'>battery</h1>
-                <Battery batteryLevel={batteryLevel}/>
-                <BatterySparkline level={batteryLevelHistory}/>
-              </div>
-            </div>
-
-            {/* bearing-pitch-roll visualization */}
-            <div className='six wide column'>
-              <div className='ui red padded segment'>
-                <h1 className='ui dividing header'>bearing, pitch, roll</h1>
-                <BearingPitchRollVisualization serverIP={serverIP} />
-              </div>
-            </div>
-
-            {/* rock list */}
-            <div className='six wide column'>
-              <div className='ui red padded segment'>
+              {/* rock list */}
+              <div className='ui brown padded segment'>
                 <h1 className='ui dividing header'>Rocks</h1>
                 <RockList rocks={rockData} removeRock={this.removeRock} />
               </div>
             </div>
 
+            {/* battery level */}
+            {/*<div className='five wide column'>
+              <div className='ui pink padded segment'>
+                <h1 className='ui dividing header'>battery</h1>
+                <Battery batteryLevel={batteryLevel}/>
+                <BatterySparkline level={batteryLevelHistory}/>
+              </div>
+            </div>*/}
+
+            {/* bearing-pitch-roll visualization */}
+            <div className='eight wide column'>
+              <div className='ui blue padded segment'>
+                <h1 className='ui dividing header'>bearing, pitch, roll</h1>
+                <BearingPitchRollVisualization serverIP={serverIP} />
+              </div>
+            </div>
+
             {/* network and quality*/}
-            <div className='five wide column'>
+            {/*<div className='five wide column'>
               <div className='ui purple padded segment'>
                 <h1 className='ui dividing header'>network</h1>
                 <NetworkSparkline speed={networkSpeed}/>
               </div>
-            </div>
-
-            {/* capature photo */}
-            <div className='five wide column'>
-              <div className='ui red padded segment'>
-                <h1 className='ui dividing header'>capture photo</h1>
-                <CapturePhoto camera={BIG_DADDY_MAIN} capture={this.capturePhoto}/>
-              </div>
-            </div>
+            </div>*/}
 
             {/* bearing map */}
-            <div className='seven wide column'>
-              <div className='ui red padded segment'>
+            <div className='eight wide column'>
+              <div className='ui yellow padded segment'>
                 <h1 className='ui dividing header'>bearing</h1>
                 {<BearingMap bearing={bearing} center={loc} markerColor={color}/>}
               </div>

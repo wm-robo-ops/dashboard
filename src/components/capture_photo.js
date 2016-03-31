@@ -8,7 +8,7 @@ export default class CapturePhoto extends React.Component {
 
   render() {
     return <div>
-      <button onClick={this.props.capture.bind(this, this.props.camera)}>{this.props.camera}</button>
+      <button className='fluid ui button basic blue' onClick={this.props.capture.bind(this, this.props.camera)}>Capture Photo</button>
     </div>;
   }
 

@@ -122,7 +122,7 @@ class MainMap extends React.Component {
   render() {
     let { vehicles } = this.props;
     return <div>
-      <div style={{width: '100%', height: '300px'}} ref='map' id='map'></div>
+      <div style={{width: '100%', height: '400px'}} ref='map' id='map'></div>
       {/* legend */}
       <div>
         {vehicles.map(v => <div key={v.vehicle} style={{padding: '5px'}}>

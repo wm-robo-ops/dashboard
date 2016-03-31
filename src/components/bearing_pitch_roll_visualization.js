@@ -57,7 +57,7 @@ export default class BearingPitchRollVisualization extends React.Component {
 
     if (!window.renderer)
       window.renderer = new THREE.WebGLRenderer();
-    window.renderer.setSize(this.refs.container.parentNode.offsetWidth, 220);
+    window.renderer.setSize(this.refs.container.parentNode.offsetWidth, 400);
 
     this.refs.container.appendChild(window.renderer.domElement);
   }
