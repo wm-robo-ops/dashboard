@@ -35,10 +35,11 @@ import BearingMap from './components/bearing_map';
 import RockAddForm from './components/rock_add_form';
 import VideoPlayer from './components/video_player';
 import CamerasView from './components/cameras_view';
+import DeviceToggle from './components/device_toggle';
 import SettingsView from './components/settings_view';
 import PasswordModal from './components/password_modal';
 import PhotoLibraryView from './components/photo_library_view';
-import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
+import DOFDeviceVisualization from './components/dof_device_visualization';
 
 const POLL_INTERVAL = 2000;
 
@@ -111,14 +112,14 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     }
   },
   gps: {
-    bigDaddy: { on: false, port: 4001 },
-    scout: { on: false, port: 4002 },
-    flyer: { on: false, port: 4003 }
+    bigDaddy: { on: false, port: 4001, name: 'bigDaddy' },
+    scout: { on: false, port: 4002, name: 'scout' },
+    flyer: { on: false, port: 4003, name: 'flyer' }
   },
   dofDevice: {
-    bigDaddy: { on: false, port: 3001 },
-    scout: { on: false, port: 3002 },
-    flyer: { on: false, port: 3003 }
+    bigDaddy: { on: false, port: 3001, name: 'bigDaddy' },
+    scout: { on: false, port: 3002, name: 'scout' },
+    flyer: { on: false, port: 3003, name: 'flyer' }
   },
   photos: [],
   serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com'
@@ -209,7 +210,7 @@ export default class App extends React.Component {
       correctPassword: false
     };
     this.toggleGPS = this.toggleGPS.bind(this);
-    this.toggleVideo = this.toggleVideo.bind(this);
+    this.toggleCamera = this.toggleCamera.bind(this);
     this.capturePhoto = this.capturePhoto.bind(this);
     this.toggleDOFDevice = this.toggleDOFDevice.bind(this);
     this.checkPassword = this.checkPassword.bind(this);
@@ -253,7 +254,7 @@ export default class App extends React.Component {
     API.deleteRock(id);
   }
 
-  toggleVideo(camera) {
+  toggleCamera(camera) {
     if (this.state.data.getIn(['cameras', camera, 'on'])) {
       store.dispatch(toggleVideo(camera));
       API.toggleVideo(camera, false);
@@ -324,26 +325,30 @@ export default class App extends React.Component {
     var serverIP = data.get('serverIP');
 
     var cameras = data.get('cameras').toJS();
+    cameras = Object.keys(cameras)
+      .map(c => {
+        var cam = cameras[c];
+        cam.name = c;
+        return cam;
+      });
 
     if (vehicles.some(v => v === view)) {
       var vehicleLocations = this.getVehicleLocationData();
       var rockData = data.get('rocks').toJS();
       var loc = data.getIn([view, 'location']).toJS();
       var bearing = data.getIn([view, 'pitch']).get(0);
+      var gpsOn = data.getIn(['gps', view, 'on']);
       var color = data.getIn([view, 'color']);
-      cameras = Object.keys(cameras)
-        .map(c => {
-          var cam = cameras[c];
-          cam.name = c;
-          return cam;
-        })
-        .filter(c => c.vehicle === view);
+      var dofData = data.getIn(['dofDevice', view]).toJS();
+      cameras = cameras.filter(c => c.vehicle === view);
     }
 
     if (view === SETTINGS) {
       var gps = data.get('gps').toJS();
       var dofDevice = data.get('dofDevice').toJS();
     }
+
+    var isActive = v => v === view ? 'active' : '';
 
     return <div>
 
@@ -354,22 +359,22 @@ export default class App extends React.Component {
       {/* sidebar */}
       <div className='ui sidebar inverted vertical menu visible very thin'>
         <div className='item'><h2>Robo Ops</h2></div>
-        <div onClick={this.changeView.bind(this, CAMERAS)} className={`item ${view === CAMERAS ? 'active' : ''}`}>
+        <div onClick={this.changeView.bind(this, CAMERAS)} className={`item ${isActive(CAMERAS)}`}>
           <div>Cameras</div>
         </div>
-        <div onClick={this.changeView.bind(this, BIG_DADDY)} className={`item ${view === BIG_DADDY ? 'active' : ''}`}>
+        <div onClick={this.changeView.bind(this, BIG_DADDY)} className={`item ${isActive(BIG_DADDY)}`}>
           Big Daddy
         </div>
-        <div onClick={this.changeView.bind(this, SCOUT)} className={`item ${view === SCOUT ? 'active' : ''}`}>
+        <div onClick={this.changeView.bind(this, SCOUT)} className={`item ${isActive(SCOUT)}`}>
           Scout
         </div>
-        <div onClick={this.changeView.bind(this, FLYER)} className={`item ${view === FLYER ? 'active' : ''}`}>
+        <div onClick={this.changeView.bind(this, FLYER)} className={`item ${isActive(FLYER)}`}>
           Flyer
         </div>
-        <div onClick={this.changeView.bind(this, PHOTO_LIBRARY)} className={`item ${view === PHOTO_LIBRARY ? 'active' : ''}`}>
+        <div onClick={this.changeView.bind(this, PHOTO_LIBRARY)} className={`item ${isActive(PHOTO_LIBRARY)}`}>
           Photo Library
         </div>
-        <div onClick={this.changeView.bind(this, SETTINGS)} className={`item ${view === SETTINGS ? 'active' : ''}`}>
+        <div onClick={this.changeView.bind(this, SETTINGS)} className={`item ${isActive(SETTINGS)}`}>
           Settings
         </div>
       </div>
@@ -380,17 +385,16 @@ export default class App extends React.Component {
           <h1 className='ui block header center'>{names[view]}</h1>
         </div>
 
-        {view === CAMERAS && <CamerasView serverIP={serverIP} capturePhoto={this.capturePhoto} cameras={cameras}/>}
+        {view === CAMERAS && <CamerasView
+          serverIP={serverIP}
+          capturePhoto={this.capturePhoto}
+          cameras={cameras}
+          toggle={this.toggleCamera}
+        />}
 
         {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos').toJS()} serverIP={serverIP} />}
 
         {view === SETTINGS && <SettingsView
-          cameras={cameras}
-          gps={gps}
-          dofDevice={dofDevice}
-          toggleVideo={this.toggleVideo}
-          toggleDOFDevice={this.toggleDOFDevice}
-          toggleGPS={this.toggleGPS}
           serverIP={serverIP}
           setServerIP={this.setServerIP}
         />}
@@ -403,12 +407,10 @@ export default class App extends React.Component {
             {cameras.map(cam => <div className='eight wide column' key={cam.name}>
               <VideoPlayer
                 serverIP={serverIP}
-                serverPort={cam.port}
-                name={cam.name}
                 capturePhoto={this.capturePhoto}
-                nameReadable={cam.nameReadable}
                 changeFrameRate={this.changeFrameRate}
-                frameRate={cam.frameRate}/>
+                cameraData={cam}
+                toggle={this.toggleCamera}/>
             </div>
             )}
 
@@ -416,6 +418,7 @@ export default class App extends React.Component {
             <div className='eight wide column'>
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>location</h1>
+                <DeviceToggle checked={gpsOn} onChange={this.toggleGPS} name={view}/>
                 <MainMap vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
               </div>
             </div>
@@ -434,11 +437,15 @@ export default class App extends React.Component {
               </div>
             </div>
 
-            {/* bearing-pitch-roll visualization */}
+            {/* dof device visualization */}
             <div className='eight wide column'>
               <div className='ui blue padded segment'>
                 <h1 className='ui dividing header'>bearing, pitch, roll</h1>
-                <BearingPitchRollVisualization serverIP={serverIP} serverPort={ports.dofDevice[view]}/>
+                <DOFDeviceVisualization
+                  serverIP={serverIP}
+                  serverPort={ports.dofDevice[view]}
+                  deviceData={dofData}
+                  toggle={this.toggleDOFDevice}/>
               </div>
             </div>
 
@@ -446,7 +453,7 @@ export default class App extends React.Component {
             <div className='eight wide column'>
               <div className='ui yellow padded segment'>
                 <h1 className='ui dividing header'>bearing</h1>
-                {<BearingMap bearing={bearing} center={loc} markerColor={color}/>}
+                <BearingMap bearing={bearing} center={loc} markerColor={color}/>
               </div>
             </div>
 

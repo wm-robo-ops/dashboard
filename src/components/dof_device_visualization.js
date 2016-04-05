@@ -1,7 +1,8 @@
 /* global THREE */
 import React from 'react';
+import DeviceToggle from './device_toggle';
 
-export default class BearingPitchRollVisualization extends React.Component {
+export default class DOFDeviceVisualization extends React.Component {
 
   constructor(props) {
     super(props);
@@ -91,7 +92,10 @@ export default class BearingPitchRollVisualization extends React.Component {
   }
 
   render() {
+    var { toggle } = this.props;
+    var { name, on } = this.props.deviceData;
     return <div style={{width: '100%'}}>
+      <DeviceToggle checked={on} onChange={toggle} name={name}/>
       <div ref='container'></div>
     </div>;
   }
@@ -102,7 +106,9 @@ function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
-BearingPitchRollVisualization.propTypes = {
+DOFDeviceVisualization.propTypes = {
   serverIP: React.PropTypes.string.isRequired,
-  serverPort: React.PropTypes.number.isRequired
+  serverPort: React.PropTypes.number.isRequired,
+  toggle: React.PropTypes.func.isRequired,
+  deviceData: React.PropTypes.object.isRequired
 };
