@@ -53,6 +53,7 @@ import SettingsView                  from './components/settings_view';
 import PasswordModal                 from './components/password_modal';
 import PhotoLibraryView              from './components/photo_library_view';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
+import MapView                       from './components/map_view';
 
 const POLL_INTERVAL = 2000; // milliseconds to wait between polling vehicles
 
@@ -62,6 +63,7 @@ const CAMERAS = 'cameras';
 const SETTINGS = 'settings';
 const BIG_DADDY = 'bigDaddy';
 const PHOTO_LIBRARY = 'photoLibrary';
+const MAP_PAGE = 'mapPage';
 const vehicles = [BIG_DADDY, SCOUT, FLYER];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
@@ -201,6 +203,7 @@ const names = {
   [SCOUT]: 'Scout',
   [FLYER]: 'Flyer',
   [CAMERAS]: 'Cameras',
+  [MAP_PAGE]: 'Map Page',
   [PHOTO_LIBRARY]: 'Photo Library',
   [SETTINGS]: 'Settings'
 };
@@ -341,12 +344,13 @@ export default class App extends React.Component {
 
     var cameras = data.get('cameras').toJS();
 
+    var vehicleLocations = this.getVehicleLocationData();
+    var rockData = data.get('rocks').toJS();
+
     if (vehicles.some(v => v === view)) {
       //var batteryLevel = data.getIn([view, 'batteryLevel']);
       //var batteryLevelHistory = data.getIn([view, 'batteryLevelHistory']).toJS();
       //var networkSpeed = data.getIn([view, 'networkSpeed']).toJS();
-      var vehicleLocations = this.getVehicleLocationData();
-      var rockData = data.get('rocks').toJS();
       var loc = data.getIn([view, 'location']).toJS();
       var bearing = data.getIn([view, 'pitch']).get(0);
       var color = data.getIn([view, 'color']);
@@ -399,6 +403,9 @@ export default class App extends React.Component {
           {/*data.getIn([FLYER, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>*/}
           Flyer
         </div>
+        <div onClick={this.changeView.bind(this, MAP_PAGE)} className={`item ${view === MAP_PAGE ? 'active' : ''}`}>
+          Map
+        </div>
         <div onClick={this.changeView.bind(this, PHOTO_LIBRARY)} className={`item ${view === PHOTO_LIBRARY ? 'active' : ''}`}>
           Photo Library
         </div>
@@ -415,6 +422,15 @@ export default class App extends React.Component {
         </div>
 
         {view === CAMERAS && <CamerasView serverIP={serverIP} capturePhoto={this.capturePhoto} cameras={cameras}/>}
+
+        {view === MAP_PAGE && <div>
+          <div className='six wide column'>
+            <div className='ui black padded segment'>
+              <h1 className='ui dividing header'>location</h1>
+              <MainMap zoom={18.5} height='700' vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
+            </div>
+          </div>
+        </div>}
 
         {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos').toJS()} serverIP={serverIP} />}
 
@@ -460,7 +476,7 @@ export default class App extends React.Component {
             <div className='eight wide column'>
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>location</h1>
-                <MainMap vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
+                <MainMap zoom={17.5} height='400' vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
               </div>
             </div>
 

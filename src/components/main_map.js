@@ -14,7 +14,7 @@ class MainMap extends React.Component {
       container: this.refs.map,
       style: 'mapbox://styles/mapbox/satellite-v8',
       center: [-95.081320, 29.564835],
-      zoom: 17.5
+      zoom: this.props.zoom
     });
 
     this.map.on('click', this.mapClick.bind(this));
@@ -122,7 +122,7 @@ class MainMap extends React.Component {
   render() {
     let { vehicles } = this.props;
     return <div>
-      <div style={{width: '100%', height: '400px'}} ref='map' id='map'></div>
+      <div style={{width: '100%', height: this.props.height + 'px'}} ref='map' id='map'></div>
       {/* legend */}
       <div>
         {vehicles.map(v => <div key={v.vehicle} style={{padding: '5px'}}>
