@@ -30,26 +30,30 @@ export default class CamerasView extends React.Component {
 
   render() {
     var { cameras } = this.props;
-    var { active } = this.state;
+    var { active, selected } = this.state;
+
+    var camera;
+    if (selected) {
+      camera = cameras.find(c => c.name === active);
+    }
 
     return <div>
-
       {this.state.selected && <div onClick={this.onEscape}>
         <VideoPlayer
           serverIP={this.props.serverIP}
-          name={cameras[active].vehicle}
-          nameReadable={cameras[active].nameReadable}
-          capturePhoto={this.props.capturePhoto}/>
+          capturePhoto={this.props.capturePhoto}
+          cameraData={camera}
+          toggle={this.props.toggle}/>
       </div>}
 
       {!this.state.selected && <div className='ui grid'>
 
-        {Object.keys(cameras).map(cam => <div key={cam} className='eight wide column' onClick={this.enlarge.bind(this, cam)}>
+        {cameras.map(cam => <div key={cam.name} className='eight wide column' onClick={this.enlarge.bind(this, cam.name)}>
           <VideoPlayer
-            name={cameras[cam].vehicle}
-            nameReadable={cameras[cam].nameReadable}
             serverIP={this.props.serverIP}
-            capturePhoto={this.props.capturePhoto}/>
+            capturePhoto={this.props.capturePhoto}
+            cameraData={cam}
+            toggle={this.props.toggle}/>
         </div>)}
 
       </div>}
@@ -62,5 +66,5 @@ export default class CamerasView extends React.Component {
 CamerasView.propTypes = {
   serverIP: React.PropTypes.string.isRequired,
   capturePhoto: React.PropTypes.func.isRequired,
-  cameras: React.PropTypes.object.isRequired
+  cameras: React.PropTypes.array.isRequired
 };

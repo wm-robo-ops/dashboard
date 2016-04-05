@@ -94,6 +94,7 @@ class MainMap extends React.Component {
   }
 
   componentWillUnmount() {
+    this.map.remove();
     this.map = null;
   }
 

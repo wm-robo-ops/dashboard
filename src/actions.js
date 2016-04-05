@@ -1,5 +1,3 @@
-export const MUTE = 'MUTE';
-export const UNMUTE = 'UNMUTE';
 export const ADD_ROCK = 'ADD_ROCK';
 export const SET_ROCKS = 'SET_ROCKS';
 export const TOGGLE_GPS = 'TOGGLE_GPS';
@@ -17,6 +15,7 @@ export const NETWORK_SPEED_UPDATE = 'NETWORK_SPEED_UPDATE';
 export const SET_ALL_GPS = 'SET_ALL_GPS';
 export const SET_ALL_DOF_DEVICE = 'SET_ALL_DOF_DEVICE';
 export const SET_SERVER_IP = 'SET_SERVER_IP';
+export const CHANGE_FRAME_RATE = 'CHANGE_FRAME_RATE';
 
 export function updateBattery(data) {
   let { vehicle, batteryLevel } = data;
@@ -54,14 +53,6 @@ export function removeRock(id) {
   return { type: REMOVE_ROCK, id };
 }
 
-export function mute() {
-  return { type: MUTE };
-}
-
-export function unmute() {
-  return { type: UNMUTE };
-}
-
 export function setMinBattery(min) {
   return { type: SET_MIN_BATTERY, min };
 }
@@ -96,4 +87,8 @@ export function updatePhotos(photos) {
 
 export function setServerIP(ip) {
   return { type: SET_SERVER_IP, ip };
+}
+
+export function changeFrameRate(camera, frameRate) {
+  return { type: CHANGE_FRAME_RATE, camera, frameRate };
 }
