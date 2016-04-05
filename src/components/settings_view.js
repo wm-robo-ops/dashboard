@@ -6,18 +6,6 @@ export default class SettingsView extends React.Component {
     super(props);
   }
 
-  onMuteCheckBoxChange() {
-    if (this.props.muted) {
-      this.props.unmute();
-    } else {
-      this.props.mute();
-    }
-  }
-
-  onMinBatterySliderChange(e) {
-    this.props.setMinBattery(+e.target.value);
-  }
-
   onVideoToggle(camera) {
     this.props.toggleVideo(camera);
   }
@@ -36,37 +24,6 @@ export default class SettingsView extends React.Component {
 
   render() {
     return <div>
-      <div className='ui segments'>
-        <div className='ui padded segment'>
-          <h2>Alerts</h2>
-        </div>
-        <div className='ui padded segment'>
-          <div className='ui checkbox'>
-            <input
-              style={{width: '100%'}}
-              type='checkbox'
-              name='cb'
-              onChange={this.onMuteCheckBoxChange.bind(this)}
-              checked={this.props.muted}
-            />
-            <label>Mute Battery Alert</label>
-          </div>
-        </div>
-        <div className='ui padded segment'>
-          <div>
-            <div>Minimum battery level for alerts</div>
-            <input
-              type='range'
-              name='cb'
-              min='0'
-              max='100'
-              value={this.props.minBattery}
-              onChange={this.onMinBatterySliderChange.bind(this)}
-            />
-            <div>{`${this.props.minBattery}%`}</div>
-          </div>
-        </div>
-      </div>
 
       {/* video stream toggles */}
       <div className='ui segments'>
@@ -106,19 +63,19 @@ export default class SettingsView extends React.Component {
           <h3>GPS</h3>
           <div>
             <div className='ui toggle checkbox'>
-              <input type='checkbox' checked={this.props.gps.bigDaddy} onChange={this.onGPSToggle.bind(this, 'bigDaddy')}/>
+              <input type='checkbox' checked={this.props.gps.bigDaddy.on} onChange={this.onGPSToggle.bind(this, 'bigDaddy')}/>
               <label>Big Daddy</label>
             </div>
           </div>
           <div>
             <div className='ui toggle checkbox'>
-              <input type='checkbox' checked={this.props.gps.scout} onChange={this.onGPSToggle.bind(this, 'scout')}/>
+              <input type='checkbox' checked={this.props.gps.scout.on} onChange={this.onGPSToggle.bind(this, 'scout')}/>
               <label>Scout</label>
             </div>
           </div>
           <div>
             <div className='ui toggle checkbox'>
-              <input type='checkbox' checked={this.props.gps.flyer} onChange={this.onGPSToggle.bind(this, 'flyer')}/>
+              <input type='checkbox' checked={this.props.gps.flyer.on} onChange={this.onGPSToggle.bind(this, 'flyer')}/>
               <label>Flyer</label>
             </div>
           </div>
@@ -127,25 +84,26 @@ export default class SettingsView extends React.Component {
           <h3>DOF Device</h3>
           <div>
             <div className='ui toggle checkbox'>
-              <input type='checkbox' checked={this.props.dofDevice.bigDaddy} onChange={this.onDOFDeviceToggle.bind(this, 'bigDaddy')}/>
+              <input type='checkbox' checked={this.props.dofDevice.bigDaddy.on} onChange={this.onDOFDeviceToggle.bind(this, 'bigDaddy')}/>
               <label>Big Daddy</label>
             </div>
           </div>
           <div>
             <div className='ui toggle checkbox'>
-              <input type='checkbox' checked={this.props.dofDevice.scout} onChange={this.onDOFDeviceToggle.bind(this, 'scout')}/>
+              <input type='checkbox' checked={this.props.dofDevice.scout.on} onChange={this.onDOFDeviceToggle.bind(this, 'scout')}/>
               <label>Scout</label>
             </div>
           </div>
           <div>
             <div className='ui toggle checkbox'>
-              <input type='checkbox' checked={this.props.dofDevice.flyer} onChange={this.onDOFDeviceToggle.bind(this, 'flyer')}/>
+              <input type='checkbox' checked={this.props.dofDevice.flyer.on} onChange={this.onDOFDeviceToggle.bind(this, 'flyer')}/>
               <label>Flyer</label>
             </div>
           </div>
 
         </div>
       </div>
+
 
       {/* Server IP address */}
       <div className='ui segments'>
@@ -219,20 +177,15 @@ export default class SettingsView extends React.Component {
 }
 
 SettingsView.propTypes = {
-  muted: React.PropTypes.bool.isRequired,
-  mute: React.PropTypes.func.isRequired,
-  unmute: React.PropTypes.func.isRequired,
-  setMinBattery: React.PropTypes.func.isRequired,
-  minBattery: React.PropTypes.number.isRequired,
   gps: React.PropTypes.shape({
-    bigDaddy: React.PropTypes.bool.isRequired,
-    scout: React.PropTypes.bool.isRequired,
-    flyer: React.PropTypes.bool.isRequired
+    bigDaddy: React.PropTypes.object.isRequired,
+    scout: React.PropTypes.object.isRequired,
+    flyer: React.PropTypes.object.isRequired
   }).isRequired,
   dofDevice: React.PropTypes.shape({
-    bigDaddy: React.PropTypes.bool.isRequired,
-    scout: React.PropTypes.bool.isRequired,
-    flyer: React.PropTypes.bool.isRequired
+    bigDaddy: React.PropTypes.object.isRequired,
+    scout: React.PropTypes.object.isRequired,
+    flyer: React.PropTypes.object.isRequired
   }).isRequired,
   toggleVideo: React.PropTypes.func.isRequired,
   toggleDOFDevice: React.PropTypes.func.isRequired,

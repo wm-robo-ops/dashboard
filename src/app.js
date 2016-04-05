@@ -1,4 +1,3 @@
-/* eslint no-multi-spaces:0 */
 import React from 'react';
 import Immutable from 'immutable';
 import { createStore } from 'redux';
@@ -6,8 +5,6 @@ import hat from 'hat';
 
 // actions
 import {
-  mute,
-  unmute,
   addRock,
   setRocks,
   toggleGPS,
@@ -15,16 +12,14 @@ import {
   updatePitch,
   toggleVideo,
   updatePhotos,
-  setMinBattery,
   updateBearing,
-  updateBattery,
   setAllCameras,
   updateLocation,
   toggleDOFDevice,
-  updateNetworkSpeed,
   setAllGPS,
   setAllDOFDevice,
-  setServerIP
+  setServerIP,
+  changeFrameRate
 } from './actions';
 
 // reducers
@@ -33,28 +28,19 @@ import dashboardApp from './reducers';
 // API
 import Api from './api';
 
-// mock API
-import {
-  getPitch,
-  getBearing,
-  getLocation,
-  getBatteryLevel,
-  getNetworkSpeed
-} from './mock_client';
-
 // components
-import MainMap                       from './components/main_map';
-import RockList                      from './components/rock_list';
-import BearingMap                    from './components/bearing_map';
-import RockAddForm                   from './components/rock_add_form';
-import VideoPlayer                   from './components/video_player';
-import CamerasView                   from './components/cameras_view';
-import SettingsView                  from './components/settings_view';
-import PasswordModal                 from './components/password_modal';
-import PhotoLibraryView              from './components/photo_library_view';
+import MainMap from './components/main_map';
+import RockList from './components/rock_list';
+import BearingMap from './components/bearing_map';
+import RockAddForm from './components/rock_add_form';
+import VideoPlayer from './components/video_player';
+import CamerasView from './components/cameras_view';
+import SettingsView from './components/settings_view';
+import PasswordModal from './components/password_modal';
+import PhotoLibraryView from './components/photo_library_view';
 import BearingPitchRollVisualization from './components/bearing_pitch_roll_visualization';
 
-const POLL_INTERVAL = 2000; // milliseconds to wait between polling vehicles
+const POLL_INTERVAL = 2000;
 
 const SCOUT = 'scout';
 const FLYER = 'flyer';
@@ -91,28 +77,56 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   rocks: [],
   cameras: {
-    bigDaddyMain: { vehicle: BIG_DADDY, on: false, ip: '', nameReadable: 'Big Daddy Main' },
-    bigDaddyArm: { vehicle: BIG_DADDY, on: false, ip: '', nameReadable: 'Big Daddy Arm' },
-    scout: { vehicle: SCOUT, on: false, ip: '', nameReadable: 'Scout Main' },
-    flyer: { vehicle: FLYER, on: false, ip: '', nameReadable: 'Flyer Main' }
+    bigDaddyMain: {
+      vehicle: BIG_DADDY,
+      on: false,
+      ip: '',
+      nameReadable: 'Big Daddy Main',
+      frameRate: 30,
+      port: 8001
+    },
+    bigDaddyArm: {
+      vehicle: BIG_DADDY,
+      on: false,
+      ip: '',
+      nameReadable: 'Big Daddy Arm',
+      frameRate: 30,
+      port: 8002
+    },
+    scout: {
+      vehicle: SCOUT,
+      on: false,
+      ip: '',
+      nameReadable: 'Scout Main',
+      frameRate: 30,
+      port: 8003
+    },
+    flyer: {
+      vehicle: FLYER,
+      on: false,
+      ip: '',
+      nameReadable: 'Flyer Main',
+      frameRate: 30,
+      port: 8004
+    }
   },
   gps: {
-    bigDaddy: false,
-    scout: false,
-    flyer: false
+    bigDaddy: { on: false, port: 4001 },
+    scout: { on: false, port: 4002 },
+    flyer: { on: false, port: 4003 }
   },
   dofDevice: {
-    bigDaddy: false,
-    scout: false,
-    flyer: false
+    bigDaddy: { on: false, port: 3001 },
+    scout: { on: false, port: 3002 },
+    flyer: { on: false, port: 3003 }
   },
-  muted: true,
-  minBattery: 20,
   photos: [],
-  serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com'
+  //serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com'
+  serverIP: 'localhost'
 }));
 
 var API = new Api(store.getState().get('serverIP'));
+
 window.deleteRock = function(id) {
   API.deleteRock(id);
 };
@@ -125,16 +139,6 @@ function updateFromServer() {
       store.dispatch(setAllGPS(stats.gps));
       store.dispatch(setAllDOFDevice(stats.dofDevice));
       for (var vehicle in vs) {
-        /*
-        store.dispatch(updateBattery({
-          vehicle,
-          batteryLevel: vs[vehicle].batteryLevel
-        }));
-        store.dispatch(updateNetworkSpeed({
-          vehicle,
-          data: vs[vehicle].networkSpeed
-        }));
-        */
         store.dispatch(updateLocation({
           vehicle,
           location: vs[vehicle].location
@@ -158,43 +162,9 @@ function updateFromServer() {
     .then(photos => store.dispatch(updatePhotos(photos)));
 }
 
-function mock() {
-  for (var i = 0; i < vehicles.length; i++) {
-    let vehicle = vehicles[i];
-    store.dispatch(updateBattery({
-      vehicle,
-      batteryLevel: getBatteryLevel(vehicle)
-    }));
-    store.dispatch(updateLocation({
-      vehicle,
-      location: getLocation(vehicle)
-    }));
-    store.dispatch(updateNetworkSpeed({
-      vehicle,
-      data: getNetworkSpeed(vehicle)
-    }));
-    store.dispatch(updateBearing({
-      vehicle,
-      bearing: getBearing(vehicle)
-    }));
-    store.dispatch(updatePitch({
-      vehicle,
-      pitch: getPitch(vehicle)
-    }));
-  }
+function startPolling() {
+  window.setInterval(updateFromServer, POLL_INTERVAL);
 }
-
-function updateStats() {
-  var isDemo = location.search.split('=')[1] === 'true';
-  if (!isDemo) {
-    updateFromServer();
-  } else {
-    mock();
-  }
-}
-
-// poll for battery and location information
-window.setInterval(updateStats, POLL_INTERVAL);
 
 const names = {
   [BIG_DADDY]: 'Big Daddy',
@@ -214,6 +184,19 @@ const colors = {
   yellow: ''
 };
 
+const ports = {
+  dofDevice: {
+    [BIG_DADDY]: 3001,
+    [SCOUT]: 3002,
+    [FLYER]: 3003
+  },
+  gps: {
+    [BIG_DADDY]: 4001,
+    [SCOUT]: 4002,
+    [FLYER]: 4003
+  }
+};
+
 /**
  * App class
  */
@@ -231,6 +214,7 @@ export default class App extends React.Component {
     this.capturePhoto = this.capturePhoto.bind(this);
     this.toggleDOFDevice = this.toggleDOFDevice.bind(this);
     this.checkPassword = this.checkPassword.bind(this);
+    this.changeFrameRate = this.changeFrameRate.bind(this);
   }
 
   componentWillMount() {
@@ -270,10 +254,6 @@ export default class App extends React.Component {
     API.deleteRock(id);
   }
 
-  setMinBattery(min) {
-    store.dispatch(setMinBattery(min));
-  }
-
   toggleVideo(camera) {
     if (this.state.data.getIn(['cameras', camera, 'on'])) {
       store.dispatch(toggleVideo(camera));
@@ -285,7 +265,7 @@ export default class App extends React.Component {
   }
 
   toggleGPS(vehicle) {
-    if (this.state.data.getIn(['gps', vehicle])) {
+    if (this.state.data.getIn(['gps', vehicle, 'on'])) {
       store.dispatch(toggleGPS(vehicle));
       API.toggleGPS(vehicle, false);
     } else {
@@ -295,7 +275,7 @@ export default class App extends React.Component {
   }
 
   toggleDOFDevice(vehicle) {
-    if (this.state.data.getIn(['dofDevice', vehicle])) {
+    if (this.state.data.getIn(['dofDevice', vehicle, 'on'])) {
       store.dispatch(toggleDOFDevice(vehicle));
       API.toggleDOFDevice(vehicle, false);
     } else {
@@ -325,6 +305,7 @@ export default class App extends React.Component {
       .then(() => {
         localStorage.setItem('roboOpsPassword', password);
         this.setState({correctPassword: true});
+        startPolling();
       })
       .catch(e => {
         console.log(e);
@@ -332,19 +313,20 @@ export default class App extends React.Component {
       });
   }
 
+  changeFrameRate(camera, frameRate) {
+    store.dispatch(changeFrameRate(camera, frameRate));
+    API.changeFrameRate(camera, frameRate);
+  }
+
   render() {
     var data = this.state.data;
     var view = this.state.view;
 
-    //var minBattery = data.get('minBattery');
     var serverIP = data.get('serverIP');
 
     var cameras = data.get('cameras').toJS();
 
     if (vehicles.some(v => v === view)) {
-      //var batteryLevel = data.getIn([view, 'batteryLevel']);
-      //var batteryLevelHistory = data.getIn([view, 'batteryLevelHistory']).toJS();
-      //var networkSpeed = data.getIn([view, 'networkSpeed']).toJS();
       var vehicleLocations = this.getVehicleLocationData();
       var rockData = data.get('rocks').toJS();
       var loc = data.getIn([view, 'location']).toJS();
@@ -364,22 +346,11 @@ export default class App extends React.Component {
       var dofDevice = data.get('dofDevice').toJS();
     }
 
-    /*
-    var lowBattery = vehicles.some(v => {
-      return data.getIn([v, 'batteryLevel']) < data.get('minBattery');
-    });
-    */
-
     return <div>
 
       {(this.state.correctPassword === false) && <PasswordModal checkPassword={this.checkPassword.bind(this)}/>}
 
       {(this.state.correctPassword === true) && <div>
-
-      {/*(lowBattery && !data.get('muted')) && <audio preload autoPlay>
-        <source src='./lowBattery.mp3' type='audio/mpeg'/>
-        Your browser does not support the audio tag
-      </audio>*/}
 
       {/* sidebar */}
       <div className='ui sidebar inverted vertical menu visible very thin'>
@@ -388,15 +359,12 @@ export default class App extends React.Component {
           <div>Cameras</div>
         </div>
         <div onClick={this.changeView.bind(this, BIG_DADDY)} className={`item ${view === BIG_DADDY ? 'active' : ''}`}>
-          {/*data.getIn([BIG_DADDY, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>*/}
           Big Daddy
         </div>
         <div onClick={this.changeView.bind(this, SCOUT)} className={`item ${view === SCOUT ? 'active' : ''}`}>
-          {/*data.getIn([SCOUT, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>*/}
           Scout
         </div>
         <div onClick={this.changeView.bind(this, FLYER)} className={`item ${view === FLYER ? 'active' : ''}`}>
-          {/*data.getIn([FLYER, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>*/}
           Flyer
         </div>
         <div onClick={this.changeView.bind(this, PHOTO_LIBRARY)} className={`item ${view === PHOTO_LIBRARY ? 'active' : ''}`}>
@@ -425,11 +393,6 @@ export default class App extends React.Component {
           toggleVideo={this.toggleVideo}
           toggleDOFDevice={this.toggleDOFDevice}
           toggleGPS={this.toggleGPS}
-          muted={data.get('muted')}
-          mute={store.dispatch.bind(this, mute())}
-          unmute={store.dispatch.bind(this, unmute())}
-          setMinBattery={this.setMinBattery}
-          minBattery={data.get('minBattery')}
           serverIP={serverIP}
           setServerIP={this.setServerIP}
         />}
@@ -438,21 +401,16 @@ export default class App extends React.Component {
 
           <div className='ui grid'>
 
-            {/*<div className='three wide column'>
-              <div className='ui teal padded segment'>
-                <h1 className='ui dividing header'>zoom</h1>
-                <ZoomControl />
-              </div>
-
-              <div className='ui teal padded segment'>
-                <h1 className='ui dividing header'>pan</h1>
-                <PanControl />
-              </div>
-            </div>*/}
-
             {/* video */}
             {cameras.map(cam => <div className='eight wide column' key={cam.name}>
-              <VideoPlayer serverIP={serverIP} name={cam.name} capturePhoto={this.capturePhoto} nameReadable={cam.nameReadable}/>
+              <VideoPlayer
+                serverIP={serverIP}
+                serverPort={cam.port}
+                name={cam.name}
+                capturePhoto={this.capturePhoto}
+                nameReadable={cam.nameReadable}
+                changeFrameRate={this.changeFrameRate}
+                frameRate={cam.frameRate}/>
             </div>
             )}
 
@@ -478,30 +436,13 @@ export default class App extends React.Component {
               </div>
             </div>
 
-            {/* battery level */}
-            {/*<div className='five wide column'>
-              <div className='ui pink padded segment'>
-                <h1 className='ui dividing header'>battery</h1>
-                <Battery batteryLevel={batteryLevel}/>
-                <BatterySparkline level={batteryLevelHistory}/>
-              </div>
-            </div>*/}
-
             {/* bearing-pitch-roll visualization */}
             <div className='eight wide column'>
               <div className='ui blue padded segment'>
                 <h1 className='ui dividing header'>bearing, pitch, roll</h1>
-                <BearingPitchRollVisualization serverIP={serverIP} />
+                <BearingPitchRollVisualization serverIP={serverIP} serverPort={ports.dofDevice[view]}/>
               </div>
             </div>
-
-            {/* network and quality*/}
-            {/*<div className='five wide column'>
-              <div className='ui purple padded segment'>
-                <h1 className='ui dividing header'>network</h1>
-                <NetworkSparkline speed={networkSpeed}/>
-              </div>
-            </div>*/}
 
             {/* bearing map */}
             <div className='eight wide column'>

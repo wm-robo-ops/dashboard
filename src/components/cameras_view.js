@@ -37,6 +37,8 @@ export default class CamerasView extends React.Component {
       {this.state.selected && <div onClick={this.onEscape}>
         <VideoPlayer
           serverIP={this.props.serverIP}
+          serverPort={cameras[active].port}
+          frameRate={cameras[active].frameRate}
           name={cameras[active].vehicle}
           nameReadable={cameras[active].nameReadable}
           capturePhoto={this.props.capturePhoto}/>
@@ -49,6 +51,8 @@ export default class CamerasView extends React.Component {
             name={cameras[cam].vehicle}
             nameReadable={cameras[cam].nameReadable}
             serverIP={this.props.serverIP}
+            serverPort={cameras[cam].port}
+            frameRate={cameras[cam].frameRate}
             capturePhoto={this.props.capturePhoto}/>
         </div>)}
 

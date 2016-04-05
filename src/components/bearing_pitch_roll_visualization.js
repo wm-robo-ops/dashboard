@@ -13,10 +13,26 @@ export default class BearingPitchRollVisualization extends React.Component {
   componentDidMount() {
     this.setup();
     window.addEventListener('resize', this.resize);
+    this.address = `ws://${this.props.serverIP}:${this.props.serverPort}`;
+    this.client = new WebSocket(this.address);
+    this.client.onmessage = (e) => {
+      try {
+        var data = JSON.parse(e.data);
+        this.update(deg2rad(parseFloat(data.roll)), deg2rad(parseFloat(data.heading)), deg2rad(parseFloat(data.pitch)));
+        window.renderer.render(this.scene, this.camera);
+      }
+      catch(err) {
+        console.log(err);
+      }
+    };
+  }
 
-    var address = `ws://${this.props.serverIP}:9999`;
-    var client = new WebSocket(address);
-    client.onmessage = (e) => {
+  componentWillReceiveProps(props) {
+    if (props.serverPort === this.props.serverPort) return;
+    this.client.close();
+    this.address = `ws://${this.props.serverIP}:${props.serverPort}`;
+    this.client = new WebSocket(this.address);
+    this.client.onmessage = (e) => {
       try {
         var data = JSON.parse(e.data);
         this.update(deg2rad(parseFloat(data.roll)), deg2rad(parseFloat(data.heading)), deg2rad(parseFloat(data.pitch)));
@@ -29,6 +45,7 @@ export default class BearingPitchRollVisualization extends React.Component {
   }
 
   componentWillUnmount() {
+    this.client.close();
     window.removeEventListener('resize', this.resize);
   }
 
@@ -86,5 +103,6 @@ function deg2rad(deg) {
 }
 
 BearingPitchRollVisualization.propTypes = {
-  serverIP: React.PropTypes.string.isRequired
+  serverIP: React.PropTypes.string.isRequired,
+  serverPort: React.PropTypes.number.isRequired
 };

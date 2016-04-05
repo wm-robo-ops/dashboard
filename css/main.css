@@ -1,5 +1,6 @@
 html, body {}
 
+.mt3 { margin-top: 30px; }
 .my3 { margin-top: 30px; margin-bottom: 30px; }
 .mb2 { margin-bottom: 20px; }
 .mb3 { margin-bottom: 30px; }
@@ -19,3 +20,4 @@ html, body {}
   background-color: #000;
 }
 .hover-red:hover { color: red; }
+.bold { font-weight: bold; }

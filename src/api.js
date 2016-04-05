@@ -132,4 +132,14 @@ export default class API {
         .catch(() => reject('ERROR: Network error in password request'));
     });
   }
+
+  changeFrameRate(camera, frameRate) {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/video/framerate/${camera}/${frameRate}`, {
+        method: 'POST'
+      })
+        .then(res => res.text())
+        .catch(() => reject('ERROR: Could not change frame rate'));
+    });
+  }
 }
