@@ -63,7 +63,7 @@ const CAMERAS = 'cameras';
 const SETTINGS = 'settings';
 const BIG_DADDY = 'bigDaddy';
 const PHOTO_LIBRARY = 'photoLibrary';
-const MAP_PAGE = 'mapPage';
+const MAP = 'map';
 const vehicles = [BIG_DADDY, SCOUT, FLYER];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
@@ -203,7 +203,7 @@ const names = {
   [SCOUT]: 'Scout',
   [FLYER]: 'Flyer',
   [CAMERAS]: 'Cameras',
-  [MAP_PAGE]: 'Map Page',
+  [MAP]: 'Map',
   [PHOTO_LIBRARY]: 'Photo Library',
   [SETTINGS]: 'Settings'
 };
@@ -403,7 +403,7 @@ export default class App extends React.Component {
           {/*data.getIn([FLYER, 'batteryLevel']) < minBattery && <i className='icon warning red'></i>*/}
           Flyer
         </div>
-        <div onClick={this.changeView.bind(this, MAP_PAGE)} className={`item ${view === MAP_PAGE ? 'active' : ''}`}>
+        <div onClick={this.changeView.bind(this, MAP)} className={`item ${view === MAP ? 'active' : ''}`}>
           Map
         </div>
         <div onClick={this.changeView.bind(this, PHOTO_LIBRARY)} className={`item ${view === PHOTO_LIBRARY ? 'active' : ''}`}>
@@ -423,14 +423,7 @@ export default class App extends React.Component {
 
         {view === CAMERAS && <CamerasView serverIP={serverIP} capturePhoto={this.capturePhoto} cameras={cameras}/>}
 
-        {view === MAP_PAGE && <div>
-          <div className='six wide column'>
-            <div className='ui black padded segment'>
-              <h1 className='ui dividing header'>location</h1>
-              <MainMap zoom={18.5} height='700' vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
-            </div>
-          </div>
-        </div>}
+        {view === MAP && <MapView vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>}
 
         {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos').toJS()} serverIP={serverIP} />}
 
