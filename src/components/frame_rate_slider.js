@@ -8,11 +8,10 @@ export default class FrameRateSlider extends React.Component {
     this.changeFrameRate = this.changeFrameRate.bind(this);
   }
   onMouseDown() {
-    console.log('mousedown');
-    this.mouseDown = false;
+    this.mouseDown = true;
   }
   onMouseUp() {
-    this.mouseDown = true;
+    this.mouseDown = false;
   }
   changeFrameRate(e) {
     if (this.mouseDown) return;

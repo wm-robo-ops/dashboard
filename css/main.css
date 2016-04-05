@@ -21,3 +21,4 @@ html, body {}
 }
 .hover-red:hover { color: red; }
 .bold { font-weight: bold; }
+.hidden { display: none; }

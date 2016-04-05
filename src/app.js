@@ -8,7 +8,9 @@ import {
   addRock,
   setRocks,
   toggleGPS,
+  setAllGPS,
   removeRock,
+  setServerIP,
   updatePitch,
   toggleVideo,
   updatePhotos,
@@ -16,9 +18,7 @@ import {
   setAllCameras,
   updateLocation,
   toggleDOFDevice,
-  setAllGPS,
   setAllDOFDevice,
-  setServerIP,
   changeFrameRate
 } from './actions';
 
@@ -81,7 +81,6 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     bigDaddyMain: {
       vehicle: BIG_DADDY,
       on: false,
-      ip: '',
       nameReadable: 'Big Daddy Main',
       frameRate: 30,
       port: 8001
@@ -89,7 +88,6 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     bigDaddyArm: {
       vehicle: BIG_DADDY,
       on: false,
-      ip: '',
       nameReadable: 'Big Daddy Arm',
       frameRate: 30,
       port: 8002
@@ -97,7 +95,6 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     scout: {
       vehicle: SCOUT,
       on: false,
-      ip: '',
       nameReadable: 'Scout Main',
       frameRate: 30,
       port: 8003
@@ -105,7 +102,6 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     flyer: {
       vehicle: FLYER,
       on: false,
-      ip: '',
       nameReadable: 'Flyer Main',
       frameRate: 30,
       port: 8004
@@ -182,19 +178,6 @@ const colors = {
   red: '',
   orange: '',
   yellow: ''
-};
-
-const ports = {
-  dofDevice: {
-    [BIG_DADDY]: 3001,
-    [SCOUT]: 3002,
-    [FLYER]: 3003
-  },
-  gps: {
-    [BIG_DADDY]: 4001,
-    [SCOUT]: 4002,
-    [FLYER]: 4003
-  }
 };
 
 /**
@@ -343,11 +326,6 @@ export default class App extends React.Component {
       cameras = cameras.filter(c => c.vehicle === view);
     }
 
-    if (view === SETTINGS) {
-      var gps = data.get('gps').toJS();
-      var dofDevice = data.get('dofDevice').toJS();
-    }
-
     var isActive = v => v === view ? 'active' : '';
 
     return <div>
@@ -443,7 +421,6 @@ export default class App extends React.Component {
                 <h1 className='ui dividing header'>bearing, pitch, roll</h1>
                 <DOFDeviceVisualization
                   serverIP={serverIP}
-                  serverPort={ports.dofDevice[view]}
                   deviceData={dofData}
                   toggle={this.toggleDOFDevice}/>
               </div>

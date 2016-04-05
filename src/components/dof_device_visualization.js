@@ -6,15 +6,21 @@ export default class DOFDeviceVisualization extends React.Component {
 
   constructor(props) {
     super(props);
-    this.setup = this.setup.bind(this);
+    this.setupViz = this.setupViz.bind(this);
     this.update = this.update.bind(this);
     this.resize = this.resize.bind(this);
+    this.connectSocket = this.connectSocket.bind(this);
   }
 
   componentDidMount() {
-    this.setup();
-    window.addEventListener('resize', this.resize);
-    this.address = `ws://${this.props.serverIP}:${this.props.serverPort}`;
+    this.setupViz();
+    if (this.props.deviceData.on) {
+      this.connectSocket();
+    }
+  }
+
+  connectSocket() {
+    this.address = `ws://${this.props.serverIP}:${this.props.deviceData.port}`;
     this.client = new WebSocket(this.address);
     this.client.onmessage = (e) => {
       try {
@@ -26,35 +32,30 @@ export default class DOFDeviceVisualization extends React.Component {
         console.log(err);
       }
     };
+  }
+
+  disconnectSocket() {
+    if (this.client) {
+      this.client.close();
+    }
   }
 
   componentWillReceiveProps(props) {
-    if (props.serverPort === this.props.serverPort) return;
-    this.client.close();
-    this.address = `ws://${this.props.serverIP}:${props.serverPort}`;
-    this.client = new WebSocket(this.address);
-    this.client.onmessage = (e) => {
-      try {
-        var data = JSON.parse(e.data);
-        this.update(deg2rad(parseFloat(data.roll)), deg2rad(parseFloat(data.heading)), deg2rad(parseFloat(data.pitch)));
-        window.renderer.render(this.scene, this.camera);
-      }
-      catch(err) {
-        console.log(err);
-      }
-    };
+    if (!this.props.deviceData.on && props.deviceData.on) {
+      this.connectSocket();
+    }
+    if (this.props.deviceData.on && !props.deviceData.on) {
+      this.disconnectSocket();
+    }
   }
 
   componentWillUnmount() {
-    this.client.close();
+    this.disconnectSocket();
     window.removeEventListener('resize', this.resize);
   }
 
-  resize() {
-    window.renderer.setSize(this.refs.container.parentNode.offsetWidth, 220);
-  }
 
-  setup() {
+  setupViz() {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
     this.camera.position.z = 1000;
@@ -78,6 +79,11 @@ export default class DOFDeviceVisualization extends React.Component {
     window.renderer.setSize(this.refs.container.parentNode.offsetWidth, 400);
 
     this.refs.container.appendChild(window.renderer.domElement);
+    window.addEventListener('resize', this.resize);
+  }
+
+  resize() {
+    window.renderer.setSize(this.refs.container.parentNode.offsetWidth, 220);
   }
 
   update(x, y, z) {
@@ -96,7 +102,7 @@ export default class DOFDeviceVisualization extends React.Component {
     var { name, on } = this.props.deviceData;
     return <div style={{width: '100%'}}>
       <DeviceToggle checked={on} onChange={toggle} name={name}/>
-      <div ref='container'></div>
+      <div className={`${on ? '' : 'hidden' }`} ref='container'></div>
     </div>;
   }
 
@@ -108,7 +114,6 @@ function deg2rad(deg) {
 
 DOFDeviceVisualization.propTypes = {
   serverIP: React.PropTypes.string.isRequired,
-  serverPort: React.PropTypes.number.isRequired,
   toggle: React.PropTypes.func.isRequired,
   deviceData: React.PropTypes.object.isRequired
 };
