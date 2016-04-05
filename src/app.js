@@ -121,8 +121,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     flyer: { on: false, port: 3003 }
   },
   photos: [],
-  //serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com'
-  serverIP: 'localhost'
+  serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com'
 }));
 
 var API = new Api(store.getState().get('serverIP'));
@@ -374,7 +373,6 @@ export default class App extends React.Component {
           Settings
         </div>
       </div>
-
 
       <div className='pusher' style={{padding: '25px', marginLeft: '210px'}}>
 
