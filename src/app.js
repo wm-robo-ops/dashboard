@@ -40,6 +40,7 @@ import SettingsView from './components/settings_view';
 import PasswordModal from './components/password_modal';
 import PhotoLibraryView from './components/photo_library_view';
 import DOFDeviceVisualization from './components/dof_device_visualization';
+import MapView                       from './components/map_view';
 
 const POLL_INTERVAL = 2000;
 
@@ -49,6 +50,7 @@ const CAMERAS = 'cameras';
 const SETTINGS = 'settings';
 const BIG_DADDY = 'bigDaddy';
 const PHOTO_LIBRARY = 'photoLibrary';
+const MAP = 'map';
 const vehicles = [BIG_DADDY, SCOUT, FLYER];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
@@ -171,6 +173,7 @@ const names = {
   [SCOUT]: 'Scout',
   [FLYER]: 'Flyer',
   [CAMERAS]: 'Cameras',
+  [MAP]: 'Map',
   [PHOTO_LIBRARY]: 'Photo Library',
   [SETTINGS]: 'Settings'
 };
@@ -332,9 +335,10 @@ export default class App extends React.Component {
         return cam;
       });
 
+    var vehicleLocations = this.getVehicleLocationData();
+    var rockData = data.get('rocks').toJS();
+
     if (vehicles.some(v => v === view)) {
-      var vehicleLocations = this.getVehicleLocationData();
-      var rockData = data.get('rocks').toJS();
       var loc = data.getIn([view, 'location']).toJS();
       var bearing = data.getIn([view, 'pitch']).get(0);
       var gpsOn = data.getIn(['gps', view, 'on']);
@@ -371,6 +375,9 @@ export default class App extends React.Component {
         <div onClick={this.changeView.bind(this, FLYER)} className={`item ${isActive(FLYER)}`}>
           Flyer
         </div>
+        <div onClick={this.changeView.bind(this, MAP)} className={`item ${isActive(MAP)}`}>
+          Map
+        </div>
         <div onClick={this.changeView.bind(this, PHOTO_LIBRARY)} className={`item ${isActive(PHOTO_LIBRARY)}`}>
           Photo Library
         </div>
@@ -391,6 +398,8 @@ export default class App extends React.Component {
           cameras={cameras}
           toggle={this.toggleCamera}
         />}
+
+        {view === MAP && <MapView vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>}
 
         {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos').toJS()} serverIP={serverIP} />}
 
@@ -419,7 +428,7 @@ export default class App extends React.Component {
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>location</h1>
                 <DeviceToggle checked={gpsOn} onChange={this.toggleGPS} name={view}/>
-                <MainMap vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
+                <MainMap zoom={17.5} height='400' vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
               </div>
             </div>
 
