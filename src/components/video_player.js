@@ -10,6 +10,7 @@ export default class VideoPlayer extends React.Component {
     super(props);
     this.changeFrameRate = this.changeFrameRate.bind(this);
     this.setupVideo = this.setupVideo.bind(this);
+    this.tearDownVideo = this.tearDownVideo.bind(this);
   }
 
   componentDidMount() {
@@ -27,17 +28,23 @@ export default class VideoPlayer extends React.Component {
     window.removeEventListener('mouseup', this.onMouseUp);
   }
 
+  tearDownVideo() {
+    if (this.client) {
+      this.client.close();
+    }
+  }
+
   componentWillReceiveProps(props) {
     if (!this.props.cameraData.on && props.cameraData.on) {
       this.setupVideo();
     }
+    if (this.props.cameraData.on && !props.cameraData.on) {
+      this.tearDownVideo();
+    }
   }
 
   componentWillUnmount() {
-    if (this.client) {
-      this.client.close();
-    }
-    this.player = null; // force GC on jsmpeg
+    this.tearDownVideo();
   }
 
   changeFrameRate(frameRate) {
