@@ -29,8 +29,10 @@ import dashboardApp from './reducers';
 import Api from './api';
 
 // components
+import Time from './components/time';
 import MainMap from './components/main_map';
 import RockList from './components/rock_list';
+import MapView from './components/map_view';
 import BearingMap from './components/bearing_map';
 import RockAddForm from './components/rock_add_form';
 import VideoPlayer from './components/video_player';
@@ -40,7 +42,6 @@ import SettingsView from './components/settings_view';
 import PasswordModal from './components/password_modal';
 import PhotoLibraryView from './components/photo_library_view';
 import DOFDeviceVisualization from './components/dof_device_visualization';
-import MapView                       from './components/map_view';
 
 const POLL_INTERVAL = 2000;
 
@@ -120,7 +121,8 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     flyer: { on: false, port: 3003, name: 'flyer' }
   },
   photos: [],
-  serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com'
+  serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com',
+  time: '00:00:00'
 }));
 
 var API = new Api(store.getState().get('serverIP'));
@@ -309,6 +311,7 @@ export default class App extends React.Component {
     var view = this.state.view;
 
     var serverIP = data.get('serverIP');
+    var time = data.get('time');
 
     var cameras = data.get('cameras').toJS();
     cameras = Object.keys(cameras)
@@ -368,6 +371,7 @@ export default class App extends React.Component {
 
         <div style={{marginBottom: '20px'}}>
           <h1 className='ui block header center'>{names[view]}</h1>
+          <Time time={time}/>
         </div>
 
         {view === CAMERAS && <CamerasView

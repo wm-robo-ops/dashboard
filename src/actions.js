@@ -16,6 +16,7 @@ export const SET_ALL_GPS = 'SET_ALL_GPS';
 export const SET_ALL_DOF_DEVICE = 'SET_ALL_DOF_DEVICE';
 export const SET_SERVER_IP = 'SET_SERVER_IP';
 export const CHANGE_FRAME_RATE = 'CHANGE_FRAME_RATE';
+export const UPDATE_START_TIME = 'UPDATE_START_TIME';
 
 export function updateBattery(data) {
   let { vehicle, batteryLevel } = data;
@@ -91,4 +92,8 @@ export function setServerIP(ip) {
 
 export function changeFrameRate(camera, frameRate) {
   return { type: CHANGE_FRAME_RATE, camera, frameRate };
+}
+
+export function updateStartTime(startTime) {
+  return { type: UPDATE_START_TIME, startTime };
 }

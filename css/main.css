@@ -1,24 +1,11 @@
-html, body {}
-
+// le css
 .mt3 { margin-top: 30px; }
 .my3 { margin-top: 30px; margin-bottom: 30px; }
 .mb2 { margin-bottom: 20px; }
 .mb3 { margin-bottom: 30px; }
-
 .full-width { width: 100%; }
 .center { text-align: center; }
-
-.ctrl-btn {
-  float: left;
-  padding: 10px;
-  border-radius: 7px;
-  background-color: #E0E0E0;
-  margin: 5px;
-}
-.ctrl-btn:hover {
-  color: #fff;
-  background-color: #000;
-}
 .hover-red:hover { color: red; }
 .bold { font-weight: bold; }
 .hidden { display: none; }
+.red { color: red; }

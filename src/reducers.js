@@ -14,7 +14,8 @@ import {
   SET_ALL_GPS,
   SET_ALL_DOF_DEVICE,
   SET_SERVER_IP,
-  CHANGE_FRAME_RATE
+  CHANGE_FRAME_RATE,
+  UPDATE_START_TIME
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -56,6 +57,8 @@ function dashboardApp(state, action) {
       return state.set('serverIP', action.ip);
     case CHANGE_FRAME_RATE:
       return state.setIn(['cameras', action.camera, 'frameRate'], action.frameRate);
+    case UPDATE_START_TIME:
+      return state.setIn(['startTime', action.startTime]);
   }
   return state;
 }
