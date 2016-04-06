@@ -342,7 +342,7 @@ export default class App extends React.Component {
       {(this.state.correctPassword === true) && <div>
 
       {/* sidebar */}
-      <div className='ui sidebar inverted vertical menu visible very thin'>
+      <div className='ui left fixed vertical menu'>
         <div className='item'><h2>Robo Ops</h2></div>
         <div onClick={this.changeView.bind(this, CAMERAS)} className={`item ${isActive(CAMERAS)}`}>
           <div>Cameras</div>
