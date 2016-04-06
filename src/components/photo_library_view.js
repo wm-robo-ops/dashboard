@@ -31,7 +31,7 @@ export default class PhotoLibraryView extends React.Component {
   }
 
   render() {
-    return <div className='ui grid'>
+    return <div className={`ui stackable ${this.state.selected ? 'one' : 'three'} column grid`}>
       {this.state.selected && <PhotoCard serverIP={this.props.serverIP} url={this.state.active} enlarge={this.enlarge} enlarged={true}/>}
       {!this.state.selected && this.props.photos.map(p => <PhotoCard serverIP={this.props.serverIP} key={p} url={p} enlarge={this.enlarge} enlarged={false}/>)}
     </div>;
@@ -48,7 +48,7 @@ class PhotoCard extends React.Component {
     var lon = data[2];
     var lat = data[3];
     var bearing = data[4];
-    return <div className={`${enlarged ? 'eighteen' : 'five'} wide column`}>
+    return <div className={`column`}>
       <div className='ui fluid blue card' onClick={this.props.enlarge.bind(this, url)}>
         <div className='content'>
           {camera}

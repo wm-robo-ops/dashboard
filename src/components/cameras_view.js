@@ -46,9 +46,9 @@ export default class CamerasView extends React.Component {
           toggle={this.props.toggle}/>
       </div>}
 
-      {!this.state.selected && <div className='ui grid'>
+      {!this.state.selected && <div className='ui stackable two column grid'>
 
-        {cameras.map(cam => <div key={cam.name} className='eight wide column' onClick={this.enlarge.bind(this, cam.name)}>
+        {cameras.map(cam => <div key={cam.name} className='column' onClick={this.enlarge.bind(this, cam.name)}>
           <VideoPlayer
             serverIP={this.props.serverIP}
             capturePhoto={this.props.capturePhoto}

@@ -392,10 +392,10 @@ export default class App extends React.Component {
 
         {vehicles.some(v => v === view) && <div>
 
-          <div className='ui grid'>
+          <div className='ui stackable two column grid'>
 
             {/* video */}
-            {cameras.map(cam => <div className='eight wide column' key={cam.name}>
+            {cameras.map(cam => <div className='column' key={cam.name}>
               <VideoPlayer
                 serverIP={serverIP}
                 capturePhoto={this.capturePhoto}
@@ -406,7 +406,7 @@ export default class App extends React.Component {
             )}
 
             {/* location */}
-            <div className='eight wide column'>
+            <div className='column'>
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>location</h1>
                 <DeviceToggle checked={gpsOn} onChange={this.toggleGPS} name={view}/>
@@ -414,7 +414,7 @@ export default class App extends React.Component {
               </div>
             </div>
 
-            <div className='eight wide column'>
+            <div className='column'>
               {/* rock form */}
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>add rock</h1>
@@ -429,7 +429,7 @@ export default class App extends React.Component {
             </div>
 
             {/* dof device visualization */}
-            <div className='eight wide column'>
+            <div className='column'>
               <div className='ui blue padded segment'>
                 <h1 className='ui dividing header'>bearing, pitch, roll</h1>
                 <DOFDeviceVisualization
@@ -440,7 +440,7 @@ export default class App extends React.Component {
             </div>
 
             {/* bearing map */}
-            <div className='eight wide column'>
+            <div className='column'>
               <div className='ui yellow padded segment'>
                 <h1 className='ui dividing header'>bearing</h1>
                 <BearingMap bearing={bearing} center={loc} markerColor={color}/>
