@@ -1,10 +1,12 @@
 export default class API {
   constructor(ip) {
+    this.ip = ip;
     this.URL = `http://${ip}:5555`;
     this.setIP = this.setIP.bind(this);
   }
 
   setIP(ip) {
+    this.ip = ip;
     this.URL = `http://${ip}:5555`;
   }
 
@@ -119,7 +121,7 @@ export default class API {
 
   checkPassword(password) {
     return new Promise((resolve, reject) => {
-      fetch(`${this.URL}/password`, {
+      fetch(`http://${this.ip}:10000/`, {
         method: 'POST',
         headers: new Headers({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ password })

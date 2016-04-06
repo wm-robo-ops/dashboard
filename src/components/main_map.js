@@ -32,7 +32,7 @@ export default class MainMap extends React.Component {
         Object.keys(colors).map(color => batch.addLayer(getRockStyle(color)));
       });
 
-      // vehicles layer
+      // vehicle layer
       let { vehicles } = this.props;
       this.map.addSource('vehicleSource', {
         data: this.getVehicleGeoJSON(vehicles),
