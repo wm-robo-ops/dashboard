@@ -1,7 +1,7 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 
-class MainMap extends React.Component {
+export default class MainMap extends React.Component {
 
   constructor(props) {
     super(props);
@@ -12,7 +12,7 @@ class MainMap extends React.Component {
         'iJkcUF1TWlVIn0.YzBtz0O019DJGk3IpFi72g';
     this.map = new mapboxgl.Map({
       container: this.refs.map,
-      style: 'mapbox://styles/mapbox/satellite-v8',
+      style: 'mapbox://styles/mapbox/satellite-hybrid-v8',
       center: [-95.081320, 29.564835],
       zoom: this.props.zoom
     });
@@ -34,13 +34,29 @@ class MainMap extends React.Component {
 
       // vehicles layer
       let { vehicles } = this.props;
-      for (var i = 0; i < vehicles.length; i++) {
-        this.map.addSource(vehicles[i].vehicle, {
-          data: this.getVehicleGeoJSON(vehicles[i].coordinates),
-          type: 'geojson'
-        });
-        this.map.addLayer(createVehicleStyle(vehicles[i]));
-      }
+      this.map.addSource('vehicleSource', {
+        data: this.getVehicleGeoJSON(vehicles),
+        type: 'geojson'
+      });
+      this.map.addLayer(vehicleLayerStyle);
+
+      // setup popup
+      var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+      });
+      this.map.on('mousemove', e => {
+        var features = this.map.queryRenderedFeatures(e.point, { layers: ['vehicles'] });
+        this.map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+        if (!features.length) {
+          popup.remove();
+          return;
+        }
+        var f = features[0];
+        popup.setLngLat(f.geometry.coordinates)
+          .setHTML(f.properties.name)
+          .addTo(this.map);
+      });
     };
 
     // wait until map is loaded to set
@@ -72,14 +88,36 @@ class MainMap extends React.Component {
     };
   }
 
-  getVehicleGeoJSON(coordinates) {
+  getVehicleGeoJSON(vehicles) {
+    var icon, name;
     return {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'Point',
-        coordinates
-      }
+      type: 'FeatureCollection',
+      features: vehicles.map(v => {
+        switch (v.vehicle) {
+          case 'bigDaddy':
+            icon = 'bus';
+            name = 'bigDaddy';
+            break;
+          case 'scout':
+            icon = 'car';
+            name = 'scout';
+            break;
+          case 'flyer':
+            icon = 'airfield';
+            name = 'flyer';
+            break;
+        }
+        return {
+          type: 'Feature',
+          properties: {
+            icon, name
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: v.coordinates
+          }
+        };
+      })
     };
   }
 
@@ -87,9 +125,7 @@ class MainMap extends React.Component {
     if (!this.map || !this.map.loaded()) {
       return;
     }
-    props.vehicles.forEach(v => {
-      this.map.getSource(v.vehicle).setData(this.getVehicleGeoJSON(v.coordinates));
-    });
+    this.map.getSource('vehicleSource').setData(this.getVehicleGeoJSON(props.vehicles));
     this.map.getSource('rocksSource').setData(this.getRockGeoJSON(props.rockData));
   }
 
@@ -103,19 +139,22 @@ class MainMap extends React.Component {
     if (!features.length) {
       return;
     }
-    var feature = features[0];
+    var f = features[0];
     var content = '<div style="text-align: center">' +
                     '<div style="padding: 10px">' +
-                      feature.properties.color + ' rock!' +
+                      f.properties.color + ' rock!' +
+                    '</div>' +
+                    '<div style="padding: 10px">' +
+                      f.geometry.coordinates[0].toFixed(2) + ', ' + f.geometry.coordinates[1].toFixed(2) +
                     '</div>' +
                     '<div >' +
-                      '<button onclick="window.deleteRock(\'' + feature.properties.id + '\')">' +
+                      '<button onclick="window.deleteRock(\'' + f.properties.id + '\')">' +
                         'delete' +
                       '</button>' +
                     '</div>' +
                   '</div>';
     new mapboxgl.Popup()
-      .setLngLat(feature.geometry.coordinates)
+      .setLngLat(f.geometry.coordinates)
       .setHTML(content)
       .addTo(this.map);
   }
@@ -124,21 +163,6 @@ class MainMap extends React.Component {
     let { vehicles } = this.props;
     return <div>
       <div style={{width: '100%', height: this.props.height + 'px'}} ref='map' id='map'></div>
-      {/* legend */}
-      <div>
-        {vehicles.map(v => <div key={v.vehicle} style={{padding: '5px'}}>
-          <div
-            style={{
-              display: 'inline-block',
-              height: '10px',
-              width: '10px',
-              backgroundColor: v.color,
-              marginRight: '5px',
-              borderRadius: '5px'
-            }}></div>
-          <div style={{display: 'inline-block'}}>{v.vehicle}</div>
-        </div>)}
-      </div>
     </div>;
   }
 }
@@ -159,21 +183,14 @@ MainMap.propTypes = {
   removeRock: React.PropTypes.func.isRequired
 };
 
-export default MainMap;
-
-function createVehicleStyle(v) {
-  return {
-    'id': v.vehicle,
-    'type': 'circle',
-    'source': v.vehicle,
-    'filter': ['all', ['==', '$type', 'Point']],
-    'paint': {
-      'circle-radius': 5,
-      'circle-color': v.color
-    },
-    'interactive': true
-  };
-}
+var vehicleLayerStyle = {
+  'id': 'vehicles',
+  'type': 'symbol',
+  'source': 'vehicleSource',
+  'layout': {
+    'icon-image': '{icon}-15'
+  }
+};
 
 function getRockStyle(color) {
   return {

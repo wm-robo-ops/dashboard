@@ -55,30 +55,9 @@ const MAP = 'map';
 const vehicles = [BIG_DADDY, SCOUT, FLYER];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
-  bigDaddy: {
-    batteryLevel: 100,
-    batteryLevelHistory: [0, 100],
-    location: [0, 0],
-    networkSpeed: [0],
-    color: '#000000',
-    pitch: [0, 0, 0]
-  },
-  scout: {
-    batteryLevel: 100,
-    batteryLevelHistory: [0, 100],
-    location: [0, 0],
-    networkSpeed: [0],
-    color: '#000000',
-    pitch: [0, 0, 0]
-  },
-  flyer: {
-    batteryLevel: 100,
-    batteryLevelHistory: [0, 100],
-    location: [0, 0],
-    networkSpeed: [0],
-    color: '#000000',
-    pitch: [0, 0, 0]
-  },
+  bigDaddy: { location: [0, 0], pitch: [0, 0, 0] },
+  scout: { location: [0, 0], pitch: [0, 0, 0] },
+  flyer: { location: [0, 0], pitch: [0, 0, 0] },
   rocks: [],
   cameras: {
     bigDaddyMain: {
@@ -408,7 +387,7 @@ export default class App extends React.Component {
             {/* location */}
             <div className='column'>
               <div className='ui black padded segment'>
-                <h1 className='ui dividing header'>location</h1>
+                <h1 className='ui dividing header'>Location</h1>
                 <DeviceToggle checked={gpsOn} onChange={this.toggleGPS} name={view}/>
                 <MainMap zoom={17.5} height='400' vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
               </div>
@@ -417,7 +396,7 @@ export default class App extends React.Component {
             <div className='column'>
               {/* rock form */}
               <div className='ui red padded segment'>
-                <h1 className='ui dividing header'>add rock</h1>
+                <h1 className='ui dividing header'>Add Rock</h1>
                 <RockAddForm submit={this.addRock} vehicleLocations={vehicleLocations} colors={colors}/>
               </div>
 
@@ -431,7 +410,7 @@ export default class App extends React.Component {
             {/* dof device visualization */}
             <div className='column'>
               <div className='ui blue padded segment'>
-                <h1 className='ui dividing header'>bearing, pitch, roll</h1>
+                <h1 className='ui dividing header'>Bearing, Pitch, Roll</h1>
                 <DOFDeviceVisualization
                   serverIP={serverIP}
                   deviceData={dofData}
@@ -442,7 +421,7 @@ export default class App extends React.Component {
             {/* bearing map */}
             <div className='column'>
               <div className='ui yellow padded segment'>
-                <h1 className='ui dividing header'>bearing</h1>
+                <h1 className='ui dividing header'>Bearing</h1>
                 <BearingMap bearing={bearing} center={loc} markerColor={color}/>
               </div>
             </div>
