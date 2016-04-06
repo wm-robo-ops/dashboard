@@ -12,7 +12,7 @@ class RockList extends React.Component {
 
   render() {
     return <div>
-      <table className="ui celled table">
+      <table className='ui celled table'>
         <thead>
           <tr>
             <th></th>
@@ -24,7 +24,7 @@ class RockList extends React.Component {
         <tbody>
           {this.props.rocks.map(r => <tr key={r.id}>
             <td>
-              <i className={`remove icon hover-red`} onClick={this.removeRock.bind(this, r.id)}></i>
+              <i className='remove icon hover-red' onClick={this.removeRock.bind(this, r.id)}></i>
             </td>
             <td>{r.color}</td>
             <td>{r.lon.toFixed(4)}</td>

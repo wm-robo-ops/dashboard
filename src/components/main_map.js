@@ -171,7 +171,6 @@ MainMap.propTypes = {
   vehicles: React.PropTypes.arrayOf(React.PropTypes.shape({
     vehicle: React.PropTypes.string.isRequired,
     coordinates: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    color: React.PropTypes.string.isRequired,
     name: React.PropTypes.string.isRequired
   })),
   rockData: React.PropTypes.arrayOf(React.PropTypes.shape({

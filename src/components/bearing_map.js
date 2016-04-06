@@ -28,7 +28,7 @@ export default class BearingMap extends React.Component {
         data: this.getGeoJSON(),
         type: 'geojson'
       });
-      this.map.addLayer(createMarkerStyle(this.props.markerColor));
+      this.map.addLayer(createMarkerStyle('#000'));
     };
     if (this.map.style.loaded()) {
       set();
@@ -85,6 +85,5 @@ function createMarkerStyle(color) {
 }
 
 BearingMap.propTypes = {
-  bearing: React.PropTypes.number.isRequired,
-  markerColor: React.PropTypes.string.isRequired
+  bearing: React.PropTypes.number.isRequired
 };

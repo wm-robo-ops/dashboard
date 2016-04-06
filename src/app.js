@@ -204,7 +204,6 @@ export default class App extends React.Component {
       return {
         vehicle: v,
         coordinates: this.state.data.getIn([v, 'location']).toJS(),
-        color: this.state.data.getIn([v, 'color']),
         name: names[v]
       };
     });
@@ -307,7 +306,6 @@ export default class App extends React.Component {
       var loc = data.getIn([view, 'location']).toJS();
       var bearing = data.getIn([view, 'pitch']).get(0);
       var gpsOn = data.getIn(['gps', view, 'on']);
-      var color = data.getIn([view, 'color']);
       var dofData = data.getIn(['dofDevice', view]).toJS();
       cameras = cameras.filter(c => c.vehicle === view);
     }
@@ -422,7 +420,7 @@ export default class App extends React.Component {
             <div className='column'>
               <div className='ui yellow padded segment'>
                 <h1 className='ui dividing header'>Bearing</h1>
-                <BearingMap bearing={bearing} center={loc} markerColor={color}/>
+                <BearingMap bearing={bearing} center={loc}/>
               </div>
             </div>
 
