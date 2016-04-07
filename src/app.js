@@ -59,36 +59,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   scout: { location: [0, 0], pitch: [0, 0, 0] },
   flyer: { location: [0, 0], pitch: [0, 0, 0] },
   rocks: [],
-  cameras: {
-    bigDaddyMain: {
-      vehicle: BIG_DADDY,
-      on: false,
-      nameReadable: 'Big Daddy Main',
-      frameRate: 30,
-      port: 8001
-    },
-    bigDaddyArm: {
-      vehicle: BIG_DADDY,
-      on: false,
-      nameReadable: 'Big Daddy Arm',
-      frameRate: 30,
-      port: 8002
-    },
-    scout: {
-      vehicle: SCOUT,
-      on: false,
-      nameReadable: 'Scout Main',
-      frameRate: 30,
-      port: 8003
-    },
-    flyer: {
-      vehicle: FLYER,
-      on: false,
-      nameReadable: 'Flyer Main',
-      frameRate: 30,
-      port: 8004
-    }
-  },
+  cameras: {},
   gps: {
     bigDaddy: { on: false, port: 4001, name: 'bigDaddy' },
     scout: { on: false, port: 4002, name: 'scout' },
