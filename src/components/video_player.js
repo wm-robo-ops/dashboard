@@ -57,7 +57,7 @@ export default class VideoPlayer extends React.Component {
       <h1 className='ui dividing header'>{nameReadable}</h1>
       <div style={{width: '100%'}}>
         <DeviceToggle checked={on} onChange={this.props.toggle} name={name}/>
-        {on && <canvas ref='videoCanvas' style={{width: '100%'}}/>}
+        <canvas className={`${on ? '' : 'hidden'}`}ref='videoCanvas' style={{width: '100%'}}/>
         <CapturePhoto camera={name} capture={this.props.capturePhoto}/>
         <FrameRateSlider changeFrameRate={this.changeFrameRate} frameRate={frameRate}/>
       </div>
