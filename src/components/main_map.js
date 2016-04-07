@@ -5,6 +5,11 @@ export default class MainMap extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      vehicles: true,
+      rocks: true,
+      trails: true
+    };
   }
 
   componentDidMount() {
@@ -159,10 +164,47 @@ export default class MainMap extends React.Component {
       .addTo(this.map);
   }
 
+  toggleLayer(layer) {
+    var layers;
+    switch (layer) {
+      case 'vehicles':
+        layers = ['vehicles'];
+        break;
+      case 'rocks':
+        layers = Object.keys(colors).map(c => c + 'Rocks');
+        break;
+      case 'trails':
+        layers = ['trails'];
+        break;
+    }
+    if (layer === 'trails') return; // !!!!! FIX THIS !!!!!
+    this.setState({[layer]: !this.state[layer]}, () => {
+      this.map.batch(batch => {
+        layers.forEach(l => {
+          batch.setLayoutProperty(l, 'visibility', this.state[layer] ? 'visible' : 'none');
+        });
+      });
+    });
+  }
+
   render() {
     let { vehicles } = this.props;
     return <div>
-      <div style={{width: '100%', height: this.props.height + 'px'}} ref='map' id='map'></div>
+      <div style={{width: '100%', height: this.props.height + 'px'}} ref='map' className='mb2' id='map'></div>
+      <div>
+        <div className='ui toggle checkbox mr6'>
+          <input type='checkbox' checked={this.state.vehicles} onChange={this.toggleLayer.bind(this, 'vehicles')}/>
+          <label className='bold'>vehicles</label>
+        </div>
+        <div className='ui toggle checkbox mr6'>
+          <input type='checkbox' checked={this.state.rocks} onChange={this.toggleLayer.bind(this, 'rocks')}/>
+          <label className='bold'>rocks</label>
+        </div>
+        <div className='ui toggle checkbox mr6'>
+          <input type='checkbox' checked={this.state.trails} onChange={this.toggleLayer.bind(this, 'trails')}/>
+          <label className='bold'>trails</label>
+        </div>
+      </div>
     </div>;
   }
 }
