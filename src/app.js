@@ -274,8 +274,7 @@ export default class App extends React.Component {
         startPolling();
       })
       .catch(e => {
-        console.log(e);
-        alert('Incorrect Password!');
+        alert(e);
       });
   }
 

@@ -129,7 +129,7 @@ export default class API {
         .then(res => res.text())
         .then(text => {
           if (text === 'ok') resolve(true);
-          else reject(false);
+          else reject('Incorect password. Try again.');
         })
         .catch(() => reject('ERROR: Network error in password request'));
     });
