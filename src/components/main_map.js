@@ -8,7 +8,7 @@ export default class MainMap extends React.Component {
     this.state = {
       vehicles: true,
       rocks: true,
-      trails: true
+      traces: true
     };
   }
 
@@ -30,20 +30,31 @@ export default class MainMap extends React.Component {
     var set = () => {
       // rock layer
       this.map.addSource('rocksSource', {
-        data: this.getRockGeoJSON(this.props.rockData),
+        data: `http://${this.props.serverIP}:5555/rocks/geojson`,
         type: 'geojson'
-      });
-      this.map.batch(batch => {
-        Object.keys(colors).map(color => batch.addLayer(getRockStyle(color)));
       });
 
       // vehicle layer
-      let { vehicles } = this.props;
       this.map.addSource('vehicleSource', {
-        data: this.getVehicleGeoJSON(vehicles),
+        data: `http://${this.props.serverIP}:5555/location`,
         type: 'geojson'
       });
-      this.map.addLayer(vehicleLayerStyle);
+
+      // trace layer
+      let { locationHistory } = this.props;
+      this.map.addSource('traceSource', {
+        data: `http://${this.props.serverIP}:5555/trace`,
+        type: 'geojson'
+      });
+
+      // add all styles in one batch
+      this.map.batch(batch => {
+        Object.keys(colors).map(color => batch.addLayer(getRockStyle(color)));
+        batch.addLayer(vehicleLayerStyle);
+        batch.addLayer(bigDaddyTraceLayerStyle);
+        batch.addLayer(scoutTraceLayerStyle);
+        batch.addLayer(flyerTraceLayerStyle);
+      });
 
       // setup popup
       var popup = new mapboxgl.Popup({
@@ -74,64 +85,13 @@ export default class MainMap extends React.Component {
     }
   }
 
-  getRockGeoJSON(rocks) {
-    return {
-      type: 'FeatureCollection',
-      features: rocks.map(r => {
-        return {
-          type: 'Feature',
-          properties: {
-            id: r.id,
-            color: r.color
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: [r.lon, r.lat]
-          }
-        };
-      })
-    };
-  }
-
-  getVehicleGeoJSON(vehicles) {
-    var icon, name;
-    return {
-      type: 'FeatureCollection',
-      features: vehicles.map(v => {
-        switch (v.vehicle) {
-          case 'bigDaddy':
-            icon = 'bus';
-            name = 'bigDaddy';
-            break;
-          case 'scout':
-            icon = 'car';
-            name = 'scout';
-            break;
-          case 'flyer':
-            icon = 'airfield';
-            name = 'flyer';
-            break;
-        }
-        return {
-          type: 'Feature',
-          properties: {
-            icon, name
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: v.coordinates
-          }
-        };
-      })
-    };
-  }
-
-  componentWillReceiveProps(props) {
+  componentWillReceiveProps() {
     if (!this.map || !this.map.loaded()) {
       return;
     }
-    this.map.getSource('vehicleSource').setData(this.getVehicleGeoJSON(props.vehicles));
-    this.map.getSource('rocksSource').setData(this.getRockGeoJSON(props.rockData));
+    this.map.getSource('vehicleSource').setData(`http://${this.props.serverIP}:5555/location`);
+    this.map.getSource('rocksSource').setData(`http://${this.props.serverIP}:5555/rocks/geojson`);
+    this.map.getSource('traceSource').setData(`http://${this.props.serverIP}:5555/trace`);
   }
 
   componentWillUnmount() {
@@ -173,11 +133,10 @@ export default class MainMap extends React.Component {
       case 'rocks':
         layers = Object.keys(colors).map(c => c + 'Rocks');
         break;
-      case 'trails':
-        layers = ['trails'];
+      case 'traces':
+        layers = ['big-daddy-trace', 'scout-trace', 'flyer-trace'];
         break;
     }
-    if (layer === 'trails') return; // !!!!! FIX THIS !!!!!
     this.setState({[layer]: !this.state[layer]}, () => {
       this.map.batch(batch => {
         layers.forEach(l => {
@@ -201,8 +160,8 @@ export default class MainMap extends React.Component {
           <label className='bold'>rocks</label>
         </div>
         <div className='ui toggle checkbox mr6'>
-          <input type='checkbox' checked={this.state.trails} onChange={this.toggleLayer.bind(this, 'trails')}/>
-          <label className='bold'>trails</label>
+          <input type='checkbox' checked={this.state.traces} onChange={this.toggleLayer.bind(this, 'traces')}/>
+          <label className='bold'>traces</label>
         </div>
       </div>
     </div>;
@@ -210,17 +169,6 @@ export default class MainMap extends React.Component {
 }
 
 MainMap.propTypes = {
-  vehicles: React.PropTypes.arrayOf(React.PropTypes.shape({
-    vehicle: React.PropTypes.string.isRequired,
-    coordinates: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    name: React.PropTypes.string.isRequired
-  })),
-  rockData: React.PropTypes.arrayOf(React.PropTypes.shape({
-    color: React.PropTypes.string.isRequired,
-    id: React.PropTypes.string.isRequired,
-    lon: React.PropTypes.number.isRequired,
-    lat: React.PropTypes.number.isRequired
-  })),
   removeRock: React.PropTypes.func.isRequired
 };
 
@@ -245,6 +193,37 @@ function getRockStyle(color) {
     }
   };
 }
+
+var bigDaddyTraceLayerStyle = {
+  'id': 'big-daddy-trace',
+  'type': 'line',
+  'source': 'traceSource',
+  'filter': ['==', 'vehicle', 'bigDaddy'],
+  'paint': {
+    'line-width': 1.7,
+    'line-color': '#0000FF'
+  }
+};
+var scoutTraceLayerStyle = {
+  'id': 'scout-trace',
+  'type': 'line',
+  'source': 'traceSource',
+  'filter': ['==', 'vehicle', 'scout'],
+  'paint': {
+    'line-width': 1.7,
+    'line-color': '#FF0000'
+  }
+};
+var flyerTraceLayerStyle = {
+  'id': 'flyer-trace',
+  'type': 'line',
+  'source': 'traceSource',
+  'filter': ['==', 'vehicle', 'flyer'],
+  'paint': {
+    'line-width': 1.7,
+    'line-color': '#00FF00'
+  }
+};
 
 const colors = {
   purple: '#551A8B',

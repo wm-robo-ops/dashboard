@@ -4,10 +4,8 @@ import {
   SET_ROCKS,
   TOGGLE_GPS,
   REMOVE_ROCK,
-  PITCH_UPDATE,
   UPDATE_PHOTOS,
   TOGGLE_VIDEO,
-  UPDATE_BEARING,
   LOCATION_UPDATE,
   SET_ALL_CAMERAS,
   TOGGLE_DOF_DEVICE,
@@ -15,7 +13,7 @@ import {
   SET_ALL_DOF_DEVICE,
   SET_SERVER_IP,
   CHANGE_FRAME_RATE,
-  UPDATE_START_TIME
+  UPDATE_START_TIME,
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -23,10 +21,6 @@ function dashboardApp(state, action) {
   switch (action.type) {
     case LOCATION_UPDATE:
       return state.setIn([vehicle, 'location'], Immutable.List(action.location));
-    case UPDATE_BEARING:
-      return state.setIn([vehicle, 'bearing'], action.bearing);
-    case PITCH_UPDATE:
-      return state.setIn([vehicle, 'pitch'], Immutable.List(action.pitch));
     case ADD_ROCK:
       let data = {
         lat: action.lat,

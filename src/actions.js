@@ -2,11 +2,9 @@ export const ADD_ROCK = 'ADD_ROCK';
 export const SET_ROCKS = 'SET_ROCKS';
 export const TOGGLE_GPS = 'TOGGLE_GPS';
 export const REMOVE_ROCK = 'REMOVE_ROCK';
-export const PITCH_UPDATE = 'PITCH_UPDATE';
 export const UPDATE_PHOTOS = 'UPDATE_PHOTOS';
 export const TOGGLE_VIDEO = 'TOGGLE_VIDEO';
 export const BATTERY_UPDATE = 'BATTERY_UPDATE';
-export const UPDATE_BEARING = 'UPDATE_BEARING';
 export const LOCATION_UPDATE = 'LOCATION_UPDATE';
 export const SET_MIN_BATTERY = 'SET_MIN_BATTERY';
 export const SET_ALL_CAMERAS = 'SET_ALL_CAMERAS';
@@ -17,6 +15,7 @@ export const SET_ALL_DOF_DEVICE = 'SET_ALL_DOF_DEVICE';
 export const SET_SERVER_IP = 'SET_SERVER_IP';
 export const CHANGE_FRAME_RATE = 'CHANGE_FRAME_RATE';
 export const UPDATE_START_TIME = 'UPDATE_START_TIME';
+export const UPDATE_LOCATION_HISTORY = 'UPDATE_LOCATION_HISTORY';
 
 export function updateBattery(data) {
   let { vehicle, batteryLevel } = data;
@@ -30,16 +29,6 @@ export function updateLocation(data) {
 
 export function updateNetworkSpeed(data) {
   return Object.assign({ type: NETWORK_SPEED_UPDATE }, data);
-}
-
-export function updateBearing(data) {
-  let { vehicle, bearing } = data;
-  return { type: UPDATE_BEARING, vehicle, bearing };
-}
-
-export function updatePitch(data) {
-  let { vehicle, pitch } = data;
-  return { type: PITCH_UPDATE, vehicle, pitch };
 }
 
 export function addRock(data) {

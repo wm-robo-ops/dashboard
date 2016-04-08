@@ -11,10 +11,8 @@ import {
   setAllGPS,
   removeRock,
   setServerIP,
-  updatePitch,
   toggleVideo,
   updatePhotos,
-  updateBearing,
   setAllCameras,
   updateLocation,
   toggleDOFDevice,
@@ -33,7 +31,7 @@ import Time from './components/time';
 import MainMap from './components/main_map';
 import RockList from './components/rock_list';
 import MapView from './components/map_view';
-import BearingMap from './components/bearing_map';
+//import BearingMap from './components/bearing_map';
 import RockAddForm from './components/rock_add_form';
 import VideoPlayer from './components/video_player';
 import CamerasView from './components/cameras_view';
@@ -55,9 +53,9 @@ const MAP = 'map';
 const vehicles = [BIG_DADDY, SCOUT, FLYER];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
-  bigDaddy: { location: [0, 0], pitch: [0, 0, 0] },
-  scout: { location: [0, 0], pitch: [0, 0, 0] },
-  flyer: { location: [0, 0], pitch: [0, 0, 0] },
+  bigDaddy: { location: [0, 0] },
+  scout: { location: [0, 0] },
+  flyer: { location: [0, 0] },
   rocks: [],
   cameras: {},
   gps: {
@@ -72,7 +70,8 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   photos: [],
   serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com',
-  time: '00:00:00'
+  startTime: '00:00:00',
+  locationHistory: []
 }));
 
 var API = new Api(store.getState().get('serverIP'));
@@ -92,14 +91,6 @@ function updateFromServer() {
         store.dispatch(updateLocation({
           vehicle,
           location: vs[vehicle].location
-        }));
-        store.dispatch(updateBearing({
-          vehicle,
-          bearing: vs[vehicle].bearing
-        }));
-        store.dispatch(updatePitch({
-          vehicle,
-          pitch: vs[vehicle].pitch
         }));
       }
     })
@@ -255,13 +246,13 @@ export default class App extends React.Component {
   }
 
   render() {
-    var data = this.state.data;
+    var data = this.state.data.toJS();
     var view = this.state.view;
 
-    var serverIP = data.get('serverIP');
-    var time = data.get('time');
+    var serverIP = data.serverIP;
+    var startTime = data.startTime;
 
-    var cameras = data.get('cameras').toJS();
+    var cameras = data.cameras;
     cameras = Object.keys(cameras)
       .map(c => {
         var cam = cameras[c];
@@ -270,13 +261,15 @@ export default class App extends React.Component {
       });
 
     var vehicleLocations = this.getVehicleLocationData();
-    var rockData = data.get('rocks').toJS();
+    var rockData = data.rocks;
 
     if (vehicles.some(v => v === view)) {
-      var loc = data.getIn([view, 'location']).toJS();
-      var bearing = data.getIn([view, 'pitch']).get(0);
-      var gpsOn = data.getIn(['gps', view, 'on']);
-      var dofData = data.getIn(['dofDevice', view]).toJS();
+      //var loc = data.getIn([view, 'location']).toJS();
+      //var loc = data[view].location;
+      //var bearing = data.getIn([view, 'pitch']).get(0);
+      //var bearing = data[view].pitch;
+      var gpsOn = data.gps[view].on;
+      var dofData = data.dofDevice[view];
       cameras = cameras.filter(c => c.vehicle === view);
     }
 
@@ -318,7 +311,7 @@ export default class App extends React.Component {
 
         <div style={{marginBottom: '20px'}}>
           <h1 className='ui block header center'>{names[view]}</h1>
-          <Time time={time}/>
+          <Time startTime={startTime}/>
         </div>
 
         {view === CAMERAS && <CamerasView
@@ -328,9 +321,9 @@ export default class App extends React.Component {
           toggle={this.toggleCamera}
         />}
 
-        {view === MAP && <MapView vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>}
+        {view === MAP && <MapView removeRock={this.removeRock} serverIP={serverIP}/>}
 
-        {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.get('photos').toJS()} serverIP={serverIP} />}
+        {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.photos} serverIP={serverIP} />}
 
         {view === SETTINGS && <SettingsView
           serverIP={serverIP}
@@ -357,7 +350,7 @@ export default class App extends React.Component {
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>Location</h1>
                 <DeviceToggle checked={gpsOn} onChange={this.toggleGPS} name={view}/>
-                <MainMap zoom={17.5} height='400' vehicles={vehicleLocations} rockData={rockData} removeRock={this.removeRock}/>
+                <MainMap zoom={17.5} height='400' removeRock={this.removeRock} serverIP={serverIP}/>
               </div>
             </div>
 
@@ -387,12 +380,12 @@ export default class App extends React.Component {
             </div>
 
             {/* bearing map */}
-            <div className='column'>
+            {/*<div className='column'>
               <div className='ui yellow padded segment'>
                 <h1 className='ui dividing header'>Bearing</h1>
                 <BearingMap bearing={bearing} center={loc}/>
               </div>
-            </div>
+            </div>*/}
 
           </div>
 
