@@ -47,6 +47,12 @@ export default class MainMap extends React.Component {
         type: 'geojson'
       });
 
+      // path layer
+      this.map.addSource('pathSource', {
+        data: `http://${this.props.serverIP}:5555/trace`,
+        type: 'geojson'
+      });
+
       // add all styles in one batch
       this.map.batch(batch => {
         Object.keys(colors).map(color => batch.addLayer(getRockStyle(color)));
@@ -54,6 +60,7 @@ export default class MainMap extends React.Component {
         batch.addLayer(bigDaddyTraceLayerStyle);
         batch.addLayer(scoutTraceLayerStyle);
         batch.addLayer(flyerTraceLayerStyle);
+        batch.addLayer(pathStyle);
       });
 
       // setup popup
@@ -222,6 +229,16 @@ var flyerTraceLayerStyle = {
   'paint': {
     'line-width': 1.7,
     'line-color': '#00FF00'
+  }
+};
+var pathStyle = {
+  'id': 'path',
+  'type': 'line',
+  'source': 'pathSource',
+  'filter': ['==', 'vehicle', 'flyer'],
+  'paint': {
+    'line-width': 1.7,
+    'line-color': '#000000'
   }
 };
 

@@ -43,13 +43,13 @@ import DOFDeviceVisualization from './components/dof_device_visualization';
 
 const POLL_INTERVAL = 2000;
 
+const MAP = 'map';
 const SCOUT = 'scout';
 const FLYER = 'flyer';
 const CAMERAS = 'cameras';
 const SETTINGS = 'settings';
 const BIG_DADDY = 'bigDaddy';
 const PHOTO_LIBRARY = 'photoLibrary';
-const MAP = 'map';
 const vehicles = [BIG_DADDY, SCOUT, FLYER];
 
 var store = createStore(dashboardApp, Immutable.fromJS({
@@ -70,8 +70,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   photos: [],
   serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com',
-  startTime: '00:00:00',
-  locationHistory: []
+  startTime: '00:00:00'
 }));
 
 var API = new Api(store.getState().get('serverIP'));
@@ -264,8 +263,6 @@ export default class App extends React.Component {
     var rockData = data.rocks;
 
     if (vehicles.some(v => v === view)) {
-      //var loc = data.getIn([view, 'location']).toJS();
-      //var loc = data[view].location;
       //var bearing = data.getIn([view, 'pitch']).get(0);
       //var bearing = data[view].pitch;
       var gpsOn = data.gps[view].on;
