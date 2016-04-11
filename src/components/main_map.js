@@ -8,7 +8,8 @@ export default class MainMap extends React.Component {
     this.state = {
       vehicles: true,
       rocks: true,
-      traces: true
+      traces: true,
+      path: true
     };
   }
 
@@ -49,7 +50,7 @@ export default class MainMap extends React.Component {
 
       // path layer
       this.map.addSource('pathSource', {
-        data: `http://${this.props.serverIP}:5555/trace`,
+        data: `http://${this.props.serverIP}:5555/path`,
         type: 'geojson'
       });
 
@@ -99,6 +100,7 @@ export default class MainMap extends React.Component {
     this.map.getSource('vehicleSource').setData(`http://${this.props.serverIP}:5555/location`);
     this.map.getSource('rocksSource').setData(`http://${this.props.serverIP}:5555/rocks/geojson`);
     this.map.getSource('traceSource').setData(`http://${this.props.serverIP}:5555/trace`);
+    this.map.getSource('pathSource').setData(`http://${this.props.serverIP}:5555/path`);
   }
 
   componentWillUnmount() {
@@ -143,6 +145,9 @@ export default class MainMap extends React.Component {
       case 'traces':
         layers = ['big-daddy-trace', 'scout-trace', 'flyer-trace'];
         break;
+      case 'path':
+        layers = ['path'];
+        break;
     }
     this.setState({[layer]: !this.state[layer]}, () => {
       this.map.batch(batch => {
@@ -158,17 +163,29 @@ export default class MainMap extends React.Component {
     return <div>
       <div style={{width: '100%', height: this.props.height + 'px'}} ref='map' className='mb2' id='map'></div>
       <div>
-        <div className='ui toggle checkbox mr6'>
-          <input type='checkbox' checked={this.state.vehicles} onChange={this.toggleLayer.bind(this, 'vehicles')}/>
-          <label className='bold'>vehicles</label>
+        <div>
+          <div className='ui toggle checkbox'>
+            <input type='checkbox' checked={this.state.vehicles} onChange={this.toggleLayer.bind(this, 'vehicles')}/>
+            <label className='bold'>vehicles</label>
+          </div>
         </div>
-        <div className='ui toggle checkbox mr6'>
-          <input type='checkbox' checked={this.state.rocks} onChange={this.toggleLayer.bind(this, 'rocks')}/>
-          <label className='bold'>rocks</label>
+        <div>
+          <div className='ui toggle checkbox'>
+            <input type='checkbox' checked={this.state.rocks} onChange={this.toggleLayer.bind(this, 'rocks')}/>
+            <label className='bold'>rocks</label>
+          </div>
         </div>
-        <div className='ui toggle checkbox mr6'>
-          <input type='checkbox' checked={this.state.traces} onChange={this.toggleLayer.bind(this, 'traces')}/>
-          <label className='bold'>traces</label>
+        <div>
+          <div className='ui toggle checkbox'>
+            <input type='checkbox' checked={this.state.traces} onChange={this.toggleLayer.bind(this, 'traces')}/>
+            <label className='bold'>traces</label>
+          </div>
+        </div>
+        <div>
+          <div className='ui toggle checkbox'>
+            <input type='checkbox' checked={this.state.path} onChange={this.toggleLayer.bind(this, 'path')}/>
+            <label className='bold'>optimal path</label>
+          </div>
         </div>
       </div>
     </div>;
