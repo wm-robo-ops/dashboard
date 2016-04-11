@@ -252,7 +252,6 @@ var pathStyle = {
   'id': 'path',
   'type': 'line',
   'source': 'pathSource',
-  'filter': ['==', 'vehicle', 'flyer'],
   'paint': {
     'line-width': 1.7,
     'line-color': '#000000'
