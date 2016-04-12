@@ -144,6 +144,7 @@ export default class MainMap extends React.Component {
         break;
       case 'rocks':
         layers = Object.keys(colors).map(c => c + 'Rocks');
+        layers.push('alien');
         break;
       case 'traces':
         layers = ['big-daddy-trace', 'scout-trace', 'flyer-trace'];
