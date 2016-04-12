@@ -110,7 +110,9 @@ export default class MainMap extends React.Component {
   }
 
   mapClick(e) {
-    var features = this.map.queryRenderedFeatures(e.point, { layers: Object.keys(colors).map(c => c + 'Rocks' )});
+    var layers = Object.keys(colors).map(c => c + 'Rocks' );
+    layers.push('alien');
+    var features = this.map.queryRenderedFeatures(e.point, { layers });
     if (!features.length) {
       return;
     }
