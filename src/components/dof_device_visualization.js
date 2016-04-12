@@ -20,6 +20,7 @@ export default class DOFDeviceVisualization extends React.Component {
   }
 
   connectSocket() {
+    if (this.client) return;
     this.address = `ws://${this.props.serverIP}:${this.props.deviceData.port}`;
     this.client = new WebSocket(this.address);
     this.client.onmessage = (e) => {
@@ -37,14 +38,20 @@ export default class DOFDeviceVisualization extends React.Component {
   disconnectSocket() {
     if (this.client) {
       this.client.close();
+      this.client = null;
     }
   }
 
   componentWillReceiveProps(props) {
-    if (!this.props.deviceData.on && props.deviceData.on) {
-      this.connectSocket();
+    // switching views
+    if (props.deviceData.name !== this.props.deviceData.name) {
+      this.disconnectSocket();
     }
-    if (this.props.deviceData.on && !props.deviceData.on) {
+  }
+  componentDidUpdate() {
+    if (this.props.deviceData.on) {
+      this.connectSocket();
+    } else {
       this.disconnectSocket();
     }
   }
@@ -74,8 +81,9 @@ export default class DOFDeviceVisualization extends React.Component {
     this.circle.rotation.x = Math.PI / 2;
     this.scene.add(this.circle);
 
-    if (!window.renderer)
+    if (!window.renderer) {
       window.renderer = new THREE.WebGLRenderer();
+    }
     window.renderer.setSize(this.refs.container.parentNode.offsetWidth, 400);
 
     this.refs.container.appendChild(window.renderer.domElement);
@@ -87,12 +95,18 @@ export default class DOFDeviceVisualization extends React.Component {
   }
 
   update(x, y, z) {
-    this.box.rotation.x = x;
-    this.box.rotation.y = y;
-    this.box.rotation.z = z;
-    this.circle.rotation.x = x;
-    this.circle.rotation.y = y;
-    this.circle.rotation.z = z;
+    if (x) {
+      this.box.rotation.x = x;
+      this.circle.rotation.x = x;
+    }
+    if (y) {
+      this.box.rotation.y = y;
+      this.circle.rotation.y = y;
+    }
+    if (z) {
+      this.box.rotation.z = z;
+      this.circle.rotation.z = z;
+    }
 
     window.renderer.render(this.scene, this.camera);
   }
