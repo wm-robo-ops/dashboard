@@ -219,7 +219,7 @@ export default class App extends React.Component {
     var loc = `${lonLat.get(0)}_${lonLat.get(1)}`;
     var bearing = this.state.data.getIn([vehicle, 'pitch', 0]);
     var name = `${camera.replace(/_/g, '~')}_${time}_${loc}_${bearing}.png`;
-    API.capturePhoto(name);
+    API.capturePhoto(camera, name);
   }
 
   setServerIP(ip) {

@@ -95,9 +95,9 @@ export default class API {
     });
   }
 
-  capturePhoto(name) {
+  capturePhoto(camera, name) {
     return new Promise((resolve, reject) => {
-      fetch(`${this.URL}/photo/${name}`, {
+      fetch(`${this.URL}/photo/${camera}/${name}`, {
         method: 'POST'
       })
         .then(res => res.text())
