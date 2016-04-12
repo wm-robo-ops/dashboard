@@ -62,6 +62,7 @@ export default class MainMap extends React.Component {
         batch.addLayer(scoutTraceLayerStyle);
         batch.addLayer(flyerTraceLayerStyle);
         batch.addLayer(pathStyle);
+        batch.addLayer(alienStyle);
       });
 
       // setup popup
@@ -109,7 +110,9 @@ export default class MainMap extends React.Component {
   }
 
   mapClick(e) {
-    var features = this.map.queryRenderedFeatures(e.point, { layers: Object.keys(colors).map(c => c + 'Rocks' )});
+    var layers = Object.keys(colors).map(c => c + 'Rocks' );
+    layers.push('alien');
+    var features = this.map.queryRenderedFeatures(e.point, { layers });
     if (!features.length) {
       return;
     }
@@ -141,6 +144,7 @@ export default class MainMap extends React.Component {
         break;
       case 'rocks':
         layers = Object.keys(colors).map(c => c + 'Rocks');
+        layers.push('alien');
         break;
       case 'traces':
         layers = ['big-daddy-trace', 'scout-trace', 'flyer-trace'];
@@ -217,6 +221,16 @@ function getRockStyle(color) {
     }
   };
 }
+
+var alienStyle = {
+  'id': 'alien',
+  'type': 'symbol',
+  'source': 'rocksSource',
+  'filter': ['==', 'color', 'alien'],
+  'layout': {
+    'icon-image': 'aquarium-15'
+  }
+};
 
 var bigDaddyTraceLayerStyle = {
   'id': 'big-daddy-trace',
