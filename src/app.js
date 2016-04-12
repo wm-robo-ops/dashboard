@@ -122,7 +122,8 @@ const colors = {
   blue: '',
   red: '',
   orange: '',
-  yellow: ''
+  yellow: '',
+  alien: ''
 };
 
 /**

@@ -62,6 +62,7 @@ export default class MainMap extends React.Component {
         batch.addLayer(scoutTraceLayerStyle);
         batch.addLayer(flyerTraceLayerStyle);
         batch.addLayer(pathStyle);
+        batch.addLayer(alienStyle);
       });
 
       // setup popup
@@ -217,6 +218,16 @@ function getRockStyle(color) {
     }
   };
 }
+
+var alienStyle = {
+  'id': 'alien',
+  'type': 'symbol',
+  'source': 'rocksSource',
+  'filter': ['==', 'color', 'alien'],
+  'layout': {
+    'icon-image': 'aquarium-15'
+  }
+};
 
 var bigDaddyTraceLayerStyle = {
   'id': 'big-daddy-trace',
