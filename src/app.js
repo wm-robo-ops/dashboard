@@ -69,7 +69,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     flyer: { on: false, port: 3003, name: 'flyer' }
   },
   photos: [],
-  serverIP: 'ec2-54-172-2-230.compute-1.amazonaws.com',
+  serverIP: 'ec2-54-85-173-111.compute-1.amazonaws.com',
   startTime: '00:00:00'
 }));
 

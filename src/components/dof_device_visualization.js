@@ -67,6 +67,7 @@ export default class DOFDeviceVisualization extends React.Component {
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
     this.camera.position.z = 1000;
 
+    // draw box
     var boxGeom = new THREE.BoxGeometry(200, 200, 200);
     for (var i = 0; i < boxGeom.faces.length; i++) {
       boxGeom.faces[i].color.setHex(Math.random() * 0xffffff);
@@ -75,6 +76,7 @@ export default class DOFDeviceVisualization extends React.Component {
     this.box = new THREE.Mesh(boxGeom, boxMaterial);
     this.scene.add(this.box);
 
+    // draw circle
     var circleGeom = new THREE.CircleGeometry(500, 64);
     var circleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
     this.circle = new THREE.Mesh(circleGeom, circleMaterial);
