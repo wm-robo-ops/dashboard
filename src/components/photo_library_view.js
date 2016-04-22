@@ -55,7 +55,7 @@ class PhotoCard extends React.Component {
           <div className='right floated meta'>{time}</div>
         </div>
         <div className='image'>
-          <img src={`http://${this.props.serverIP}:6000/${url}`}/>
+          <img src={`http://${this.props.serverIP}:8080/${url}`}/>
         </div>
         <div className='extra content'>
           <div>coordinates:</div>

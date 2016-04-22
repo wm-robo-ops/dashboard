@@ -31,26 +31,26 @@ export default class MainMap extends React.Component {
     var set = () => {
       // rock layer
       this.map.addSource('rocksSource', {
-        data: `http://${this.props.serverIP}:6000/rocks/geojson`,
+        data: `http://${this.props.serverIP}:8080/rocks/geojson`,
         type: 'geojson'
       });
 
       // vehicle layer
       this.map.addSource('vehicleSource', {
-        data: `http://${this.props.serverIP}:6000/location`,
+        data: `http://${this.props.serverIP}:8080/location`,
         type: 'geojson'
       });
 
       // trace layer
       let { locationHistory } = this.props;
       this.map.addSource('traceSource', {
-        data: `http://${this.props.serverIP}:6000/trace`,
+        data: `http://${this.props.serverIP}:8080/trace`,
         type: 'geojson'
       });
 
       // path layer
       this.map.addSource('pathSource', {
-        data: `http://${this.props.serverIP}:6000/path`,
+        data: `http://${this.props.serverIP}:8080/path`,
         type: 'geojson'
       });
 
@@ -98,10 +98,10 @@ export default class MainMap extends React.Component {
     if (!this.map || !this.map.loaded()) {
       return;
     }
-    this.map.getSource('vehicleSource').setData(`http://${this.props.serverIP}:6000/location`);
-    this.map.getSource('rocksSource').setData(`http://${this.props.serverIP}:6000/rocks/geojson`);
-    this.map.getSource('traceSource').setData(`http://${this.props.serverIP}:6000/trace`);
-    this.map.getSource('pathSource').setData(`http://${this.props.serverIP}:6000/path`);
+    this.map.getSource('vehicleSource').setData(`http://${this.props.serverIP}:8080/location`);
+    this.map.getSource('rocksSource').setData(`http://${this.props.serverIP}:8080/rocks/geojson`);
+    this.map.getSource('traceSource').setData(`http://${this.props.serverIP}:8080/trace`);
+    this.map.getSource('pathSource').setData(`http://${this.props.serverIP}:8080/path`);
   }
 
   componentWillUnmount() {
