@@ -1,13 +1,13 @@
 export default class API {
   constructor(ip) {
     this.ip = ip;
-    this.URL = `http://${ip}:5555`;
+    this.URL = `http://${ip}:6000`;
     this.setIP = this.setIP.bind(this);
   }
 
   setIP(ip) {
     this.ip = ip;
-    this.URL = `http://${ip}:5555`;
+    this.URL = `http://${ip}:6000`;
   }
 
   getStats() {
