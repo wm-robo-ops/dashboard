@@ -48,7 +48,7 @@ export default class VideoPlayer extends React.Component {
   }
 
   changeFrameRate(frameRate) {
-    this.props.changeFrameRate(this.props.name, frameRate);
+    this.props.changeFrameRate(this.props.cameraData.name, frameRate);
   }
 
   render() {

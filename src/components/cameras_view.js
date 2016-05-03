@@ -24,7 +24,9 @@ export default class CamerasView extends React.Component {
     window.removeEventListener('keyup', this.onEscape);
   }
 
-  enlarge(active) {
+  enlarge(active, e) {
+    var { type } = e.target;
+    if (type === 'checkbox' || type === 'submit') return;
     this.setState({ selected: true, active });
   }
 

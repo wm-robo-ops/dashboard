@@ -3,19 +3,18 @@ import React from 'react';
 export default class FrameRateSlider extends React.Component {
   constructor(props) {
     super(props);
-    this.onMouseDown = this.onMouseDown.bind(this);
+    this.state = {
+      fr: 30
+    };
     this.onMouseUp = this.onMouseUp.bind(this);
     this.changeFrameRate = this.changeFrameRate.bind(this);
   }
-  onMouseDown() {
-    this.mouseDown = true;
-  }
   onMouseUp() {
-    this.mouseDown = false;
+    this.props.changeFrameRate(this.state.fr);
   }
   changeFrameRate(e) {
-    if (this.mouseDown) return;
-    this.props.changeFrameRate(e.target.value);
+    e.preventDefault();
+    this.setState({ fr: e.target.value });
   }
   render() {
     return <div className='mt3'>
