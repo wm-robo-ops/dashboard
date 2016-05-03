@@ -69,7 +69,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
     flyer: { on: false, port: 3003, name: 'flyer' }
   },
   photos: [],
-  serverIP: window.serverIP || 'ec2-54-85-173-111.compute-1.amazonaws.com',
+  serverIP: 'ec2-54-83-155-188.compute-1.amazonaws.com',
   startTime: '00:00:00'
 }));
 
@@ -369,7 +369,7 @@ export default class App extends React.Component {
             {/* dof device visualization */}
             <div className='column'>
               <div className='ui blue padded segment'>
-                <h1 className='ui dividing header'>Bearing, Pitch, Roll</h1>
+                <h1 className='ui dividing header'>Heading, Pitch, Roll</h1>
                 <DOFDeviceVisualization
                   serverIP={serverIP}
                   deviceData={dofData}
@@ -377,10 +377,10 @@ export default class App extends React.Component {
               </div>
             </div>
 
-            {/* bearing map */}
+            {/* heading map */}
             {/*<div className='column'>
               <div className='ui yellow padded segment'>
-                <h1 className='ui dividing header'>Bearing</h1>
+                <h1 className='ui dividing header'>Heading</h1>
                 <BearingMap bearing={bearing} center={loc}/>
               </div>
             </div>*/}
