@@ -99,7 +99,7 @@ export default class DOFDeviceVisualization extends React.Component {
   update(x, y, z) {
     if (x) {
       this.box.rotation.x = x;
-      this.circle.rotation.x = x;
+      this.circle.rotation.x = x + Math.PI / 2;
     }
     if (y) {
       this.box.rotation.y = y;
