@@ -14,10 +14,10 @@ import {
   toggleVideo,
   updatePhotos,
   setAllCameras,
-  updateLocation,
   toggleDOFDevice,
   setAllDOFDevice,
-  changeFrameRate
+  changeFrameRate,
+  setVehicleGeoJSON
 } from './actions';
 
 // reducers
@@ -70,7 +70,8 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   photos: [],
   serverIP: 'ec2-54-83-155-188.compute-1.amazonaws.com',
-  startTime: '00:00:00'
+  startTime: '00:00:00',
+  vehicleGeoJSON: {type: 'FeatureCollection', features: []}
 }));
 
 var API = new Api(store.getState().get('serverIP'));
@@ -82,16 +83,10 @@ window.deleteRock = function(id) {
 function updateFromServer() {
   API.getStats()
     .then(stats => {
-      let vs = stats.vehicles;
       store.dispatch(setAllCameras(stats.cameras));
       store.dispatch(setAllGPS(stats.gps));
       store.dispatch(setAllDOFDevice(stats.dofDevice));
-      for (var vehicle in vs) {
-        store.dispatch(updateLocation({
-          vehicle,
-          location: vs[vehicle].location
-        }));
-      }
+      store.dispatch(setVehicleGeoJSON(stats.vehicleGeoJSON));
     })
     .catch(e => console.log(e));
 
@@ -348,7 +343,7 @@ export default class App extends React.Component {
               <div className='ui black padded segment'>
                 <h1 className='ui dividing header'>Location</h1>
                 <DeviceToggle checked={gpsOn} onChange={this.toggleGPS} name={view}/>
-                <MainMap zoom={17.5} height='400' removeRock={this.removeRock} serverIP={serverIP}/>
+                <MainMap zoom={17.5} height='400' removeRock={this.removeRock} serverIP={serverIP} vehicleGeoJSON={data.vehicleGeoJSON}/>
               </div>
             </div>
 

@@ -16,6 +16,7 @@ export const SET_SERVER_IP = 'SET_SERVER_IP';
 export const CHANGE_FRAME_RATE = 'CHANGE_FRAME_RATE';
 export const UPDATE_START_TIME = 'UPDATE_START_TIME';
 export const UPDATE_LOCATION_HISTORY = 'UPDATE_LOCATION_HISTORY';
+export const SET_VEHICLE_GEOJSON = 'SET_VEHICLE_GEOJSON';
 
 export function updateBattery(data) {
   let { vehicle, batteryLevel } = data;
@@ -85,4 +86,8 @@ export function changeFrameRate(camera, frameRate) {
 
 export function updateStartTime(startTime) {
   return { type: UPDATE_START_TIME, startTime };
+}
+
+export function setVehicleGeoJSON(geojson) {
+  return {type: SET_VEHICLE_GEOJSON, geojson };
 }

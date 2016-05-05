@@ -14,6 +14,7 @@ import {
   SET_SERVER_IP,
   CHANGE_FRAME_RATE,
   UPDATE_START_TIME,
+  SET_VEHICLE_GEOJSON
 } from './actions';
 
 function dashboardApp(state, action) {
@@ -53,6 +54,8 @@ function dashboardApp(state, action) {
       return state.setIn(['cameras', action.camera, 'frameRate'], action.frameRate);
     case UPDATE_START_TIME:
       return state.setIn(['startTime', action.startTime]);
+    case SET_VEHICLE_GEOJSON:
+      return state.set('vehicleGeoJSON', Immutable.fromJS(action.geojson));
   }
   return state;
 }

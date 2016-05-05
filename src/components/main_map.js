@@ -94,11 +94,12 @@ export default class MainMap extends React.Component {
     }
   }
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps(props) {
     if (!this.map || !this.map.loaded()) {
       return;
     }
-    this.map.getSource('vehicleSource').setData(`http://${this.props.serverIP}:8080/location`);
+    //this.map.getSource('vehicleSource').setData(`http://${this.props.serverIP}:8080/location`);
+    this.map.getSource('vehicleSource').setData(props.vehicleGeoJSON);
     this.map.getSource('rocksSource').setData(`http://${this.props.serverIP}:8080/rocks/geojson`);
     this.map.getSource('traceSource').setData(`http://${this.props.serverIP}:8080/trace`);
     this.map.getSource('pathSource').setData(`http://${this.props.serverIP}:8080/path`);
@@ -163,8 +164,11 @@ export default class MainMap extends React.Component {
   }
 
   render() {
-    let { vehicles } = this.props;
+    var vd = this.props.vehicleGeoJSON.features;
     return <div>
+      {vd.length && <div>
+        {vd.map((v, i) => <div key={i}>{`${v.properties.name} - lon: ${v.geometry.coordinates[0]}, lat: ${v.geometry.coordinates[1]}`}</div>)}
+      </div>}
       <div style={{width: '100%', height: this.props.height + 'px'}} ref='map' className='mb2' id='map'></div>
       <div>
         <div>
