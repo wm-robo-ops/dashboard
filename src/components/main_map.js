@@ -98,7 +98,6 @@ export default class MainMap extends React.Component {
     if (!this.map || !this.map.loaded()) {
       return;
     }
-    //this.map.getSource('vehicleSource').setData(`http://${this.props.serverIP}:8080/location`);
     this.map.getSource('vehicleSource').setData(props.vehicleGeoJSON);
     this.map.getSource('rocksSource').setData(`http://${this.props.serverIP}:8080/rocks/geojson`);
     this.map.getSource('traceSource').setData(`http://${this.props.serverIP}:8080/trace`);

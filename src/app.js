@@ -156,16 +156,6 @@ export default class App extends React.Component {
     this.setState({ view });
   }
 
-  getVehicleLocationData() {
-    return vehicles.map(v => {
-      return {
-        vehicle: v,
-        coordinates: this.state.data.getIn([v, 'location']).toJS(),
-        name: names[v]
-      };
-    });
-  }
-
   addRock(data) {
     data.id = hat();
     store.dispatch(addRock(data));
@@ -255,7 +245,6 @@ export default class App extends React.Component {
         return cam;
       });
 
-    var vehicleLocations = this.getVehicleLocationData();
     var rockData = data.rocks;
 
     if (vehicles.some(v => v === view)) {
@@ -351,7 +340,7 @@ export default class App extends React.Component {
               {/* rock form */}
               <div className='ui red padded segment'>
                 <h1 className='ui dividing header'>Add Rock</h1>
-                <RockAddForm submit={this.addRock} vehicleLocations={vehicleLocations} colors={colors}/>
+                <RockAddForm submit={this.addRock} vehicleGeoJSON={data.vehicleGeoJSON} colors={colors}/>
               </div>
 
               {/* rock list */}

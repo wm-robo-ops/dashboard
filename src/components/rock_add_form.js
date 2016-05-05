@@ -51,7 +51,7 @@ export default class RockAddForm extends React.Component {
   }
 
   render() {
-    let vehicles = this.props.vehicleLocations;
+    let vehicles = this.props.vehicleGeoJSON.features;
 
     return <div>
 
@@ -94,7 +94,7 @@ export default class RockAddForm extends React.Component {
                 <label>use vehicle location</label>
                 <select className='ui fluid dropdown' ref='vehicleSelect' onChange={this.setVehicleLocation.bind(this)}>
                   <option>---</option>
-                  {vehicles.map(v => <option key={v.vehicle} value={v.coordinates}>{v.name}</option>)}
+                  {vehicles.map(v => <option key={v.properties.name} value={v.geometry.coordinates}>{v.properties.name}</option>)}
                 </select>
               </div>
               <button className='ui button' type='submit' onClick={this.submit.bind(this)}>Add</button>
@@ -111,6 +111,5 @@ export default class RockAddForm extends React.Component {
 
 RockAddForm.propTypes = {
   submit: React.PropTypes.func.isRequired,
-  vehicleLocations: React.PropTypes.array.isRequired,
   colors: React.PropTypes.object.isRequired
 };
