@@ -6,6 +6,11 @@ export default class DOFDeviceVisualization extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      heading: 0,
+      pitch: 0,
+      roll: 0
+    };
     this.setupViz = this.setupViz.bind(this);
     this.update = this.update.bind(this);
     this.resize = this.resize.bind(this);
@@ -26,7 +31,7 @@ export default class DOFDeviceVisualization extends React.Component {
     this.client.onmessage = (e) => {
       try {
         var data = JSON.parse(e.data);
-        this.update(deg2rad(parseFloat(data.roll)), deg2rad(parseFloat(data.heading)), deg2rad(parseFloat(data.pitch)));
+        this.update(deg2rad(parseFloat(data.pitch)), deg2rad(parseFloat(data.roll)), deg2rad(parseFloat(data.heading)));
         window.renderer.render(this.scene, this.camera);
       }
       catch(err) {
@@ -100,14 +105,17 @@ export default class DOFDeviceVisualization extends React.Component {
     if (x) {
       this.box.rotation.x = x;
       this.circle.rotation.x = x + Math.PI / 2;
+      this.setState({ pitch: x });
     }
     if (y) {
       this.box.rotation.y = y;
       this.circle.rotation.y = y;
+      this.setState({ roll: y });
     }
     if (z) {
       this.box.rotation.z = z;
       this.circle.rotation.z = z;
+      this.setState({ heading: z });
     }
 
     window.renderer.render(this.scene, this.camera);
@@ -116,8 +124,12 @@ export default class DOFDeviceVisualization extends React.Component {
   render() {
     var { toggle } = this.props;
     var { name, on } = this.props.deviceData;
+    var { heading, pitch, roll } = this.state;
     return <div style={{width: '100%'}}>
       <DeviceToggle checked={on} onChange={toggle} name={name}/>
+      <div>{`heading: ${rad2deg(heading)}°`}</div>
+      <div>{`pitch: ${rad2deg(pitch)}°`}</div>
+      <div>{`roll: ${rad2deg(roll)}°`}</div>
       <div className={`${on ? '' : 'hidden' }`} ref='container'></div>
     </div>;
   }
@@ -126,6 +138,10 @@ export default class DOFDeviceVisualization extends React.Component {
 
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
+}
+
+function rad2deg(rad) {
+  return rad * (180 / Math.PI);
 }
 
 DOFDeviceVisualization.propTypes = {
