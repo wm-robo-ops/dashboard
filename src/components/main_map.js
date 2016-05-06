@@ -66,14 +66,15 @@ export default class MainMap extends React.Component {
 
       // add all styles in one batch
       this.map.batch(batch => {
-        Object.keys(colors).map(color => batch.addLayer(getRockStyle(color)));
-        batch.addLayer(vehicleLayerStyle);
-        batch.addLayer(bigDaddyTraceLayerStyle);
+        batch.addLayer(gridStyle);
+        batch.addLayer(gridLabelStyle);
         batch.addLayer(scoutTraceLayerStyle);
         batch.addLayer(flyerTraceLayerStyle);
         batch.addLayer(pathStyle);
         batch.addLayer(alienStyle);
-        batch.addLayer(gridStyle);
+        Object.keys(colors).map(color => batch.addLayer(getRockStyle(color)));
+        batch.addLayer(bigDaddyTraceLayerStyle);
+        batch.addLayer(vehicleLayerStyle);
       });
 
       // setup popup
@@ -164,7 +165,7 @@ export default class MainMap extends React.Component {
         layers = ['path'];
         break;
       case 'grid':
-        layers = ['grid'];
+        layers = ['grid', 'gridLabel'];
         break;
     }
     this.setState({[layer]: !this.state[layer]}, () => {
@@ -319,6 +320,15 @@ var gridStyle = {
   'paint': {
     'line-width': 1.7,
     'line-color': '#000000'
+  }
+};
+var gridLabelStyle = {
+  'id': 'gridLabel',
+  'type': 'symbol',
+  'source': 'gridSource',
+  'layout': {
+    'text-field': '{label}',
+    'text-size': 10
   }
 };
 
