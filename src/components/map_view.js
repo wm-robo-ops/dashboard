@@ -12,7 +12,7 @@ export default class CamerasView extends React.Component {
       <div className='six wide column'>
         <div className='ui black padded segment'>
           <h1 className='ui dividing header'>location</h1>
-          <MainMap zoom={18.5} height='700' removeRock={this.props.removeRock} serverIP={this.props.serverIP}/>
+          <MainMap zoom={18.5} height='700' removeRock={this.props.removeRock} serverIP={this.props.serverIP} vehicleGeoJSON={this.props.vehicleGeoJSON}/>
         </div>
       </div>
     </div>;

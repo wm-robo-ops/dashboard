@@ -303,9 +303,9 @@ export default class App extends React.Component {
           toggle={this.toggleCamera}
         />}
 
-        {view === MAP && <MapView removeRock={this.removeRock} serverIP={serverIP}/>}
+        {view === MAP && <MapView removeRock={this.removeRock} serverIP={serverIP} vehicleGeoJSON={data.vehicleGeoJSON}/>}
 
-        {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.photos} serverIP={serverIP} />}
+        {view === PHOTO_LIBRARY && <PhotoLibraryView photos={data.photos} serverIP={serverIP}/>}
 
         {view === SETTINGS && <SettingsView
           serverIP={serverIP}
