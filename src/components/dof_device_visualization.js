@@ -127,9 +127,11 @@ export default class DOFDeviceVisualization extends React.Component {
     var { heading, pitch, roll } = this.state;
     return <div style={{width: '100%'}}>
       <DeviceToggle checked={on} onChange={toggle} name={name}/>
-      <div>{`heading: ${rad2deg(heading)}°`}</div>
-      <div>{`pitch: ${rad2deg(pitch)}°`}</div>
-      <div>{`roll: ${rad2deg(roll)}°`}</div>
+      <div className='ui three column grid'>
+        <div className='column'><h2>{`heading: ${rad2deg(heading)}°`}</h2></div>
+        <div className='column'><h2>{`pitch: ${rad2deg(pitch)}°`}</h2></div>
+        <div className='column'><h2>{`roll: ${rad2deg(roll)}°`}</h2></div>
+      </div>
       <div className={`${on ? '' : 'hidden' }`} ref='container'></div>
     </div>;
   }
