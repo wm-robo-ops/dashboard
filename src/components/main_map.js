@@ -1,5 +1,6 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
+import grid from '../grid';
 
 export default class MainMap extends React.Component {
 
@@ -54,6 +55,12 @@ export default class MainMap extends React.Component {
         type: 'geojson'
       });
 
+      // grid layer
+      this.map.addSource('gridSource', {
+        data: grid,
+        type: 'geojson'
+      });
+
       // add all styles in one batch
       this.map.batch(batch => {
         Object.keys(colors).map(color => batch.addLayer(getRockStyle(color)));
@@ -63,6 +70,7 @@ export default class MainMap extends React.Component {
         batch.addLayer(flyerTraceLayerStyle);
         batch.addLayer(pathStyle);
         batch.addLayer(alienStyle);
+        batch.addLayer(gridStyle);
       });
 
       // setup popup
@@ -211,7 +219,6 @@ var vehicleLayerStyle = {
     'icon-image': '{icon}-15'
   }
 };
-
 function getRockStyle(color) {
   return {
     'id': color + 'Rocks',
@@ -224,7 +231,6 @@ function getRockStyle(color) {
     }
   };
 }
-
 var alienStyle = {
   'id': 'alien',
   'type': 'symbol',
@@ -234,7 +240,6 @@ var alienStyle = {
     'icon-image': 'aquarium-15'
   }
 };
-
 var bigDaddyTraceLayerStyle = {
   'id': 'big-daddy-trace',
   'type': 'line',
@@ -269,6 +274,15 @@ var pathStyle = {
   'id': 'path',
   'type': 'line',
   'source': 'pathSource',
+  'paint': {
+    'line-width': 1.7,
+    'line-color': '#000000'
+  }
+};
+var gridStyle = {
+  'id': 'grid',
+  'type': 'line',
+  'source': 'gridSource',
   'paint': {
     'line-width': 1.7,
     'line-color': '#000000'
