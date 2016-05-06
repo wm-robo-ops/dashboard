@@ -10,8 +10,11 @@ export default class MainMap extends React.Component {
       vehicles: true,
       rocks: true,
       traces: true,
-      path: true
+      path: true,
+      grid: true
     };
+    this.jumpTo = this.jumpTo.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   componentDidMount() {
@@ -160,6 +163,9 @@ export default class MainMap extends React.Component {
       case 'path':
         layers = ['path'];
         break;
+      case 'grid':
+        layers = ['grid'];
+        break;
     }
     this.setState({[layer]: !this.state[layer]}, () => {
       this.map.batch(batch => {
@@ -170,37 +176,64 @@ export default class MainMap extends React.Component {
     });
   }
 
+  jumpTo(coords) {
+    this.map.flyTo({ center: coords });
+  }
+
+  reset() {
+    this.map.flyTo({ center: [-95.081320, 29.564835], zoom: this.props.zoom });
+  }
+
   render() {
     var vd = this.props.vehicleGeoJSON.features;
     return <div>
-      {vd.length && <div>
-        {vd.map((v, i) => <div key={i}>{`${v.properties.name} - lon: ${v.geometry.coordinates[0]}, lat: ${v.geometry.coordinates[1]}`}</div>)}
+      {(vd.length > 0) && <div className='mb2'>
+        {vd.map((v, i) => <div key={i}><span className='bold'>{`${names[v.properties.name]}`}</span> &#8594; {` lon: ${v.geometry.coordinates[0]}, lat: ${v.geometry.coordinates[1]}`}</div>)}
       </div>}
       <div style={{width: '100%', height: this.props.height + 'px'}} ref='map' className='mb2' id='map'></div>
-      <div>
-        <div>
-          <div className='ui toggle checkbox'>
-            <input type='checkbox' checked={this.state.vehicles} onChange={this.toggleLayer.bind(this, 'vehicles')}/>
-            <label className='bold'>vehicles</label>
+      <div className='ui stackable three column grid'>
+        <div className='column'>
+          <div className='bold mb1'>Layers:</div>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.state.vehicles} onChange={this.toggleLayer.bind(this, 'vehicles')}/>
+              <label className='bold'>vehicles</label>
+            </div>
+          </div>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.state.rocks} onChange={this.toggleLayer.bind(this, 'rocks')}/>
+              <label className='bold'>rocks</label>
+            </div>
+          </div>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.state.traces} onChange={this.toggleLayer.bind(this, 'traces')}/>
+              <label className='bold'>traces</label>
+            </div>
+          </div>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.state.path} onChange={this.toggleLayer.bind(this, 'path')}/>
+              <label className='bold'>optimal path</label>
+            </div>
+          </div>
+          <div>
+            <div className='ui toggle checkbox'>
+              <input type='checkbox' checked={this.state.grid} onChange={this.toggleLayer.bind(this, 'grid')}/>
+              <label className='bold'>grid</label>
+            </div>
           </div>
         </div>
-        <div>
-          <div className='ui toggle checkbox'>
-            <input type='checkbox' checked={this.state.rocks} onChange={this.toggleLayer.bind(this, 'rocks')}/>
-            <label className='bold'>rocks</label>
-          </div>
-        </div>
-        <div>
-          <div className='ui toggle checkbox'>
-            <input type='checkbox' checked={this.state.traces} onChange={this.toggleLayer.bind(this, 'traces')}/>
-            <label className='bold'>traces</label>
-          </div>
-        </div>
-        <div>
-          <div className='ui toggle checkbox'>
-            <input type='checkbox' checked={this.state.path} onChange={this.toggleLayer.bind(this, 'path')}/>
-            <label className='bold'>optimal path</label>
-          </div>
+        {(vd.length > 0) && <div className='column'>
+          <div className='bold mb1'>Jump To:</div>
+          {vd.map((v, i) => <div key={i}>
+            <button className='ui button basic blue' onClick={this.jumpTo.bind(this, v.geometry.coordinates)}>{names[v.properties.name]}</button>
+          </div>)}
+        </div>}
+        <div className='column'>
+          <div className='bold mb1'>Reset center/zoom</div>
+          <button className='ui button basic blue' onClick={this.reset}>Reset</button>
         </div>
       </div>
     </div>;
@@ -296,4 +329,10 @@ const colors = {
   green: '#008000',
   blue: '#0000FF',
   red: '#FF0000'
+};
+
+const names = {
+  bigDaddy: 'Big Daddy',
+  scout: 'Scout',
+  flyer: 'Flyer'
 };
