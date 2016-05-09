@@ -17,7 +17,8 @@ import {
   toggleDOFDevice,
   setAllDOFDevice,
   changeFrameRate,
-  setVehicleGeoJSON
+  setVehicleGeoJSON,
+  setStartTime
 } from './actions';
 
 // reducers
@@ -31,7 +32,6 @@ import Time from './components/time';
 import MainMap from './components/main_map';
 import RockList from './components/rock_list';
 import MapView from './components/map_view';
-//import BearingMap from './components/bearing_map';
 import RockAddForm from './components/rock_add_form';
 import VideoPlayer from './components/video_player';
 import CamerasView from './components/cameras_view';
@@ -70,7 +70,7 @@ var store = createStore(dashboardApp, Immutable.fromJS({
   },
   photos: [],
   serverIP: 'ec2-54-83-155-188.compute-1.amazonaws.com',
-  startTime: '00:00:00',
+  startTime: false,
   vehicleGeoJSON: {type: 'FeatureCollection', features: []}
 }));
 
@@ -87,6 +87,7 @@ function updateFromServer() {
       store.dispatch(setAllGPS(stats.gps));
       store.dispatch(setAllDOFDevice(stats.dofDevice));
       store.dispatch(setVehicleGeoJSON(stats.vehicleGeoJSON));
+      store.dispatch(setStartTime(stats.startTime));
     })
     .catch(e => console.log(e));
 
@@ -230,6 +231,11 @@ export default class App extends React.Component {
     API.changeFrameRate(camera, frameRate);
   }
 
+  setStartTime(time) {
+    store.dispatch(setStartTime(time));
+    API.setStartTime(time);
+  }
+
   render() {
     var data = this.state.data.toJS();
     var view = this.state.view;
@@ -293,7 +299,7 @@ export default class App extends React.Component {
 
         <div style={{marginBottom: '20px'}}>
           <h1 className='ui block header center'>{names[view]}</h1>
-          <Time startTime={startTime}/>
+          <Time setStartTime={this.setStartTime} startTime={startTime}/>
         </div>
 
         {view === CAMERAS && <CamerasView
@@ -360,14 +366,6 @@ export default class App extends React.Component {
                   toggle={this.toggleDOFDevice}/>
               </div>
             </div>
-
-            {/* heading map */}
-            {/*<div className='column'>
-              <div className='ui yellow padded segment'>
-                <h1 className='ui dividing header'>Heading</h1>
-                <BearingMap bearing={bearing} center={loc}/>
-              </div>
-            </div>*/}
 
           </div>
 

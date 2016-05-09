@@ -17,6 +17,7 @@ export const CHANGE_FRAME_RATE = 'CHANGE_FRAME_RATE';
 export const UPDATE_START_TIME = 'UPDATE_START_TIME';
 export const UPDATE_LOCATION_HISTORY = 'UPDATE_LOCATION_HISTORY';
 export const SET_VEHICLE_GEOJSON = 'SET_VEHICLE_GEOJSON';
+export const SET_START_TIME = 'SET_START_TIME';
 
 export function updateBattery(data) {
   let { vehicle, batteryLevel } = data;
@@ -89,5 +90,9 @@ export function updateStartTime(startTime) {
 }
 
 export function setVehicleGeoJSON(geojson) {
-  return {type: SET_VEHICLE_GEOJSON, geojson };
+  return { type: SET_VEHICLE_GEOJSON, geojson };
+}
+
+export function setStartTime(time) {
+  return { type: SET_START_TIME, time };
 }

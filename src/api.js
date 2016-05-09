@@ -144,4 +144,14 @@ export default class API {
         .catch(() => reject('ERROR: Could not change frame rate'));
     });
   }
+
+  setStartTime(time) {
+    return new Promise((resolve, reject) => {
+      fetch(`${this.URL}/start_time/set/${time}`, {
+        method: 'POST'
+      })
+        .then(res => res.text())
+        .catch(() => reject('ERROR: Could not start timer'));
+    });
+  }
 }
