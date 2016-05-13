@@ -130,10 +130,13 @@ export default class MainMap extends React.Component {
     }
     var f = features[0];
     var content = '<div style="text-align: center">' +
-                    '<div style="padding: 10px">' +
-                      f.properties.color + ' rock!' +
+                    '<div style="padding: 3px">' +
+                      f.properties.color + ' rock' +
                     '</div>' +
-                    '<div style="padding: 10px">' +
+                    '<div style="padding: 3px">' +
+                      'id: ' + f.properties.name +
+                    '</div>' +
+                    '<div style="padding: 3px">' +
                       f.geometry.coordinates[0].toFixed(2) + ', ' + f.geometry.coordinates[1].toFixed(2) +
                     '</div>' +
                     '<div >' +

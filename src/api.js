@@ -37,7 +37,7 @@ export default class API {
       })
         .then(res => res.text())
         .then(text => {
-          if (text !== 'ok') reject('DELETE failed');
+          if (text !== 'ok') reject('rock POST failed');
         })
         .catch(e => reject(e));
     });

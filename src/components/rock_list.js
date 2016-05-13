@@ -16,6 +16,7 @@ class RockList extends React.Component {
         <thead>
           <tr>
             <th></th>
+            <th>id</th>
             <th>Color</th>
             <th>Longitude</th>
             <th>Latitude</th>
@@ -26,6 +27,7 @@ class RockList extends React.Component {
             <td>
               <i className='remove icon hover-red' onClick={this.removeRock.bind(this, r.id)}></i>
             </td>
+            <td>{r.name}</td>
             <td>{r.color}</td>
             <td>{r.lon.toFixed(4)}</td>
             <td>{r.lat.toFixed(4)}</td>
