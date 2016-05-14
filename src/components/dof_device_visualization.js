@@ -31,7 +31,7 @@ export default class DOFDeviceVisualization extends React.Component {
     this.client.onmessage = (e) => {
       try {
         var data = JSON.parse(e.data);
-        this.update(deg2rad(parseFloat(data.pitch)), deg2rad(parseFloat(data.roll)), deg2rad(parseFloat(data.heading)));
+        this.update(deg2rad(parseFloat(data.pitch)), deg2rad(parseFloat(data.roll)), deg2rad(parseFloat(data.heading - 133)));
         window.renderer.render(this.scene, this.camera);
       }
       catch(err) {

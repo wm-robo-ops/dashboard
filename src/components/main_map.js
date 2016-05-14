@@ -64,18 +64,16 @@ export default class MainMap extends React.Component {
         type: 'geojson'
       });
 
-      // add all styles in one batch
-      this.map.batch(batch => {
-        batch.addLayer(gridStyle);
-        batch.addLayer(gridLabelStyle);
-        batch.addLayer(scoutTraceLayerStyle);
-        batch.addLayer(flyerTraceLayerStyle);
-        batch.addLayer(pathStyle);
-        batch.addLayer(alienStyle);
-        Object.keys(colors).map(color => batch.addLayer(getRockStyle(color)));
-        batch.addLayer(bigDaddyTraceLayerStyle);
-        batch.addLayer(vehicleLayerStyle);
-      });
+      // add all styles
+      this.map.addLayer(gridStyle);
+      this.map.addLayer(gridLabelStyle);
+      this.map.addLayer(scoutTraceLayerStyle);
+      this.map.addLayer(flyerTraceLayerStyle);
+      this.map.addLayer(pathStyle);
+      this.map.addLayer(alienStyle);
+      Object.keys(colors).map(color => this.map.addLayer(getRockStyle(color)));
+      this.map.addLayer(bigDaddyTraceLayerStyle);
+      this.map.addLayer(vehicleLayerStyle);
 
       // setup popup
       var popup = new mapboxgl.Popup({
@@ -172,10 +170,8 @@ export default class MainMap extends React.Component {
         break;
     }
     this.setState({[layer]: !this.state[layer]}, () => {
-      this.map.batch(batch => {
-        layers.forEach(l => {
-          batch.setLayoutProperty(l, 'visibility', this.state[layer] ? 'visible' : 'none');
-        });
+      layers.forEach(l => {
+        this.map.setLayoutProperty(l, 'visibility', this.state[layer] ? 'visible' : 'none');
       });
     });
   }
