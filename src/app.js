@@ -254,8 +254,6 @@ export default class App extends React.Component {
     var rockData = data.rocks;
 
     if (vehicles.some(v => v === view)) {
-      //var bearing = data.getIn([view, 'pitch']).get(0);
-      //var bearing = data[view].pitch;
       var gpsOn = data.gps[view].on;
       var dofData = data.dofDevice[view];
       cameras = cameras.filter(c => c.vehicle === view);

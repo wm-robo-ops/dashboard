@@ -42,7 +42,7 @@
     "browserify": "^13.0.0",
     "budo": "^8.2.2",
     "eslint": "^2.10.0",
-    "eslint-plugin-react": "^4.1.0",
+    "eslint-plugin-react": "^5.1.1",
     "minifyify": "^7.3.1"
   }
 }

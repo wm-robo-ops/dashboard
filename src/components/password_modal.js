@@ -32,7 +32,7 @@ export default class PasswordModal extends React.Component {
       <div className='header'>
         Enter Password
       </div>
-      <div>If dashboard is not functioning as desired, please call <span className='bold'>(757) 927-2413</span> to report.</div>
+      <div className='pad2'>If dashboard is not functioning as desired, please call <span className='bold'>(757) 927-2413</span> to report.</div>
       <div className='ui form'>
         <input ref='passwordInput' type='password' placeholder='password'/>
       </div>
