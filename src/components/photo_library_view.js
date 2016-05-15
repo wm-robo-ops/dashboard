@@ -47,7 +47,6 @@ class PhotoCard extends React.Component {
     var time = data[1].replace(/-/g, ':');
     var lon = data[2];
     var lat = data[3];
-    var bearing = data[4];
     return <div className='column'>
       <div className='ui fluid blue card' onClick={this.props.enlarge.bind(this, url)}>
         <div className='content'>
@@ -60,8 +59,6 @@ class PhotoCard extends React.Component {
         <div className='extra content'>
           <div>coordinates:</div>
           <div>{`(${lon}, ${lat})`}</div>
-          <div>bearing:</div>
-          <div>{bearing}</div>
         </div>
       </div>
     </div>;
