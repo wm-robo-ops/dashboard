@@ -22,7 +22,7 @@ export default class MainMap extends React.Component {
         'iJkcUF1TWlVIn0.YzBtz0O019DJGk3IpFi72g';
     this.map = new mapboxgl.Map({
       container: this.refs.map,
-      style: 'mapbox://styles/mapbox/satellite-hybrid-v8',
+      style: 'mapbox://styles/kelvinabrokwa/cio7x5q690018bdnjqxr9yt6w',
       center: [-95.081320, 29.564835],
       zoom: this.props.zoom
     });
